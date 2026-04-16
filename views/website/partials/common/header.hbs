@@ -22,7 +22,7 @@
 
     <div class="pc-nav__right">
       <form class="pc-nav-search" id="pcNavSearchForm" action="{{#if basePath}}{{basePath}}/search{{else}}/search{{/if}}" method="get" role="search">
-        <input type="search" name="q" class="pc-nav-search__input" id="pcNavSearchInput" placeholder="{{#if searchPageTexts.heroSearchPlaceholder}}{{searchPageTexts.heroSearchPlaceholder}}{{else}}Search products...{{/if}}" aria-label="{{#if searchPageTexts.heroSearchPlaceholder}}{{searchPageTexts.heroSearchPlaceholder}}{{else}}Search products{{/if}}" autocomplete="off">
+        <input type="search" name="q" class="pc-nav-search__input" id="pcNavSearchInput" placeholder="{{#if searchPageTexts.navSearchPlaceholder}}{{searchPageTexts.navSearchPlaceholder}}{{/if}}" aria-label="{{#if searchPageTexts.navSearchPlaceholder}}{{searchPageTexts.navSearchPlaceholder}}{{else}}Search products{{/if}}" autocomplete="off">
         <button type="button" class="pc-nav-search__btn" id="pcNavSearchTrigger" aria-label="{{#if (eq locale 'zh-CN')}}展开搜索{{else}}Expand search{{/if}}">
           <img src="/images/head/search-normal.png" alt="Search" class="pc-nav-icon" width="24" height="24">
         </button>

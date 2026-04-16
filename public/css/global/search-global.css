@@ -1,4 +1,24 @@
 /* 站内搜索结果页（Figma 搜索结果页 / node 453-3278） */
+.g-search-page .pc-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  transition: background 0.25s ease, backdrop-filter 0.25s ease;
+}
+
+/* 覆盖 common-global 中 .pc-nav:hover 的实色，保持玻璃感 */
+.g-search-page .pc-nav:hover {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
 .g-search-page .g-main {
   background: var(--g-color-bg, #f8f8f8);
 }
@@ -13,6 +33,9 @@
   background: var(--g-search-hero-bg);
   padding: clamp(2rem, 5vw, 3.25rem) 0;
   border-bottom: none;
+  height:404px;
+  display: flex;
+  align-items: center;
 }
 
 .g-searchTop__wrap {
