@@ -75,7 +75,7 @@ export class DbBackupService {
     const host =
       this.config.get<string>('database.host') ||
       process.env.DB_HOST ||
-      '154.193.246.133';
+      '47.116.106.247';
     const port =
       this.config.get<number>('database.port') ??
       parseInt(process.env.DB_PORT || '3306', 10);

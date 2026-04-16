@@ -4,7 +4,7 @@ main:
     - services:
         - docker
       env:
-          REMOTE_HOST: 154.193.246.133
+          REMOTE_HOST: 47.116.106.247
           REMOTE_PORT: 22
           REMOTE_USERNAME: root
           REMOTE_PASSWORD: KJYMhnMxiX4QjHaG

@@ -1,6 +1,6 @@
 # config.yaml 示例
 server:
-  host: "154.193.246.133"
+  host: "47.116.106.247"
   port: 22
   user: "root"
   # 使用密码或密钥认证

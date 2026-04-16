@@ -1,7 +1,7 @@
 export default () => ({
   port: parseInt(process.env.PORT || '3000', 10),
   database: {
-    host: process.env.DB_HOST || '154.193.246.133',
+    host: process.env.DB_HOST || '47.116.106.247',
     port: parseInt(process.env.DB_PORT || '3306', 10),
     username: process.env.DB_USERNAME || 'pengcheng',
     password: process.env.DB_PASSWORD || 'KJYMhnMxiX4QjHaG',
@@ -14,7 +14,7 @@ export default () => ({
     dockerContainer: process.env.DB_BACKUP_DOCKER_CONTAINER || 'mysql',
   },
   redis: {
-    host: process.env.REDIS_HOST || '154.193.246.133',
+    host: process.env.REDIS_HOST || '47.116.106.247',
     port: parseInt(process.env.REDIS_PORT || '6379', 10),
     password: process.env.REDIS_PASSWORD || 'ZiFbtpcpc4eC5sPy',
     db: parseInt(process.env.REDIS_DB || '0', 10),
