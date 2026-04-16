@@ -3,7 +3,7 @@ module.exports = {
   apps: [
     {
       name: 'pengcheng',
-      script: 'dist/main.js',
+      script: 'dist/src/main.js',
       cwd: __dirname,
       instances: 1,
       exec_mode: 'fork',
