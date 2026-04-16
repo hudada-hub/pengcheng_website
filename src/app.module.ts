@@ -31,6 +31,7 @@ import { AdminUnauthorizedFilter } from './common/filters/admin-unauthorized.fil
 import { WebsiteNotFoundFilter } from './common/filters/website-not-found.filter';
 import { ScheduleModule } from '@nestjs/schedule';
 import { DbBackupModule } from './modules/db-backup/db-backup.module';
+import { DbHeartbeatModule } from './modules/db-heartbeat/db-heartbeat.module';
 import { MemberModule } from './modules/member/member.module';
 
 @Module({
@@ -41,6 +42,7 @@ import { MemberModule } from './modules/member/member.module';
     RedisModule,
     I18nModule,
     DbBackupModule,
+    DbHeartbeatModule,
     AuthModule,
     AdminModule,
     MenuModule,

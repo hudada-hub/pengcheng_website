@@ -968,7 +968,7 @@ body.g-pd-lightbox-open {
 .g-pd-info__cert--figma {
   border: none !important;
   background: transparent !important;
-  padding: 4px 6px !important;
+  padding: 6px 6px !important;
   margin: 0;
   font-family: 'Exo', system-ui, sans-serif;
   font-weight: 600;
@@ -977,6 +977,8 @@ body.g-pd-lightbox-open {
   color: #424558;
   text-align: center;
   line-height: 1.25;
+  box-sizing: border-box;
+
 }
 
 .g-pd-info__certs-figma-divider {
@@ -1434,6 +1436,12 @@ body.g-pd-lightbox-open {
  * 产品详情页移动端（<992px）：仅作用 .g-product-detail-page，PC 端不变
  * -------------------------------------------------------------------------- */
 @media (max-width: 991.98px) {
+  .g-product-detail-page,
+  .g-product-detail-layout,
+  .g-products-layout {
+    overflow-x: hidden;
+  }
+
   .g-product-detail-page .g-product-detail-layout .g-products-layout__inner {
     padding-top: clamp(16px, 3.5vw, 28px);
     padding-bottom: clamp(40px, 10vw, 64px);

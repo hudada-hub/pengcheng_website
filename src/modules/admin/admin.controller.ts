@@ -730,7 +730,8 @@ export class AdminController {
     if (filterLangId != null) listBaseQs.langId = String(filterLangId);
 
     const paginationBase =
-      '/admin/download-file-records?' + new URLSearchParams(listBaseQs).toString();
+      '/admin/download-file-records?' +
+      new URLSearchParams(listBaseQs).toString();
 
     const dlUserIds = [
       ...new Set(

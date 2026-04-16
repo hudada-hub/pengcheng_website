@@ -283,7 +283,7 @@ export class MemberCenterPageController extends BaseWebsiteController {
     }
 
     // 获取分页参数
-    const query = req.query as Record<string, unknown> || {};
+    const query = (req.query as Record<string, unknown>) || {};
     const page = Math.max(1, Number(query.page) || 1);
     const pageSize = 10;
 

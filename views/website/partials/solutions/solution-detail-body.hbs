@@ -49,19 +49,18 @@
             </h3>
             <div class="g-solution-case-card__footer">
               <div class="g-solution-case-card__spec">
-                <span class="g-solution-case-card__spec-icon" aria-hidden="true">
+               
+                {{#if this.specLine}}
+                 <span class="g-solution-case-card__spec-icon" aria-hidden="true">
                   <iconify-icon icon="mdi:hexagon-outline"></iconify-icon>
                   <iconify-icon icon="mdi:lightning-bolt" class="g-solution-case-card__bolt"></iconify-icon>
                 </span>
-                {{#if this.specLine}}
                 <span class="g-solution-case-card__spec-text">{{this.specLine}}</span>
-                {{else}}
-                <span class="g-solution-case-card__spec-text g-solution-case-card__spec-text--muted">â€?/span>
                 {{/if}}
               </div>
               <a href="{{this.detailUrl}}" class="g-solution-case-card__cta">
                 {{../applicationCaseViewDetailsLabel}}
-                <iconify-icon icon="mdi:arrow-right"></iconify-icon>
+                <span class="g-solution-case-card__arrow"></span>
               </a>
             </div>
           </div>

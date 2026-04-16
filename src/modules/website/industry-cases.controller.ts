@@ -16,7 +16,11 @@ import { Solution } from '../../entities/solution.entity';
 import { Menu } from '../../entities/menu.entity';
 import { LangService } from '../../i18n/lang.service';
 import { WebsiteLayoutService } from './website-layout.service';
-import { BaseWebsiteController, LOCALE_KEY, NavItem } from './base-website.controller';
+import {
+  BaseWebsiteController,
+  LOCALE_KEY,
+  NavItem,
+} from './base-website.controller';
 import { getResourceNotFoundCopy } from '../../common/utils/website-not-found-messages';
 import type { LayoutCachePayload } from './website-layout.types';
 import { Status } from '../../common/entities/base.entity';
@@ -73,6 +77,8 @@ const LAYOUT_CONFIG_KEYS = [
   'product-texts-relations',
   /** 应用案例列表页文字 */
   'case-list-text',
+  /** 应用案例详情页查看详情按钮文字：取自表字段 title */
+  'application-text',
 ];
 
 @Controller()
@@ -182,8 +188,8 @@ export class IndustryCasesController extends BaseWebsiteController {
       casesMenu = await this.menuRepo.findOne({
         where: {
           linkUrl: 'cases',
-          langId: langId
-        }
+          langId: langId,
+        },
       });
 
       if (casesMenu) {
@@ -200,20 +206,33 @@ export class IndustryCasesController extends BaseWebsiteController {
     }
 
     // 解析应用案例列表页文字配置
-    let caseListTexts = {
+    const caseListTexts = {
       categoryTitle: 'Case Categories',
       allCategories: 'All Categories',
+      noCasesYet: 'No cases yet.',
     };
     const caseListTextConfig = layoutData.configByKey['case-list-text'] ?? null;
     if (caseListTextConfig && caseListTextConfig.content) {
-      const content = Array.isArray(caseListTextConfig.content) ? caseListTextConfig.content : [];
+      const content = Array.isArray(caseListTextConfig.content)
+        ? caseListTextConfig.content
+        : [];
       if (content.length > 0) {
         const item = content[0] as { content?: unknown };
-        caseListTexts.categoryTitle = String(item.content || 'Case Categories').trim();
+        caseListTexts.categoryTitle = String(
+          item.content || 'Case Categories',
+        ).trim();
       }
       if (content.length > 1) {
         const item = content[1] as { content?: unknown };
-        caseListTexts.allCategories = String(item.content || 'All Categories').trim();
+        caseListTexts.allCategories = String(
+          item.content || 'All Categories',
+        ).trim();
+      }
+      if (content.length > 2) {
+        const item = content[2] as { content?: unknown };
+        caseListTexts.noCasesYet = String(
+          item.content || 'No cases yet.',
+        ).trim();
       }
     }
 
@@ -240,17 +259,25 @@ export class IndustryCasesController extends BaseWebsiteController {
     // 获取分类数据（type=1，业务板块）
     const categories = await this.solutionCategoryRepo.find({
       where: { type: 1, status: Status.Normal, langId },
-      order: { id: 'ASC' },
+      order: { solutionCategoryId: 'ASC' },
     });
 
     // 统计每个分类的案例数量
     const categoryWithCounts = categories.map((category) => {
+      if (!category.solutionCategoryId) {
+        return {
+          id: 0,
+          title: category.title,
+          count: 0,
+        };
+      }
       const count = rows.filter((caseItem) => {
         if (!caseItem.categoryId) return false;
-        return caseItem.categoryId.includes(category.id.toString());
+        const solutionCategoryIdStr = String(category.solutionCategoryId);
+        return caseItem.categoryId.includes(solutionCategoryIdStr);
       }).length;
       return {
-        id: Number(category.id),
+        id: Number(category.solutionCategoryId),
         title: category.title,
         count,
       };
@@ -292,7 +319,9 @@ export class IndustryCasesController extends BaseWebsiteController {
       makeUrl: (p: number) => {
         const base = `${basePath}/cases`.replace(/\/+$/, '') || '/cases';
         const q = searchQ ? `&q=${encodeURIComponent(searchQ)}` : '';
-        const cat = categoryId ? `&categoryId=${encodeURIComponent(categoryId)}` : '';
+        const cat = categoryId
+          ? `&categoryId=${encodeURIComponent(categoryId)}`
+          : '';
         return `${base}?page=${p}${q}${cat}`;
       },
       isDomestic,
@@ -425,6 +454,8 @@ export class IndustryCasesController extends BaseWebsiteController {
     const layoutData = await this.getLayoutData(langId || 0, {
       configKeys: LAYOUT_CONFIG_KEYS,
     });
+    console.log('[DEBUG] langId:', langId, 'pathLocale:', pathLocale);
+    console.log('[DEBUG] application-text config:', JSON.stringify(layoutData.configByKey['application-text']));
     const logoUrl = this.getLogoUrlFromConfig(
       layoutData.configByKey['logo'] ?? null,
     );
@@ -589,7 +620,6 @@ export class IndustryCasesController extends BaseWebsiteController {
       basePath,
     );
 
-
     const caseBannerSearchPlaceholder =
       locale === 'zh-CN' ? '搜索案例' : 'Search cases';
 
@@ -685,6 +715,10 @@ export class IndustryCasesController extends BaseWebsiteController {
           layoutData.configByKey['product-texts-relations'],
           isDomestic,
         ).sectionSubtitle,
+        viewDetails: this.parseApplicationTextLabel(
+          layoutData.configByKey['application-text'],
+          isDomestic,
+        ),
       },
       relatedSolutionsConfig: {
         title: this.parseRelatedSolutionsTextConfig(
@@ -695,6 +729,14 @@ export class IndustryCasesController extends BaseWebsiteController {
           layoutData.configByKey['product-texts-relations'],
           isDomestic,
         ).sectionSubtitle,
+        viewDetails: (() => {
+          const val = this.parseApplicationTextLabel(
+            layoutData.configByKey['application-text'],
+            isDomestic,
+          );
+          console.log('[DEBUG] relatedSolutionsConfig.viewDetails:', val);
+          return val;
+        })(),
       },
       ...commonData,
     };
@@ -743,30 +785,40 @@ export class IndustryCasesController extends BaseWebsiteController {
   ): {
     sectionTitle: string;
     sectionSubtitle: string;
+    viewDetails: string;
   } {
-    const fb = {
-      sectionTitle: isZh ? '关联产品' : 'Related Products',
-      sectionSubtitle: '',
-    };
-    if (!cfg) return fb;
-    
+    if (!cfg) {
+      return {
+        sectionTitle: '',
+        sectionSubtitle: '',
+        viewDetails: '',
+      };
+    }
+
     // 处理数组形式的配置
     if (cfg.content && Array.isArray(cfg.content)) {
       // 第一个元素是 Related Products
       const productItem = cfg.content[0];
       if (productItem && typeof productItem === 'object') {
         const productItemObj = productItem as Record<string, unknown>;
-        const jsonTitle = typeof productItemObj.title === 'string' ? productItemObj.title.trim() : '';
-        const jsonDesc = typeof productItemObj.description === 'string' ? productItemObj.description.trim() : '';
+        const jsonTitle =
+          typeof productItemObj.title === 'string'
+            ? productItemObj.title.trim()
+            : '';
+        const jsonDesc =
+          typeof productItemObj.description === 'string'
+            ? productItemObj.description.trim()
+            : '';
         if (jsonTitle) {
           return {
             sectionTitle: jsonTitle,
             sectionSubtitle: jsonDesc,
+            viewDetails: '',
           };
         }
       }
     }
-    
+
     // 兼容旧的对象形式配置
     const obj =
       cfg.content &&
@@ -782,11 +834,26 @@ export class IndustryCasesController extends BaseWebsiteController {
     const tableDesc =
       typeof cfg.description === 'string' ? cfg.description.trim() : '';
     return {
-      sectionTitle: jsonTitle || tableTitle || fb.sectionTitle,
-      sectionSubtitle: jsonDesc || tableDesc || fb.sectionSubtitle,
+      sectionTitle: jsonTitle || tableTitle,
+      sectionSubtitle: jsonDesc || tableDesc,
+      viewDetails: '',
     };
   }
-  
+
+  /**
+   * 解析 application-text 配置的 title 字段（查看详情的按钮文字）
+   */
+  private parseApplicationTextLabel(
+    cfg: import('../../entities/config.entity').Config | null,
+    isZh: boolean,
+  ): string {
+    console.log('[DEBUG parseApplicationTextLabel] cfg:', cfg ? cfg.title : 'null');
+    if (!cfg) return '';
+    const tableTitle = typeof cfg.title === 'string' ? cfg.title.trim() : '';
+    console.log('[DEBUG parseApplicationTextLabel] tableTitle:', tableTitle);
+    return tableTitle;
+  }
+
   /**
    * 解析关联解决方案文字配置
    */
@@ -802,15 +869,21 @@ export class IndustryCasesController extends BaseWebsiteController {
       sectionSubtitle: '',
     };
     if (!cfg) return fb;
-    
+
     // 处理数组形式的配置
     if (cfg.content && Array.isArray(cfg.content)) {
       // 第二个元素是 Related Solutions
       const solutionItem = cfg.content[1];
       if (solutionItem && typeof solutionItem === 'object') {
         const solutionItemObj = solutionItem as Record<string, unknown>;
-        const jsonTitle = typeof solutionItemObj.title === 'string' ? solutionItemObj.title.trim() : '';
-        const jsonDesc = typeof solutionItemObj.description === 'string' ? solutionItemObj.description.trim() : '';
+        const jsonTitle =
+          typeof solutionItemObj.title === 'string'
+            ? solutionItemObj.title.trim()
+            : '';
+        const jsonDesc =
+          typeof solutionItemObj.description === 'string'
+            ? solutionItemObj.description.trim()
+            : '';
         if (jsonTitle) {
           return {
             sectionTitle: jsonTitle,
@@ -819,7 +892,7 @@ export class IndustryCasesController extends BaseWebsiteController {
         }
       }
     }
-    
+
     // 兼容旧的对象形式配置
     const obj =
       cfg.content &&
@@ -958,8 +1031,12 @@ export class IndustryCasesController extends BaseWebsiteController {
     return solutions.map((solution) => ({
       id: solution.id,
       title: solution.title || '',
-      url: `${basePath}/solutions/${solution.solutionId}`.replace(/\/{2,}/g, '/'),
-      picUrl: solution.bannerBgUrl?.trim() || '/images/products/placeholder.jpg',
+      url: `${basePath}/solutions/${solution.solutionId}`.replace(
+        /\/{2,}/g,
+        '/',
+      ),
+      picUrl:
+        solution.bannerBgUrl?.trim() || '/images/products/placeholder.jpg',
       description: null,
     }));
   }

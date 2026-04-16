@@ -679,10 +679,19 @@ export class MemberCartService {
       where: { categoryId, langId, status: Status.Normal },
       select: { id: true },
     });
-    console.log('[getCategoryParamOptions] Products in category:', products.length, 'categoryId:', categoryId, 'langId:', langId);
+    console.log(
+      '[getCategoryParamOptions] Products in category:',
+      products.length,
+      'categoryId:',
+      categoryId,
+      'langId:',
+      langId,
+    );
     const rowIds = products.map((p) => p.id);
     if (!rowIds.length) {
-      console.log('[getCategoryParamOptions] No products found, returning empty');
+      console.log(
+        '[getCategoryParamOptions] No products found, returning empty',
+      );
       return [];
     }
 
@@ -691,7 +700,10 @@ export class MemberCartService {
       where: { productRowId: In(rowIds) },
       relations: { paramValue: true },
     });
-    console.log('[getCategoryParamOptions] Param relations found:', rels.length);
+    console.log(
+      '[getCategoryParamOptions] Param relations found:',
+      rels.length,
+    );
 
     const categoryIds = new Set<number>();
     for (const rel of rels) {
@@ -700,7 +712,10 @@ export class MemberCartService {
         categoryIds.add(pv.categoryId);
       }
     }
-    console.log('[getCategoryParamOptions] Unique param categories:', categoryIds.size);
+    console.log(
+      '[getCategoryParamOptions] Unique param categories:',
+      categoryIds.size,
+    );
 
     if (!categoryIds.size) return [];
 
@@ -778,11 +793,21 @@ export class MemberCartService {
       },
     });
     if (!item) {
-      console.log('[getItemParamOptions] Item not found. itemId:', itemId, 'cartId:', cart.id);
+      console.log(
+        '[getItemParamOptions] Item not found. itemId:',
+        itemId,
+        'cartId:',
+        cart.id,
+      );
       throw new NotFoundException('item not found');
     }
     const langId = await this.resolveLangIdFromSegment(localeSegment);
-    console.log('[getItemParamOptions] Looking for product. productId:', item.productId, 'langId:', langId);
+    console.log(
+      '[getItemParamOptions] Looking for product. productId:',
+      item.productId,
+      'langId:',
+      langId,
+    );
     const p = await this.productRepo.findOne({
       where: {
         productId: item.productId,
@@ -790,11 +815,20 @@ export class MemberCartService {
         status: Status.Normal,
       },
     });
-    console.log('[getItemParamOptions] Found product:', p?.id, 'categoryId:', p?.categoryId);
+    console.log(
+      '[getItemParamOptions] Found product:',
+      p?.id,
+      'categoryId:',
+      p?.categoryId,
+    );
     if (!p?.categoryId) {
       return [];
     }
-    const result = await this.getCategoryParamOptions(userId, p.categoryId, localeSegment);
+    const result = await this.getCategoryParamOptions(
+      userId,
+      p.categoryId,
+      localeSegment,
+    );
     console.log('[getItemParamOptions] Result options count:', result.length);
     return result;
   }

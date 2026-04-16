@@ -52,7 +52,22 @@
   font-size: 1rem;
   line-height: 1.35;
 }
+.g-solution-case-card__arrow {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  margin-left:14px;
+  background-image: url('/images/global/arrow-right-black.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: background-image 0.2s ease;
+}
 
+
+.g-solution-case-card__cta:hover .g-solution-case-card__arrow {
+  background-image: url('/images/global/arrow-right-white.png');
+}
 .g-solution-case-card__title a {
   color: #1a1a1a;
   text-decoration: none;
@@ -81,7 +96,7 @@
 .g-solution-case-card__spec-icon {
   position: relative;
   display: inline-flex;
-  color: var(--g-sd-accent);
+  color: #f89d1b;
   font-size: 1.35rem;
   flex-shrink: 0;
 }
@@ -123,8 +138,8 @@
 }
 
 .g-solution-case-card__cta:hover {
-  background: var(--g-sd-accent);
-  border-color: var(--g-sd-accent);
+  background: #f89d1b;
+
   color: #fff;
 }
 
@@ -251,8 +266,8 @@
             </div>
             {{/if}}
             <a href="{{this.url}}" class="g-solution-case-card__cta">
-              {{#if (eq ../locale "zh-CN")}}查看详情{{else}}View Details{{/if}}
-              <iconify-icon icon="mdi:arrow-right"></iconify-icon>
+              {{../relatedProductsConfig.viewDetails}}
+               <span class="g-solution-case-card__arrow"></span>
             </a>
           </div>
         </div>

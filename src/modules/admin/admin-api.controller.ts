@@ -29,6 +29,7 @@ import { PageStatsService } from '../page-stats/page-stats.service';
 import { WebsiteUser } from '../../entities/website-user.entity';
 import { ProductParamValueTranslateService } from './product-param-value-translate.service';
 import { ProductParamCategoryTranslateService } from './product-param-category-translate.service';
+import { ContactMessage } from '../../entities/contact-message.entity';
 
 function formatYmdHmsLocal(d: Date | string | null | undefined): string {
   if (d == null) return '-';
@@ -53,6 +54,8 @@ export class AdminApiController {
     @InjectRepository(Admin) private readonly adminRepo: Repository<Admin>,
     @InjectRepository(IndustryCase)
     private readonly industryCaseRepo: Repository<IndustryCase>,
+    @InjectRepository(ContactMessage)
+    private readonly contactMessageRepo: Repository<ContactMessage>,
     private readonly redis: RedisService,
     private readonly industryCaseTranslateService: IndustryCaseTranslateService,
     private readonly menuTranslateService: MenuTranslateService,
@@ -156,11 +159,12 @@ export class AdminApiController {
 
   @Get('stats')
   async stats() {
-    const [productCount, newsCount, solutionCount, visitResult] =
+    const [productCount, newsCount, solutionCount, messageCount, visitResult] =
       await Promise.all([
         this.productRepo.count({ where: { status: Status.Normal } }),
         this.newsRepo.count({ where: { status: Status.Normal } }),
         this.solutionRepo.count({ where: { status: Status.Normal } }),
+        this.contactMessageRepo.count({ where: { status: Status.Normal } }),
         this.pageStatsRepo
           .createQueryBuilder('p')
           .select('SUM(p.view_count)', 'total')
@@ -174,7 +178,7 @@ export class AdminApiController {
       news: newsCount,
       solutions: solutionCount,
       visits,
-      messages: 0, // 留言表后续接入
+      messages: messageCount,
     };
   }
 

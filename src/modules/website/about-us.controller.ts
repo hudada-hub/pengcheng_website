@@ -105,7 +105,6 @@ function slugifyAboutSectionId(label: string): string {
   return base || 'section';
 }
 
-
 /** 解析统计项 content：如 18GWh、150+、200+Millions、500 */
 function parseLeadEnergyStatValue(raw: string): {
   main: string;

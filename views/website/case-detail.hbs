@@ -138,8 +138,8 @@
                 {{/if}}
                 <div class="g-solution-case-card__footer">
                   <a href="{{this.url}}" class="g-solution-case-card__cta">
-                    {{#if (eq ../locale "zh-CN")}}查看详情{{else}}View Details{{/if}}
-                    <iconify-icon icon="mdi:arrow-right"></iconify-icon>
+                    {{../relatedSolutionsConfig.viewDetails}}
+                    <span class="g-solution-case-card__arrow"></span>
                   </a>
                 </div>
               </div>

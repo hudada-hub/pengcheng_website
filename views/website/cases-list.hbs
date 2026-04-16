@@ -58,20 +58,10 @@
                 </button>
               </div>
               <div class="g-products-sidebar__content" id="categoryList">
-                <!-- 全部分类 -->
-                <div class="g-cases-sidebar__row">
-                  <a href="{{casesListUrl}}" class="g-cases-sidebar__link{{#if (eq selectedCategoryId null)}} is-active{{/if}}">
-                    {{caseListTexts.allCategories}}
-                    {{#if totalCount}}
-                      <span class="g-cases-sidebar__count">{{totalCount}}</span>
-                    {{/if}}
-                  </a>
-                </div>
-                
                 <!-- 业务板块分类 -->
                 {{#each categories}}
-                  <div class="g-cases-sidebar__row">
-                    <a href="{{casesListUrl}}?categoryId={{this.id}}" class="g-cases-sidebar__link{{#if (eq selectedCategoryId this.id)}} is-active{{/if}}">
+                  <div class="g-cases-sidebar__row{{#if (eq ../selectedCategoryId this.id)}} is-active{{/if}}">
+                    <a href="{{../casesListUrl}}?categoryId={{this.id}}" class="g-cases-sidebar__link{{#if (eq ../selectedCategoryId this.id)}} is-active{{/if}}">
                       {{this.title}}
                       {{#if this.count}}
                         <span class="g-cases-sidebar__count">{{this.count}}</span>
@@ -89,7 +79,7 @@
               {{#each casesList}}
               {{> website/cases/cases-list-card-item}}
               {{else}}
-              <p style="grid-column:1/-1;text-align:center;color:#888;padding:2rem 0;">{{#if (eq locale "zh-CN")}}暂无案例{{else}}No cases yet.{{/if}}</p>
+              <p style="grid-column:1/-1;text-align:center;color:#888;padding:2rem 0;">{{#if (eq locale "zh-CN")}}暂无案例{{else}}{{caseListTexts.noCasesYet}}{{/if}}</p>
               {{/each}}
             </div>
             {{#if pagination}}{{> website/common/list-pagination pagination locale=locale}}{{/if}}

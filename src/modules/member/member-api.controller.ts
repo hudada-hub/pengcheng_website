@@ -372,7 +372,10 @@ export class MemberApiController {
   async getCartCount(@Req() req: FastifyRequest, @Res() reply: FastifyReply) {
     const uid = this.requireMemberId(req);
     if (uid === null) {
-      return reply.code(401).type('application/json').send({ ok: false, message: '请先登录' });
+      return reply
+        .code(401)
+        .type('application/json')
+        .send({ ok: false, message: '请先登录' });
     }
     const count = await this.memberCartService.getItemCount(uid);
     return reply.type('application/json').send({ ok: true, count });
@@ -598,7 +601,7 @@ export class MemberApiController {
       const csrfToken = (await (reply as any).generateCsrf?.()) ?? '';
       return reply.type('application/json').send({
         ok: true,
-        message: "",
+        message: '',
         csrfToken,
       });
     } catch (e) {

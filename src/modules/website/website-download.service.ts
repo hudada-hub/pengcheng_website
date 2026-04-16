@@ -195,7 +195,14 @@ export class WebsiteDownloadService {
     page?: number;
     pageSize?: number;
   }): Promise<{ rows: Download[]; total: number }> {
-    const { docLangId, categoryGroupId, seriesGroupId, fileTypeGroupId, page = 1, pageSize = 20 } = params;
+    const {
+      docLangId,
+      categoryGroupId,
+      seriesGroupId,
+      fileTypeGroupId,
+      page = 1,
+      pageSize = 20,
+    } = params;
 
     let resourceTypeIds: number[] | null = null;
     if (categoryGroupId != null) {
@@ -247,7 +254,10 @@ export class WebsiteDownloadService {
     }
 
     const total = await qb.getCount();
-    const rows = await qb.skip((page - 1) * pageSize).take(pageSize).getMany();
+    const rows = await qb
+      .skip((page - 1) * pageSize)
+      .take(pageSize)
+      .getMany();
     return { rows, total };
   }
 }

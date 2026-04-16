@@ -267,10 +267,7 @@ export class AdminCartInquiryController {
 
   @Delete('cart-inquiries/:id')
   @UseGuards(AdminAuthGuard, CsrfGuard)
-  async deleteCartInquiry(
-    @Param('id') id: string,
-    @Res() reply: FastifyReply,
-  ) {
+  async deleteCartInquiry(@Param('id') id: string, @Res() reply: FastifyReply) {
     const inquiryId = parseInt(id, 10);
     if (!Number.isFinite(inquiryId) || inquiryId < 1) {
       return reply

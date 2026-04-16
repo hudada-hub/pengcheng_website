@@ -179,13 +179,11 @@
 }
 
 .pc-member-auth__submit--secondary {
-  background: #d1d5db;
+  background: var(--g-color-primary, #f89d1b);
   color: #fff;
 }
 
-.pc-member-auth__submit--secondary:hover:not(:disabled) {
-  background: #c4cad3;
-}
+
 
 .pc-member-auth__submit:disabled {
   opacity: 0.55;

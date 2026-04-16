@@ -1,6 +1,7 @@
 /* 关于我们：地图与页脚之间的联系订阅区块 */
 .g-about-us-subscription-wrap {
   margin-top: 30px;
+  background-color: #fff;
 }
 
 /* 关于我们：Banner（about_sys_warp 参考稿：底图 + 垂直居中 overlay + 面包屑） */
@@ -34,6 +35,20 @@
   width: 100%;
   min-height: clamp(220px, 38vw, 480px);
   background: linear-gradient(135deg, #4a5a72 0%, #87a7c8 50%, #c5d4e3 100%);
+}
+
+.g-about-us-banner.about_sys_warp .about_sys_banner {
+  position: relative;
+}
+
+.g-about-us-banner.about_sys_warp .about_sys_banner__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 1;
 }
 
 .g-about-us-banner.about_sys_warp .about_sys_main {
@@ -226,8 +241,7 @@
   top: 72px;
   z-index: 90;
   background: #ffffff;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+
   transition: top 0.22s ease;
 }
 
@@ -235,6 +249,148 @@
   .g-about-us-anchor {
     top: 56px;
   }
+}
+
+/* ---------- 移动端抽屉锚点导航 ---------- */
+
+.g-about-us-anchor--desktop {
+  display: block;
+}
+
+.g-about-us-anchor-mobile {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1000;
+}
+
+@media (max-width: 768px) {
+  .g-about-us-anchor--desktop {
+    display: none;
+  }
+  
+  .g-about-us-anchor-mobile {
+    display: block;
+  }
+}
+
+.g-about-us-anchor-mobile__toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #f89d1b;
+  color: white;
+  border: none;
+  border-radius: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  font-family: 'Exo', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.g-about-us-anchor-mobile__toggle:hover {
+  background: #e88d0b;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.g-about-us-anchor-mobile__toggle-icon {
+  display: inline-block;
+  width: 20px;
+  height: 2px;
+  background: white;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.g-about-us-anchor-mobile__toggle-icon::before,
+.g-about-us-anchor-mobile__toggle-icon::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 2px;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.g-about-us-anchor-mobile__toggle-icon::before {
+  top: -6px;
+}
+
+.g-about-us-anchor-mobile__toggle-icon::after {
+  bottom: -6px;
+}
+
+.g-about-us-anchor-mobile__toggle[aria-expanded="true"] .g-about-us-anchor-mobile__toggle-icon {
+  background: transparent;
+}
+
+.g-about-us-anchor-mobile__toggle[aria-expanded="true"] .g-about-us-anchor-mobile__toggle-icon::before {
+  transform: rotate(45deg);
+  top: 0;
+}
+
+.g-about-us-anchor-mobile__toggle[aria-expanded="true"] .g-about-us-anchor-mobile__toggle-icon::after {
+  transform: rotate(-45deg);
+  bottom: 0;
+}
+
+.g-about-us-anchor-mobile__drawer {
+  position: fixed;
+  top: 0;
+  left: -300px;
+  width: 280px;
+  height: 100vh;
+  background: white;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  transition: left 0.3s ease;
+  z-index: 999;
+}
+
+.g-about-us-anchor-mobile__drawer.active {
+  left: 0;
+}
+
+.g-about-us-anchor-mobile__drawer-content {
+  height: 100%;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.g-about-us-anchor-mobile__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.g-about-us-anchor-mobile__item {
+  margin-bottom: 8px;
+}
+
+.g-about-us-anchor-mobile__link {
+  display: block;
+  padding: 12px 16px;
+  color: #333;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  font-family: 'Exo', sans-serif;
+  font-weight: 600;
+}
+
+.g-about-us-anchor-mobile__link:hover {
+  background: #f5f5f5;
+  color: #f89d1b;
+}
+
+.g-about-us-anchor-mobile__link.is-active {
+  background: #fff8e8;
+  color: #f89d1b;
+  font-weight: 700;
 }
 
 /* 主导航收起/展开过渡（仅关于我们页） */
@@ -291,6 +447,7 @@
 }
 
 .g-about-us-anchor__item {
+  font-size: 18px;
   flex: 1 1 auto;
   min-width: min(100%, 140px);
   text-align: center;
@@ -301,17 +458,28 @@
   padding:24px 10px 24px;
   font-family: 'Exo', sans-serif;
   font-weight: 700;
-  font-size: clamp(0.65rem, 1.1vw, 0.75rem);
+  font-size: clamp(0.65rem, 1.1vw, 18px);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   text-decoration: none;
   color: #2b2b2b;
   white-space: nowrap;
-  border-bottom: 2px solid transparent;
+  position: relative;
   transition:
     color 0.2s ease,
-    background 0.2s ease,
-    border-color 0.2s ease;
+    background 0.2s ease;
+}
+
+.g-about-us-anchor__link::after {
+  content: '';
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background-color: #f89d1b;
+  transition: width 0.2s ease;
 }
 
 @media (max-width: 991.98px) {
@@ -341,6 +509,10 @@
     line-height: 1.35;
     font-size: clamp(0.62rem, 2.8vw, 0.72rem);
   }
+  
+  .g-about-us-anchor__link::after {
+    bottom: 12px;
+  }
 }
 
 .g-about-us-anchor__link:hover {
@@ -350,7 +522,10 @@
 .g-about-us-anchor__link.is-active {
   color: #f89d1b;
   background: #fff8e8;
-  border-bottom-color: #f89d1b;
+}
+
+.g-about-us-anchor__link.is-active::after {
+  width: 60%;
 }
 
 /* 页面内锚点目标：避免被顶栏 + 锚点条遮挡 */
@@ -473,7 +648,7 @@
   font-weight: 800;
   font-family: 'Montserrat', 'Exo', system-ui, sans-serif;
   opacity: 0.43;
-  letter-spacing: 10px;
+  letter-spacing: 2px;
 }
 
 .g-about-us-who.about_company_warp .about_company_box .item_title .g-about-us-who__brand-line em {
@@ -531,7 +706,7 @@
   }
 
   .g-about-us-who.about_company_warp .about_company_box .item_text p {
-    font-size: 16px;
+    font-size: 18px;
   }
 }
 
@@ -556,7 +731,7 @@
   }
 
   .g-about-us-who.about_company_warp .about_company_box .item_text p {
-    font-size: 12px;
+    font-size: 14px;
   }
 
   .g-about-us-who.about_company_warp .about_company_box .item_title:before {
@@ -681,7 +856,7 @@
 .g-about-us-lead.about_company_warp .about_company_box .item_title h2 {
   margin: 0;
   padding: 0;
-  font-size: 48px;
+  font-size: 42px;
   line-height: 1.2;
   color: var(--lead-title);
   font-weight: 800;
@@ -793,12 +968,14 @@
   color: #2f2f2f;
   font-weight: 800;
   font-family: 'Exo', system-ui, sans-serif;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .g-about-us-lead.about_company_warp .about_company_slide .item_title sup {
   font-size: 16px;
   position: relative;
-  top: -17px;
+  top: -37px;
 }
 
 .g-about-us-lead.about_company_warp .about_company_slide .item_title em {
@@ -850,7 +1027,7 @@
   }
 
   .g-about-us-lead.about_company_warp .about_company_box .item_text p {
-    font-size: 12px;
+    font-size: 14px;
   }
 
   .g-about-us-lead.about_company_warp .about_company_box .item_title:before {
@@ -1411,7 +1588,7 @@
   font-size: clamp(28px, 5vw, 48px);
   color: #ffffff;
   line-height: 1;
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Exo", sans-serif;
   font-weight: 600;
 }
 
@@ -1485,7 +1662,7 @@
 .g-about-us-history .about_history_swiper .about_history_slide .item_box::before {
   content: '';
   width: 1px;
-  height: 190px;
+  height: 208px;
   position: absolute;
   left: 31px;
   top: 60px;
@@ -1501,9 +1678,9 @@
 .g-about-us-history .about_history_swiper .about_history_slide .wrap_raio {
   width: 64px;
   line-height: 60px;
-  border-radius: 50%;
-  border: 2px solid #f5a200;
-  color: #f5a200;
+  border-radius: 32px;
+
+  color: #333;
   text-align: center;
   background: #fff;
   margin-right: 15px;
@@ -1762,6 +1939,7 @@
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
   text-transform: uppercase;
+  margin-bottom:10px;
 }
 
 .g-about-us-partner .about_partner_text {
@@ -1875,9 +2053,10 @@
 }
 
 .g-about-us-partner .about_partner_slide .item_text {
-  width: 43%;
+  width: 68%;
   padding: 20px 3% 22px;
   margin: 0 0 0 auto;
+  background-color: #fff;
   box-sizing: border-box;
 }
 
@@ -2541,7 +2720,7 @@
 /* ---------- 我们的客户（配置 about-us-customers，about_customer_warp 稿） ---------- */
 
 .g-about-us-customers.about_customer_warp {
-  margin: 30px 0 50px;
+  padding: 30px 0 50px;
   background: #ffffff;
   box-sizing: border-box;
   max-width: 100%;
