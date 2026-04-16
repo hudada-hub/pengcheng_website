@@ -1,0 +1,165 @@
+{{!-- Footer - multi-column layout (Figma design) --}}
+<footer class="g-footer" role="contentinfo">
+  <div class="container" style="box-sizing: border-box;">
+    <div class="g-footer__wrap">
+      {{!-- Column 1: 使用与顶部导航一致的前两组一级菜�?--}}
+      <div class="g-footer__col">
+        {{#with (lookup navItems 0)}}
+          <p class="g-footer__col-title">{{title}}</p>
+          {{#if children}}
+          <ul>
+            {{#each children}}
+            <li><a class="g-footer__navlink" href="{{url}}">{{title}}</a></li>
+            {{/each}}
+          </ul>
+          {{/if}}
+        {{/with}}
+
+        {{#with (lookup navItems 1)}}
+          <p class="g-footer__col-title g-footer__col-title--secondary">{{title}}</p>
+          {{#if children}}
+          <ul>
+            {{#each children}}
+            <li><a class="g-footer__navlink" href="{{url}}">{{title}}</a></li>
+            {{/each}}
+          </ul>
+          {{/if}}
+        {{/with}}
+      </div>
+
+      {{!-- Column 2: 使用与顶部导航一致的第三组一级菜�?--}}
+      <div class="g-footer__col">
+        {{#with (lookup navItems 2)}}
+          <p class="g-footer__col-title">{{title}}</p>
+          {{#if children}}
+          <ul>
+            {{#each children}}
+            <li><a class="g-footer__navlink" href="{{url}}">{{title}}</a></li>
+            {{/each}}
+          </ul>
+          {{/if}}
+        {{/with}}
+      </div>
+
+      {{!-- Column 3: 使用与顶部导航一致的后续一级菜�?--}}
+      <div class="g-footer__col">
+        {{#with (lookup navItems 3)}}
+          <p class="g-footer__col-title">{{title}}</p>
+          {{#if children}}
+          <ul>
+            {{#each children}}
+            <li><a class="g-footer__navlink" href="{{url}}">{{title}}</a></li>
+            {{/each}}
+          </ul>
+          {{else}}
+          <ul>
+            <li><a class="g-footer__navlink" href="{{url}}">{{title}}</a></li>
+          </ul>
+          {{/if}}
+        {{/with}}
+
+        {{#with (lookup navItems 4)}}
+          <p class="g-footer__col-title g-footer__col-title--secondary">{{title}}</p>
+          {{#if children}}
+          <ul>
+            {{#each children}}
+            <li><a class="g-footer__navlink" href="{{url}}">{{title}}</a></li>
+            {{/each}}
+          </ul>
+          {{else}}
+          <ul>
+            <li><a class="g-footer__navlink" href="{{url}}">{{title}}</a></li>
+          </ul>
+          {{/if}}
+        {{/with}}
+
+        {{#with (lookup navItems 5)}}
+          <p class="g-footer__col-title g-footer__col-title--secondary">{{title}}</p>
+          {{#if children}}
+          <ul>
+            {{#each children}}
+            <li><a class="g-footer__navlink" href="{{url}}">{{title}}</a></li>
+            {{/each}}
+          </ul>
+          {{else}}
+          <ul>
+            <li><a class="g-footer__navlink" href="{{url}}">{{title}}</a></li>
+          </ul>
+          {{/if}}
+        {{/with}}
+
+        {{#with (lookup navItems 6)}}
+          <p class="g-footer__col-title g-footer__col-title--secondary">{{title}}</p>
+          {{#if children}}
+          <ul>
+            {{#each children}}
+            <li><a class="g-footer__navlink" href="{{url}}">{{title}}</a></li>
+            {{/each}}
+          </ul>
+          {{else}}
+          <ul>
+            <li><a class="g-footer__navlink" href="{{url}}">{{title}}</a></li>
+          </ul>
+          {{/if}}
+        {{/with}}
+      </div>
+
+      {{!-- Column 4: Contact Us + Follow Us（原�?5 列置于本列底部） --}}
+      <div class="g-footer__col g-footer__col--contact">
+        <div class="g-footer__contact-section">
+          <p class="g-footer__col-title g-footer__col-title--muted">{{footerAboutUs.title}}</p>
+          <div class="g-footer__contact-block g-footer__contact-block--emails">
+          
+            {{#each footerAboutUs.emailItems}}
+            <div class="g-footer__contact-email">
+              <p class="g-footer__contact-item">{{label}}</p>
+              <a href="mailto:{{email}}" class="g-footer__contact-link g-footer__contact-link--email">
+                <svg class="g-footer__contact-mail-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <span>{{email}}</span>
+              </a>
+            </div>
+            {{/each}}
+          </div>
+          <div class="g-footer__contact-block g-footer__contact-block--phone">
+            <p class="g-footer__contact-phone-line">
+              <span class="g-footer__contact-phone-label">{{footerPhone.label}}</span>
+              <a href="tel:{{footerPhone.phone}}" class="g-footer__contact-link g-footer__contact-link--phone">{{footerPhone.phone}}</a>
+            </p>
+          </div>
+        </div>
+        <div class="g-footer__follow-section">
+          <p class="g-footer__follow-title">{{#if followUs.title}}{{followUs.title}}{{else}}Follow Us{{/if}}</p>
+          <div class="g-footer__social">
+            {{#if followUs.items}}
+              {{#each followUs.items}}
+              <a href="{{#if url}}{{url}}{{else}}#{{/if}}" target="_blank" rel="noopener noreferrer" class="g-footer__social-link" aria-label="{{#if title}}{{title}}{{else}}social{{/if}}">
+                <img src="{{picUrl}}" alt="{{#if title}}{{title}}{{else}}social{{/if}}" loading="lazy" />
+              </a>
+              {{/each}}
+            {{/if}}
+          </div>
+          {{!-- <div class="g-footer__logo">
+            {{#if followUs.bgPicUrl}}
+            <img src="{{followUs.bgPicUrl}}" alt="{{#if followUs.title}}{{followUs.title}}{{else}}Follow Us{{/if}}" loading="lazy" />
+            {{else}}
+            <span class="g-footer__logo-text">{{title}}</span>
+            {{/if}}
+          </div> --}}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="g-footer__copyright">
+    <p>{{footerBeian.content}}</p>
+  </div>
+</footer>
+{{> website/common/page-view-tracker}}
+{{> website/common/member-auth-modal}}
+{{> website/common/inquiry-form-modal}}
+{{> website/common/floating-actions}}
+{{> website/common/contactus-modal}}
+{{> website/common/cart-drawer}}
+<script src="/js/member-auth.js" defer></script>
+<script src="/js/cart-drawer.js" defer></script>

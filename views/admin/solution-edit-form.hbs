@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head><body><div id="admin-form-fragment">
+  <div class="admin-card">
+    <form class="admin-form admin-form-modal solution-form" method="post" action="/admin/solutions/save" id="solutionEditForm">
+      <div class="admin-modal-form-scroll">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        {{#if solution}}<input type="hidden" name="id" value="{{solution.id}}">{{/if}}
+        <input type="hidden" name="kehu" id="solutionKehuJson" value="">
+
+        <section class="admin-form-section">
+          <div class="admin-form-section-title">基础信息</div>
+          <div class="admin-form-grid admin-form-grid-2">
+            <div class="form-group admin-col-span-2">
+              <label>标题 <span class="admin-required">*</span></label>
+              <input type="text" name="title" id="solutionTitle" required value="{{#if solution}}{{solution.title}}{{/if}}" placeholder="解决方案标题">
+            </div>
+            <div class="form-group">
+              <label>语言 <span class="admin-required">*</span></label>
+              <select name="langId" required>
+                {{#each langs}}
+                  <option value="{{this.id}}" {{#if (eq this.id ../defaultLangId)}}selected{{/if}}>{{this.name}} ({{this.code}})</option>
+                {{/each}}
+              </select>
+            </div>
+            <div class="form-group">
+              <label>状态</label>
+              <select name="status">
+                <option value="1" {{#if solution}}{{#if (eq solution.status 1)}}selected{{/if}}{{else}}selected{{/if}}>正常</option>
+                <option value="0" {{#if solution}}{{#if (eq solution.status 0)}}selected{{/if}}{{/if}}>隐藏</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>排序</label>
+              <input type="number" name="sort" id="solutionSort" value="{{#if solution}}{{solution.sort}}{{else}}0{{/if}}" placeholder="数值越大越靠前">
+              <small style="color:var(--admin-text-muted);">排序值越大，在列表中显示越靠前。</small>
+            </div>
+            <div class="form-group admin-col-span-2">
+              <label>解决方案分类</label>
+              {{> admin/transfer idPrefix="solutionCategories" leftTitle=transferCategories.leftTitle rightTitle=transferCategories.rightTitle inputName=transferCategories.inputName leftItems=transferCategories.leftItems rightItems=transferCategories.rightItems value=transferCategories.value}}
+            </div>
+          </div>
+        </section>
+
+        <section class="admin-form-section">
+          <div class="admin-form-section-title">Banner</div>
+          <div class="admin-form-grid admin-form-grid-2">
+            <div class="form-group admin-col-span-2">
+              <label>Banner 背景图 URL</label>
+              <div class="admin-input-row">
+                <input type="text" name="bannerBgUrl" id="solutionBannerBgUrl" value="{{#if solution}}{{solution.bannerBgUrl}}{{/if}}" placeholder="可选，或点击选择">
+                <button type="button" class="btn" id="solutionBtnPickBannerBg"><iconify-icon icon="mdi:image-search-outline"></iconify-icon> 选择</button>
+                <span class="admin-input-preview" id="solutionBannerBgPreview">{{#if solution}}{{#if solution.bannerBgUrl}}<img src="{{solution.bannerBgUrl}}" alt="">{{/if}}{{/if}}</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Banner 标题</label>
+              <input type="text" name="bannerTitle" value="{{#if solution}}{{solution.bannerTitle}}{{/if}}" placeholder="可选">
+            </div>
+            <div class="form-group">
+              <label>Banner 描述</label>
+              <textarea name="bannerDesc" rows="2" placeholder="可选">{{#if solution}}{{solution.bannerDesc}}{{/if}}</textarea>
+            </div>
+          </div>
+        </section>
+
+        <section class="admin-form-section">
+          <div class="admin-form-section-title">关联产品与应用案例</div>
+          <p class="admin-form-help" style="margin-bottom:0.75rem;">多语言匹配：当前语言的解决方案关联当前语言下的产品与应用案例。左侧为可选，右侧为已选；勾选后点击箭头移动。</p>
+          <div class="admin-form-grid admin-form-grid-2">
+            <div class="form-group admin-col-span-2">
+              <label>关联产品</label>
+              {{> admin/transfer idPrefix="solutionProducts" leftTitle=transferProducts.leftTitle rightTitle=transferProducts.rightTitle inputName=transferProducts.inputName leftItems=transferProducts.leftItems rightItems=transferProducts.rightItems value=transferProducts.value}}
+            </div>
+            <div class="form-group admin-col-span-2">
+              <label>关联应用案例</label>
+              {{> admin/transfer idPrefix="solutionCases" leftTitle=transferCases.leftTitle rightTitle=transferCases.rightTitle inputName=transferCases.inputName leftItems=transferCases.leftItems rightItems=transferCases.rightItems value=transferCases.value}}
+            </div>
+          </div>
+        </section>
+
+        <section class="admin-form-section">
+          <div class="admin-form-section-title">客户价值</div>
+          <div class="admin-form-grid admin-form-grid-2">
+            <div class="form-group admin-col-span-2">
+              <label>客户价值 Banner 图 URL</label>
+              <div class="admin-input-row">
+                <input type="text" name="kehuBannerUrl" id="solutionKehuBannerUrl" value="{{#if solution}}{{solution.kehuBannerUrl}}{{/if}}" placeholder="可选，或点击选择">
+                <button type="button" class="btn" id="solutionBtnPickKehuBanner"><iconify-icon icon="mdi:image-search-outline"></iconify-icon> 选择</button>
+                <span class="admin-input-preview" id="solutionKehuBannerPreview">{{#if solution}}{{#if solution.kehuBannerUrl}}<img src="{{solution.kehuBannerUrl}}" alt="">{{/if}}{{/if}}</span>
+              </div>
+            </div>
+            <div class="form-group admin-col-span-2">
+              <label>客户价值（可多组：标题 + 内容）</label>
+              <div id="solutionKehuList">
+                {{#if solution}}{{#if solution.kehu}}{{#each solution.kehu}}
+                <div class="solution-kehu-item" style="border:1px solid var(--admin-border);border-radius:6px;padding:0.75rem;margin-bottom:0.5rem;">
+                  <div class="form-group" style="margin-bottom:0.5rem;"><label>标题</label><input type="text" class="kehu-title" value="{{this.title}}" placeholder="标题"></div>
+                  <div class="form-group" style="margin-bottom:0;"><label>内容</label><textarea class="kehu-content" rows="2" placeholder="内容">{{this.content}}</textarea></div>
+                  <button type="button" class="btn btn-secondary btn-sm solution-kehu-remove"><iconify-icon icon="mdi:minus"></iconify-icon> 删除</button>
+                </div>
+                {{/each}}{{/if}}{{/if}}
+              </div>
+              <button type="button" class="btn btn-secondary btn-sm" id="solutionKehuAdd"><iconify-icon icon="mdi:plus"></iconify-icon> 新增一组</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="admin-form-section admin-form-section-last">
+          <div class="admin-form-section-title">SEO（可选）</div>
+          <div class="admin-form-grid admin-form-grid-2">
+            <div class="form-group admin-col-span-2">
+              <label>SEO 标题</label>
+              <input type="text" name="metaTitle" id="solutionMetaTitle" value="{{#if solution}}{{#if solution.metaTitle}}{{solution.metaTitle}}{{else}}{{solution.title}}{{/if}}{{/if}}" placeholder="留空则使用标题">
+            </div>
+            <div class="form-group admin-col-span-2">
+              <label>SEO 关键词</label>
+              <textarea name="metaKeywords" rows="2">{{#if solution}}{{solution.metaKeywords}}{{/if}}</textarea>
+            </div>
+            <div class="form-group admin-col-span-2">
+              <label>SEO 描述</label>
+              <textarea name="metaDescription" rows="2">{{#if solution}}{{solution.metaDescription}}{{/if}}</textarea>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">保存</button>
+        <button type="button" class="btn admin-modal-form-cancel">取消</button>
+      </div>
+    </form>
+  </div>
+</div></body></html>
+

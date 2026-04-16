@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head><body><div id="admin-form-fragment">
+  <div class="admin-card">
+    <form class="admin-form admin-form-modal download-form" method="post" action="/admin/downloads/save" data-default-lang-id="{{formLangId}}">
+      <div class="admin-modal-form-scroll">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        {{#if download}}<input type="hidden" name="id" value="{{download.id}}">{{/if}}
+        <input type="hidden" name="langId" id="downloadFormLangId" value="{{#if download}}{{download.langId}}{{/if}}">
+
+        <section class="admin-form-section">
+          <div class="admin-form-section-title">基础信息</div>
+          <div class="admin-form-grid admin-form-grid-2">
+            <div class="form-group">
+              <label>资源类型 <span class="admin-required">*</span></label>
+              <select name="resourceTypeId" id="downloadFormResourceTypeId" required>
+                <option value="">请选择</option>
+                {{#each categories}}
+                  <option value="{{this.id}}" data-lang-id="{{this.langId}}" {{#if ../download}}{{#if (eq this.id ../download.resourceTypeId)}}selected{{/if}}{{/if}}>{{this.name}}</option>
+                {{/each}}
+              </select>
+              <small style="color:var(--admin-text-muted);">仅列出与列表当前语言一致的资源类型；切换类型将同步隐藏字段「语言」</small>
+            </div>
+
+            <div class="form-group">
+              <label>产品系列</label>
+              <select name="seriesId" id="downloadFormSeriesId">
+                <option value="">— 无 —</option>
+                {{#each seriesList}}
+                  <option value="{{this.id}}" data-lang-id="{{this.langId}}" {{#if ../download}}{{#if (eq this.id ../download.seriesId)}}selected{{/if}}{{/if}}>{{this.name}}</option>
+                {{/each}}
+              </select>
+              <small style="color:var(--admin-text-muted);">仅显示与当前记录语言一致的系列（与列表所选语言一致）</small>
+            </div>
+
+            <div class="form-group">
+              <label>产品文件类型</label>
+              <select name="downloadFileTypeId" id="downloadFormFileTypeId">
+                <option value="">— 无 —</option>
+                {{#each fileTypeList}}
+                  <option value="{{this.id}}" data-lang-id="{{this.langId}}" {{#if ../download}}{{#if (eq this.id ../download.downloadFileTypeId)}}selected{{/if}}{{/if}}>{{this.name}}</option>
+                {{/each}}
+              </select>
+              <small style="color:var(--admin-text-muted);">仅显示当前语言下的文件类型（与列表语言一致）</small>
+            </div>
+
+            <div class="form-group admin-col-span-2">
+              <label>文件名 <span class="admin-required">*</span></label>
+              <input type="text" name="fileName" required value="{{#if download}}{{download.fileName}}{{/if}}" placeholder="文件名">
+            </div>
+
+            <div class="form-group">
+              <label>状态</label>
+              <select name="status">
+                <option value="1" {{#if download}}{{#if (eq download.status 1)}}selected{{/if}}{{else}}selected{{/if}}>正常</option>
+                <option value="0" {{#if download}}{{#if (eq download.status 0)}}selected{{/if}}{{/if}}>隐藏</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <section class="admin-form-section admin-form-section-last">
+          <div class="admin-form-section-title">文件</div>
+          <div class="admin-form-grid admin-form-grid-2">
+            <div class="form-group admin-col-span-2">
+              <label>下载地址 <span class="admin-required">*</span></label>
+              <div class="admin-input-row">
+                <input type="text" name="downloadUrl" id="downloadUrlInput" required value="{{#if download}}{{download.downloadUrl}}{{/if}}" placeholder="文件路径或 URL">
+                <button type="button" class="btn" id="downloadUrlPickBtn"><iconify-icon icon="mdi:file-document-outline"></iconify-icon> 选择文件</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">保存</button>
+        <button type="button" class="btn admin-modal-form-cancel">取消</button>
+      </div>
+    </form>
+  </div>
+</div></body></html>

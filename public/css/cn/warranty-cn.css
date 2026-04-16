@@ -1,0 +1,62 @@
+/* 保修说明页：浅灰底 + 白纸正文区 */
+.g-warranty-page.g-warranty-page {
+  background-color: #f2f3f5;
+}
+
+.g-warranty-page .g-warranty-main {
+  
+
+}
+
+.g-warranty-page .g-warranty-layout {
+  max-width: 960px;
+}
+
+.g-warranty-page .g-warranty-sheet {
+  margin: 1.5rem auto;
+  padding: 2rem 1.75rem 2.5rem;
+  background-color: #fff;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.g-warranty-page .g-warranty-title {
+  margin: 0 0 1.25rem;
+  font-family: Exo, system-ui, sans-serif;
+  font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+  font-weight: 700;
+  line-height: 1.25;
+  color: #1a1a1a;
+}
+
+.g-warranty-page .g-warranty-prose {
+  font-size: 1rem;
+  line-height: 1.65;
+  color: #333;
+}
+
+.g-warranty-page .g-warranty-prose h2 {
+  margin: 1.5rem 0 0.65rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.g-warranty-page .g-warranty-prose h2:first-child {
+  margin-top: 0;
+}
+
+.g-warranty-page .g-warranty-prose p {
+  margin: 0 0 0.85rem;
+}
+
+.g-warranty-page .g-warranty-prose p:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 767.98px) {
+  .g-warranty-page .g-warranty-sheet {
+    margin-top: 1rem;
+    padding: 1.25rem 1rem 1.75rem;
+  }
+}

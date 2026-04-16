@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head><body><div id="admin-form-fragment">
+  <div class="admin-card">
+    <form class="admin-form admin-form-modal admin-form-modal--with-richtext" method="post" action="/admin/news/save" id="newsEditForm" data-initial-category-id="{{#if selectedCategoryId}}{{selectedCategoryId}}{{/if}}">
+      <div class="admin-modal-form-scroll-wrapper">
+        <div class=" admin-modal-form-scroll--compact">
+          <input type="hidden" name="_csrf" value="{{csrfToken}}">
+          {{#if news}}<input type="hidden" name="id" value="{{news.id}}">{{/if}}
+          <div class="form-group">
+            <label>标题 <span style="color:var(--admin-danger);">*</span></label>
+            <input type="text" name="title" id="newsTitle" required value="{{#if news}}{{news.title}}{{/if}}" placeholder="新闻标题">
+          </div>
+          <div class="form-group">
+            <label>摘要</label>
+            <textarea name="summary" id="newsSummary" rows="3" placeholder="摘要">{{#if news}}{{news.summary}}{{/if}}</textarea>
+          </div>
+        </div>
+        <div class="">
+          <div class="form-group">
+            <label>正文（富文本）</label>
+            <div class="news-editor-toolbar-row" style="display:flex;align-items:center;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.5rem;">
+              <div id="news-toolbar-container" style="flex:1;min-width:0;"></div>
+            </div>
+            <div id="news-editor-container" style="min-height:280px;"></div>
+            <textarea name="content" id="newsContentTa" style="display:none;">{{#if news}}{{news.content}}{{/if}}</textarea>
+          </div>
+        </div>
+        <div class=" admin-modal-form-scroll--rest">
+          <div class="form-group">
+            <label>SEO 标题（默认与标题一致）</label>
+            <input type="text" name="metaTitle" id="newsMetaTitle" value="{{#if news}}{{#if news.metaTitle}}{{news.metaTitle}}{{else}}{{news.title}}{{/if}}{{/if}}" placeholder="留空则使用标题">
+          </div>
+          <div class="form-group">
+            <label>SEO 关键词</label>
+            <textarea name="metaKeywords" rows="2">{{#if news}}{{news.metaKeywords}}{{/if}}</textarea>
+          </div>
+          <div class="form-group">
+            <label>SEO 描述</label>
+            <textarea name="metaDescription" rows="2">{{#if news}}{{news.metaDescription}}{{/if}}</textarea>
+          </div>
+          <div class="form-group">
+            <label>缩略图</label>
+            <div class="admin-input-row">
+              <input type="text" name="thumbUrl" id="newsThumbUrl" value="{{#if news}}{{news.thumbUrl}}{{/if}}" placeholder="点击选择">
+              <button type="button" class="btn" id="newsBtnPickThumb"><iconify-icon icon="mdi:image-search-outline"></iconify-icon> 选择</button>
+              <span class="admin-input-preview" id="newsThumbPreview">{{#if news}}{{#if news.thumbUrl}}<img src="{{news.thumbUrl}}" alt="">{{/if}}{{/if}}</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>语言 <span style="color:var(--admin-danger);">*</span></label>
+            <select name="langId" id="newsFormLangId" required>
+              {{#each langs}}
+                <option value="{{this.id}}" {{#if (eq this.id ../defaultLangId)}}selected{{/if}}>{{this.name}} ({{this.code}})</option>
+              {{/each}}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>所属新闻分类 <span style="color:var(--admin-danger);">*</span></label>
+            <select name="categoryId" id="newsFormCategoryId" required aria-describedby="newsCategoryEmptyHint"></select>
+            <small id="newsCategoryEmptyHint" style="display:none;color:var(--admin-danger);">当前语言下暂无新闻分类，请先到「新闻分类」管理中添加。</small>
+          </div>
+          <script type="application/json" id="newsCategoryOptionsJson">{{{newsCategoryOptionsJson}}}</script>
+          <div class="form-group">
+            <label>状态</label>
+            <select name="status">
+              <option value="1" {{#if news}}{{#if (eq news.status 1)}}selected{{/if}}{{else}}selected{{/if}}>正常</option>
+              <option value="0" {{#if news}}{{#if (eq news.status 0)}}selected{{/if}}{{/if}}>隐藏</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>置顶</label>
+            <select name="isTop">
+              <option value="1" {{#if news}}{{#if (eq news.isTop 1)}}selected{{/if}}{{/if}}>置顶</option>
+              <option value="0" {{#if news}}{{#if (eq news.isTop 0)}}selected{{/if}}{{else}}selected{{/if}}>普通</option>
+            </select>
+            <small style="color:var(--admin-text-muted);">置顶的新闻会显示在首页新闻轮播中</small>
+          </div>
+          <div class="form-group">
+            <label>排序</label>
+            <input type="number" name="sort" id="newsSort" value="{{#if news}}{{news.sort}}{{else}}0{{/if}}" placeholder="数值越大越靠前">
+            <small style="color:var(--admin-text-muted);">排序值越大，在列表中显示越靠前。</small>
+          </div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">保存</button>
+        <button type="button" class="btn admin-modal-form-cancel">取消</button>
+      </div>
+    </form>
+  </div>
+</div></body></html>

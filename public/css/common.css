@@ -1,0 +1,14 @@
+/* 通用样式 - 基于 variables.css */
+@import './normalize.css';
+@import './variables.css';
+
+body {
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  font-family: 'Exo', system-ui, -apple-system, sans-serif;
+}
+
+a { color: var(--color-primary); text-decoration: none; }
+a:hover { }
+
+

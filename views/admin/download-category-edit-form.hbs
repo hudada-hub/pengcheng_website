@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head><body><div id="admin-form-fragment">
+  <div class="admin-card">
+    <form class="admin-form" method="post" action="/admin/download-category/save">
+      <div class="admin-modal-form-scroll">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        {{#if category}}<input type="hidden" name="id" value="{{category.id}}">{{/if}}
+        <div class="form-group">
+          <label>分类名 <span style="color:var(--admin-danger);">*</span></label>
+          <input type="text" name="name" required value="{{#if category}}{{category.name}}{{/if}}" placeholder="分类名称">
+        </div>
+        <div class="form-group">
+          <label>SEO 标题</label>
+          <input type="text" name="metaTitle" value="{{#if category}}{{#if category.metaTitle}}{{category.metaTitle}}{{else}}{{category.name}}{{/if}}{{/if}}" placeholder="留空则使用分类名">
+        </div>
+        <div class="form-group">
+          <label>SEO 关键词</label>
+          <textarea name="metaKeywords" rows="2">{{#if category}}{{category.metaKeywords}}{{/if}}</textarea>
+        </div>
+        <div class="form-group">
+          <label>SEO 描述</label>
+          <textarea name="metaDescription" rows="2">{{#if category}}{{category.metaDescription}}{{/if}}</textarea>
+        </div>
+        <div class="form-group">
+          <label>语言 <span style="color:var(--admin-danger);">*</span></label>
+          <select name="langId" required>
+            {{#each langs}}
+              <option value="{{this.id}}" {{#if (eq this.id ../defaultLangId)}}selected{{/if}}>{{this.name}} ({{this.code}})</option>
+            {{/each}}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>父级分类</label>
+          <select name="parentId">
+            <option value="0">— 顶级 —</option>
+            {{#each categories}}
+              {{#unless (eq this.id ../category.id)}}
+              <option value="{{this.id}}" {{#if (eq this.id ../category.parentId)}}selected{{/if}}>{{this.name}}</option>
+              {{/unless}}
+            {{/each}}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>排序</label>
+          <input type="number" name="sort" value="{{#if category}}{{category.sort}}{{else}}0{{/if}}" min="0">
+        </div>
+        <div class="form-group">
+          <label>状态</label>
+          <select name="status">
+            <option value="1" {{#if category}}{{#if (eq category.status 1)}}selected{{/if}}{{else}}selected{{/if}}>正常</option>
+            <option value="0" {{#if category}}{{#if (eq category.status 0)}}selected{{/if}}{{/if}}>隐藏</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">保存</button>
+        <button type="button" class="btn admin-modal-form-cancel">取消</button>
+      </div>
+    </form>
+  </div>
+</div></body></html>

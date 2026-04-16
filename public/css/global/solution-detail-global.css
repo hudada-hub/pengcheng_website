@@ -1,0 +1,349 @@
+/* 解决方案详情：Hero 左文、上浮卡片、应用案例区块 */
+
+.g-solution-detail-page {
+  --g-sd-accent: #f89d1b;
+  --g-sd-hero-h: clamp(320px, 42vw, 556px);
+  /* 与 .pc-nav__inner 同高：垂直居中时不把顶栏区域算进对齐范围 */
+  --g-sd-header-offset: 72px;
+}
+
+@media (max-width: 600px) {
+  .g-solution-detail-page {
+    --g-sd-header-offset: 56px;
+  }
+}
+
+/* Hero */
+.g-solution-detail-hero {
+  position: relative;
+  min-height: var(--g-sd-hero-h);
+  overflow: hidden;
+}
+
+.g-solution-detail-hero__bg {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
+.g-solution-detail-hero__image-container {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.g-solution-detail-hero__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.g-solution-detail-hero__placeholder {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #1a3a5c 0%, #2c5282 100%);
+  z-index: 0;
+}
+
+.g-solution-detail-hero__inner {
+  position: relative;
+  z-index: 2;
+  min-height: var(--g-sd-hero-h);
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  padding-top: var(--g-sd-header-offset);
+ 
+}
+
+.g-solution-detail-hero__text {
+  max-width: min(720px, 100%);
+  color: #fff;
+}
+
+.g-solution-detail-hero__title {
+  margin: 0 0 16px;
+  font-family: 'Exo', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.35rem, 3.2vw, 2.25rem);
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+}
+
+.g-solution-detail-hero__rule {
+  width: 48px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.85);
+  margin-bottom: 16px;
+  border-radius: 1px;
+}
+
+.g-solution-detail-hero__desc {
+  margin: 0;
+  font-family: 'Exo', sans-serif;
+  font-weight: 400;
+  font-size: clamp(0.95rem, 1.8vw, 1.3rem);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.92);
+  max-width: 680px;
+}
+
+/* 面包屑贴在 Hero 下，白底区之上 */
+.g-solution-detail-layout {
+  background: #f5f5f7;
+  padding-top: 60px;
+  
+}
+
+
+
+/* 上浮卡片 */
+.g-solution-detail-stack {
+  margin-top: clamp(-56px, -8vw, -40px);
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+.g-solution-detail-card {
+  background: #fff;
+  border-radius: 12px;
+ 
+  overflow: hidden;
+  margin-bottom: clamp(40px, 6vw, 72px);
+}
+
+.g-solution-detail-card__media {
+  position: relative;
+  width: 100%;
+  padding-top: 29%;
+  background: #fafafa;
+}
+
+.g-solution-detail-card__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.g-solution-detail-card__kehu {
+  padding: clamp(24px, 4vw, 40px) clamp(20px, 3vw, 36px) clamp(32px, 5vw, 48px);
+}
+
+.g-solution-kehu-col__title {
+  margin: 0 0 12px;
+  font-family: 'Exo', sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #1a1a1a;
+  line-height: 1.35;
+}
+
+.g-solution-kehu-col__accent {
+  width: 40px;
+  height: 4px;
+  background: var(--g-sd-accent);
+  border-radius: 2px;
+  margin-bottom: 14px;
+}
+
+.g-solution-kehu-col__text {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: #444;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* APPLICATION CASES */
+.g-solution-cases-section {
+  padding: 0 0 8px;
+}
+
+.g-solution-cases-section__head {
+  margin-bottom: clamp(24px, 4vw, 36px);
+}
+
+.g-solution-cases-section__title {
+  margin: 0 0 10px;
+  font-family: 'Exo', sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.15rem, 2.2vw, 3rem);
+  letter-spacing: 0.06em;
+  color: #424558;
+  text-transform: uppercase;
+}
+
+.g-solution-cases-section__subtitle {
+  margin: 0;
+  font-family: 'Exo', sans-serif;
+  font-size: 1.5rem;
+  color: #4a5568;
+ 
+  line-height: 1.5;
+}
+
+.g-solution-case-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.25s ease, transform 0.2s ease;
+}
+
+.g-solution-case-card:hover {
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.g-solution-case-card__media-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.g-solution-case-card__media {
+  position: relative;
+  padding-top: 58%;
+  background: #f0f0f0;
+}
+
+.g-solution-case-card__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.g-solution-case-card__body {
+  padding: 16px 18px 18px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.g-solution-case-card__title {
+  margin: 0 0 14px;
+  font-family: 'Exo', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.g-solution-case-card__title a {
+  color: #1a1a1a;
+  text-decoration: none;
+}
+
+.g-solution-case-card__title a:hover {
+  color: var(--g-sd-accent);
+}
+
+.g-solution-case-card__footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.g-solution-case-card__spec {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.g-solution-case-card__spec-icon {
+  position: relative;
+  display: inline-flex;
+  color: var(--g-sd-accent);
+  font-size: 1.35rem;
+  flex-shrink: 0;
+}
+
+.g-solution-case-card__spec-icon iconify-icon.g-solution-case-card__bolt {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.75rem;
+}
+
+.g-solution-case-card__spec-text {
+  font-family: 'Exo', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--g-sd-accent);
+}
+
+.g-solution-case-card__spec-text--muted {
+  color: #999;
+  font-weight: 500;
+}
+
+.g-solution-case-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 14px;
+  font-family: 'Exo', sans-serif;
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: #888;
+  border: 1px solid #ddd;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  flex-shrink: 0;
+}
+
+.g-solution-case-card__cta:hover {
+  background: var(--g-sd-accent);
+  border-color: var(--g-sd-accent);
+  color: #fff;
+}
+
+.g-solution-cases-section__more-wrap {
+  text-align: center;
+  margin-top: clamp(28px, 5vw, 44px);
+}
+
+.g-solution-cases-section__more {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  font-family: 'Exo', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #fff;
+  background: #424558;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.g-solution-cases-section__more:hover {
+  background: #2f3d4a;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 767px) {
+  .g-solution-detail-stack {
+    margin-top: -32px;
+  }
+}
+
+

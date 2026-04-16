@@ -1,0 +1,28 @@
+{{!-- 页面访问上报：需 SSR 提供 langId、pageViewPageType（海�?global 各页注入�?--}}
+{{#if pageViewPageType}}
+{{#if langId}}
+<script>
+(function () {
+  var langId = {{langId}};
+  var pageType = {{{json pageViewPageType}}};
+  try {
+    var path = (window.location.pathname || '') + (window.location.search || '');
+    if (path.length > 2000) path = path.slice(0, 2000);
+    var body = JSON.stringify({
+      langId: langId,
+      pageUrl: path,
+      pageType: pageType,
+      browser: navigator.userAgent || ''
+    });
+    fetch('/api/page-view', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: body,
+      keepalive: true,
+      credentials: 'same-origin'
+    }).catch(function () {});
+  } catch (e) {}
+})();
+</script>
+{{/if}}
+{{/if}}

@@ -1,0 +1,91 @@
+{{!-- 移动端右侧抽屉菜单，放在 body 下与 .pc-nav 同级 --}}
+<div class="pc-nav-drawer" id="pcNavDrawer" aria-hidden="true">
+  <div class="pc-nav-drawer__backdrop" id="pcNavDrawerBackdrop" aria-hidden="true"></div>
+  <div class="pc-nav-drawer__panel" id="pcNavDrawerPanel" role="dialog" aria-label="主导航">
+    <div class="pc-nav-drawer__header">
+      <button type="button" class="pc-nav-drawer__close" id="pcNavDrawerClose" aria-label="关闭菜单">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <nav class="pc-nav-drawer__menu" aria-label="主导航">
+      {{#each navItems}}
+        {{#if children}}
+          <div class="pc-nav-drawer__item pc-nav-drawer__item--has-children">
+            <a class="pc-nav-drawer__link" href="{{url}}">{{title}}</a>
+            <div class="pc-nav-drawer__children">
+              {{#each children}}
+                <a class="pc-nav-drawer__sublink" href="{{url}}">{{title}}</a>
+              {{/each}}
+            </div>
+          </div>
+        {{else}}
+          <a class="pc-nav-drawer__link" href="{{url}}">{{title}}</a>
+        {{/if}}
+      {{/each}}
+    </nav>
+    <div class="pc-nav-drawer__footer">
+ 
+      <select id="langSwitchDrawer" class="pc-nav-lang-select" aria-label="Switch language">
+        {{#each localeCodes}}
+          <option value="{{this}}" {{#if (eq ../pathLocale this)}}selected{{/if}} lang="{{this}}">{{localeNativeLabel this}}</option>
+        {{/each}}
+      </select>
+    </div>
+  </div>
+</div>
+<script>
+  (function () {
+    function getScrollbarWidth() {
+      return Math.max(0, window.innerWidth - document.documentElement.clientWidth);
+    }
+    function initDrawer() {
+      var langDrawer = document.getElementById('langSwitchDrawer');
+      if (langDrawer) {
+        langDrawer.addEventListener('change', function () {
+          var v = (this.value || '').trim().replace(/^\/+/, '');
+          if (typeof window.__hrefForLocaleSwitch === 'function') {
+            window.location.href = window.__hrefForLocaleSwitch(v);
+          } else {
+            window.location.href = v && v !== 'en' ? ('/' + v + '/') : '/';
+          }
+        });
+      }
+      var drawer = document.getElementById('pcNavDrawer');
+      var menuBtn = document.getElementById('pcNavMenuBtn');
+      var drawerBackdrop = document.getElementById('pcNavDrawerBackdrop');
+      var drawerClose = document.getElementById('pcNavDrawerClose');
+      function openDrawer() {
+        if (!drawer) return;
+        // 计算滚动条宽度并设置 CSS 变量，防止页面抖动
+        var sbw = getScrollbarWidth();
+        if (sbw > 0) {
+          document.documentElement.style.setProperty('--scrollbar-width', sbw + 'px');
+        }
+        drawer.classList.add('pc-nav-drawer--open');
+        drawer.setAttribute('aria-hidden', 'false');
+        if (menuBtn) menuBtn.setAttribute('aria-expanded', 'true');
+        document.body.classList.add('pc-nav-drawer-open');
+      }
+      function closeDrawer() {
+        if (!drawer) return;
+        drawer.classList.remove('pc-nav-drawer--open');
+        drawer.setAttribute('aria-hidden', 'true');
+        if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
+        document.body.classList.remove('pc-nav-drawer-open');
+        // 清除 CSS 变量
+        document.documentElement.style.removeProperty('--scrollbar-width');
+      }
+      if (menuBtn) menuBtn.addEventListener('click', openDrawer);
+      if (drawerBackdrop) drawerBackdrop.addEventListener('click', closeDrawer);
+      if (drawerClose) drawerClose.addEventListener('click', closeDrawer);
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && drawer && drawer.classList.contains('pc-nav-drawer--open')) closeDrawer();
+      });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initDrawer);
+    } else {
+      initDrawer();
+    }
+  })();
+</script>

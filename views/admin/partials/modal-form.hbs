@@ -1,0 +1,14 @@
+{{!-- 新增/编辑弹窗：宽度 80%，高度 90%，固定。使用时通过 JS 打开并往 .admin-modal-form-body 内注入表单内容。 --}}
+<div class="admin-modal-overlay" id="adminModalFormOverlay" aria-hidden="true">
+  <div class="admin-modal-dialog admin-modal-form" role="dialog" aria-modal="true" aria-labelledby="adminModalFormTitle">
+    <div class="admin-modal-header">
+      <h2 class="admin-modal-title" id="adminModalFormTitle">{{title}}</h2>
+      <button type="button" class="admin-modal-close" aria-label="关闭" id="adminModalFormClose">
+        <iconify-icon icon="mdi:close"></iconify-icon>
+      </button>
+    </div>
+    <div class="admin-modal-form-body">
+      {{!-- 表单内容由页面通过 JS 动态插入或通过 partial 传入 --}}
+    </div>
+  </div>
+</div>

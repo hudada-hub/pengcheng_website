@@ -1,0 +1,64 @@
+{{!-- Products List Section --}}
+<section class="g-products-list">
+    <div class="g-products-list__grid">
+      {{#each products}}
+      <article class="g-product-card" data-product-id="{{this.id}}">
+        <div class="g-product-card__image-wrap">
+          <a href="{{this.url}}" class="g-product-card__image-link">
+            <img src="{{this.picUrl}}" alt="{{this.title}}" class="g-product-card__image" loading="lazy" />
+          </a>
+        </div>
+        
+        <div class="g-product-card__content">
+          {{#if this.model}}
+          <div class="g-product-card__model">{{this.model}}</div>
+          {{/if}}
+          <h3 class="g-product-card__title">
+            <a href="{{this.url}}">{{this.title}}</a>
+          </h3>
+          
+          {{!-- Tab Content --}}
+          <div class="g-product-card__tab-content">
+            {{!-- 数据来自产品 core_params（核心参数），后端已解析�?label / value --}}
+            {{#if this.coreParams}}
+            <div class="g-product-card__specs">
+              {{#each this.coreParams}}
+              {{#if (lt @index 2)}}
+              <div class="g-product-card__spec-item{{#unless this.label}} g-product-card__spec-item--single{{/unless}}">
+                {{#if this.label}}
+                <span class="g-product-card__spec-label">{{this.label}}</span>
+                {{/if}}
+                <span class="g-product-card__spec-value">{{this.value}}</span>
+              </div>
+              {{/if}}
+              {{/each}}
+            </div>
+            {{/if}}
+          </div>
+          
+          {{!-- 悬停出现：Tabs 在按钮上方，与按钮一并自底部滑入（默认不占位、不可见）--}}
+          <div class="g-product-card__hover-footer">
+            <div class="g-product-card__tabs" aria-label="Product media">
+              <span class="g-product-card__tab">{{@root.productListCardTabs.images}}</span>
+              <div class="g-product-card__tab-sep" aria-hidden="true"></div>
+              <span class="g-product-card__tab">{{@root.productListCardTabs.description}}</span>
+              <div class="g-product-card__tab-sep" aria-hidden="true"></div>
+              <span class="g-product-card__tab">{{@root.productListCardTabs.specifications}}</span>
+            </div>
+            <div class="g-product-card__action">
+              <button type="button" class="g-product-card__btn" data-pc-quick-quote data-product-id="{{this.id}}" data-product-title="{{this.title}}" data-product-pic="{{this.picUrl}}" data-product-params="{{json this.coreParams}}">
+                {{@root.getAQuoteLabel}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+      {{/each}}
+    </div>
+
+    {{#if pagination}}
+    <div class="g-products-list__pagination">
+      {{> website/common/list-pagination pagination locale=locale}}
+    </div>
+    {{/if}}
+</section>

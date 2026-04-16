@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} - 鹏成后台</title>
+  <meta name="csrf-token" content="{{csrfToken}}">
+  <link rel="stylesheet" href="/css/admin/admin-theme.css">
+  <script src="/js/iconify-icon.min.js"></script>
+</head>
+<body class="admin-layout">
+  {{> admin/header}}
+  <div class="admin-body">
+    {{> admin/sidebar}}
+    <main class="admin-main">
+      <div class="admin-page-toolbar">
+        <h1 style="margin:0;">{{title}}</h1>
+        <div class="admin-page-toolbar__row">
+          <label style="font-size:var(--font-size-sm);color:var(--admin-text-muted);">语言</label>
+          <select id="ppvLangId" style="max-width:220px;">
+            <option value="all" {{#if (eq selectedLangId '')}}selected{{/if}}>全部</option>
+            {{#each langs}}
+              <option value="{{this.id}}" {{#if (eq this.id ../selectedLangId)}}selected{{/if}}>{{this.name}} ({{this.code}})</option>
+            {{/each}}
+          </select>
+          <label style="font-size:var(--font-size-sm);color:var(--admin-text-muted);">分类</label>
+          <select id="ppvCategoryId" style="max-width:260px;">
+            <option value="" {{#if (eq selectedCategoryId '')}}selected{{/if}}>全部</option>
+            {{#each categories}}
+              <option value="{{this.id}}" {{#if (eq this.id ../selectedCategoryId)}}selected{{/if}}>{{this.title}}</option>
+            {{/each}}
+          </select>
+          <a class="btn" href="/admin/product-param-categories"><iconify-icon icon="mdi:shape-outline"></iconify-icon> 分类管理</a>
+          <button type="button" class="btn btn-primary" id="btnPpvAdd"><iconify-icon icon="mdi:plus"></iconify-icon> 新增</button>
+          <button type="button" class="btn btn-secondary" id="btnPpvBatchDelete" style="margin-left:0.25rem;"><iconify-icon icon="mdi:delete-sweep"></iconify-icon> 批量删除</button>
+          <button type="button" class="btn btn-primary" id="btnPpvBatchTranslate" style="margin-left:0.25rem;" disabled><iconify-icon icon="mdi:translate"></iconify-icon> 批量翻译</button>
+        </div>
+      </div>
+      <form id="ppvBatchDeleteForm" method="post" action="/admin/product-param-values/batch-delete" style="display:none;">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      </form>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th style="width:2.5rem;">
+                <input type="checkbox" id="ppvSelectAll" title="全选" aria-label="全选">
+              </th>
+              <th>ID</th>
+              <th>分类</th>
+              <th>参数值</th>
+              <th id="ppvLangTh" style="{{#if (eq selectedLangId '')}}display:table-cell;{{else}}display:none;{{/if}}">语言</th>
+              <th>排序</th>
+              <th>状态</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each values}}
+            <tr>
+              <td><input type="checkbox" class="ppv-row-cb" value="{{this.id}}" aria-label="选择"></td>
+              <td>{{this.id}}</td>
+              <td>{{#if this.category}}{{this.category.title}}{{else}}-{{/if}}</td>
+              <td style="max-width:420px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{this.value}}</td>
+              <td class="ppv-lang-cell" style="{{#if (eq ../selectedLangId '')}}display:table-cell;{{else}}display:none;{{/if}}">{{#if this.lang}}{{this.lang.name}} ({{this.lang.code}}){{else}}-{{/if}}</td>
+              <td>{{this.sort}}</td>
+              <td>{{#if (eq this.status 1)}}<span class="status-normal">正常</span>{{else}}<span class="status-hidden">隐藏</span>{{/if}}</td>
+              <td class="actions">
+                <a href="#" class="ppv-edit-link" data-id="{{this.id}}">编辑</a>
+                <a href="#" class="ppv-translate-link" data-id="{{this.id}}">一键翻译</a>
+                <button type="button" class="btn-link ppv-delete-btn" data-id="{{this.id}}" data-popconfirm="确定删除该参数值吗？">删除</button>
+              </td>
+            </tr>
+            {{else}}
+            <tr><td colspan="8" style="text-align:center;color:var(--admin-text-muted);">暂无数据</td></tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+  {{> admin/modal-form title="产品参数值"}}
+  {{> admin/translate-modal idPrefix="productParamValueTranslate"}}
+  {{!-- 批量翻译弹窗：勾选目标语言后提交 --}}
+  <div id="productParamValueBatchTranslateModalOverlay" class="admin-modal-overlay admin-translate-modal-overlay" aria-hidden="true">
+    <div class="admin-modal-dialog admin-translate-modal" role="dialog" aria-modal="true" aria-labelledby="productParamValueBatchTranslateModalTitle">
+      <div class="admin-translate-modal-header">
+        <h2 class="admin-translate-modal-title" id="productParamValueBatchTranslateModalTitle">批量翻译</h2>
+        <button type="button" class="admin-translate-modal-close" id="productParamValueBatchTranslateModalClose" aria-label="关闭">
+          <iconify-icon icon="mdi:close"></iconify-icon>
+        </button>
+      </div>
+      <div class="admin-translate-modal-body" id="productParamValueBatchTranslateModalBody">
+        <p style="margin-bottom:0.5rem;">选择要翻译成的语言（可多选）：</p>
+        <div style="max-height:200px;overflow:auto;">
+          {{#each langs}}
+          <label style="display:block;margin-bottom:0.25rem;"><input type="checkbox" class="ppv-batch-translate-lang-cb" value="{{this.id}}"> {{this.name}} ({{this.code}})</label>
+          {{/each}}
+        </div>
+      </div>
+      <div class="admin-translate-modal-footer">
+        <div class="admin-translate-modal-actions">
+          <button type="button" class="btn btn-secondary" id="productParamValueBatchTranslateModalCancel">取消</button>
+          <button type="button" class="btn btn-primary" id="productParamValueBatchTranslateModalSubmit">开始翻译</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{> admin/confirm-modal}}
+  <script>
+    (function () {
+      var formOverlay = document.getElementById('adminModalFormOverlay');
+      var formModalBody = document.querySelector('.admin-modal-form-body');
+      var formModalTitle = document.getElementById('adminModalFormTitle');
+      function openFormModal(titleText, formUrl) {
+        if (!formOverlay || !formModalBody) return;
+        formModalTitle.textContent = titleText;
+        formModalBody.innerHTML = '<p style="text-align:center;color:var(--admin-text-muted);">加载中...</p>';
+        formOverlay.classList.add('open');
+        formOverlay.setAttribute('aria-hidden', 'false');
+        fetch(formUrl, { credentials: 'same-origin' })
+          .then(function (r) { return r.text(); })
+          .then(function (html) {
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(html, 'text/html');
+            var frag = doc.getElementById('admin-form-fragment');
+            formModalBody.innerHTML = frag ? frag.innerHTML : html;
+            var _form = formModalBody.querySelector('form');
+            if (_form) { var _inp = document.createElement('input'); _inp.type = 'hidden'; _inp.name = 'returnUrl'; _inp.value = window.location.href; _form.appendChild(_inp); }
+            var cancelBtn = formModalBody.querySelector('.admin-modal-form-cancel');
+            if (cancelBtn) cancelBtn.onclick = closeFormModal;
+          })
+          .catch(function () { formModalBody.innerHTML = '<p style="color:var(--admin-danger);">加载失败</p>'; });
+      }
+      function closeFormModal() {
+        if (formOverlay) { formOverlay.classList.remove('open'); formOverlay.setAttribute('aria-hidden', 'true'); }
+      }
+      document.getElementById('adminModalFormClose').onclick = closeFormModal;
+      document.getElementById('btnPpvAdd').onclick = function () { openFormModal('新增产品参数值', '/admin/product-param-values/edit?modal=1'); };
+      document.querySelectorAll('.ppv-edit-link').forEach(function (a) {
+        a.onclick = function (e) {
+          e.preventDefault();
+          var id = a.getAttribute('data-id');
+          if (id) openFormModal('编辑产品参数值', '/admin/product-param-values/edit/' + id + '?modal=1');
+        };
+      });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && formOverlay && formOverlay.classList.contains('open')) closeFormModal(); });
+
+      function buildUrl() {
+        var lang = (document.getElementById('ppvLangId') || {}).value || 'all';
+        var cat = (document.getElementById('ppvCategoryId') || {}).value || '';
+        var url = '/admin/product-params';
+        var qs = [];
+        if (lang && lang !== 'all') qs.push('langId=' + encodeURIComponent(lang));
+        else qs.push('langId=all');
+        if (cat) qs.push('categoryId=' + encodeURIComponent(cat));
+        return url + (qs.length ? '?' + qs.join('&') : '');
+      }
+
+      var langSelect = document.getElementById('ppvLangId');
+      var catSelect = document.getElementById('ppvCategoryId');
+      if (langSelect) langSelect.onchange = function () { window.location.href = buildUrl(); };
+      if (catSelect) catSelect.onchange = function () { window.location.href = buildUrl(); };
+
+      // 批量翻译 + 一键翻译（参考新闻分类）
+      var csrfToken = document.querySelector('meta[name="csrf-token"]') ? document.querySelector('meta[name="csrf-token"]').getAttribute('content') : '';
+      var selectAllCb = document.getElementById('ppvSelectAll');
+      var rowCbs = document.querySelectorAll('.ppv-row-cb');
+      if (selectAllCb && rowCbs.length) selectAllCb.onchange = function () { rowCbs.forEach(function (cb) { cb.checked = selectAllCb.checked; }); syncBatchButtons(); };
+
+      var btnBatchTranslate = document.getElementById('btnPpvBatchTranslate');
+      var batchDeleteBtn = document.getElementById('btnPpvBatchDelete');
+      var batchDeleteForm = document.getElementById('ppvBatchDeleteForm');
+      function syncBatchButtons() {
+        var checked = document.querySelectorAll('.ppv-row-cb:checked');
+        if (btnBatchTranslate) btnBatchTranslate.disabled = checked.length === 0;
+      }
+      rowCbs.forEach(function (cb) { cb.addEventListener('change', syncBatchButtons); });
+      syncBatchButtons();
+
+      if (batchDeleteBtn && batchDeleteForm) {
+        batchDeleteBtn.onclick = function () {
+          var checked = document.querySelectorAll('.ppv-row-cb:checked');
+          var ids = [];
+          checked.forEach(function (cb) { ids.push(cb.value); });
+          if (!ids.length) { alert('请先勾选要删除的参数值'); return; }
+          var msg = '确定删除所选 ' + ids.length + ' 条参数值吗？';
+          var doSubmit = function () {
+            batchDeleteForm.innerHTML = '<input type="hidden" name="_csrf" value="' + (csrfToken || '') + '">';
+            ids.forEach(function (id) {
+              var input = document.createElement('input');
+              input.type = 'hidden';
+              input.name = 'ids';
+              input.value = id;
+              batchDeleteForm.appendChild(input);
+            });
+            batchDeleteForm.submit();
+          };
+          if (window.showConfirmModal) window.showConfirmModal(msg, doSubmit);
+          else if (confirm(msg)) doSubmit();
+        };
+      }
+
+      var batchTranslateOverlay = document.getElementById('productParamValueBatchTranslateModalOverlay');
+      function openBatchTranslateModal() {
+        var ids = Array.prototype.slice.call(document.querySelectorAll('.ppv-row-cb:checked')).map(function (cb) { return parseInt(cb.value, 10); }).filter(function (n) { return !isNaN(n) && n > 0; });
+        if (!ids.length) { alert('请先勾选要翻译的参数值'); return; }
+        if (!batchTranslateOverlay) return;
+        batchTranslateOverlay.classList.add('open');
+        batchTranslateOverlay.setAttribute('aria-hidden', 'false');
+        batchTranslateOverlay.dataset.sourceIds = ids.join(',');
+      }
+      function closeBatchTranslateModal() {
+        if (batchTranslateOverlay) { batchTranslateOverlay.classList.remove('open'); batchTranslateOverlay.setAttribute('aria-hidden', 'true'); }
+      }
+      if (btnBatchTranslate) btnBatchTranslate.onclick = openBatchTranslateModal;
+      var bClose = document.getElementById('productParamValueBatchTranslateModalClose');
+      if (bClose) bClose.onclick = closeBatchTranslateModal;
+      var bCancel = document.getElementById('productParamValueBatchTranslateModalCancel');
+      if (bCancel) bCancel.onclick = closeBatchTranslateModal;
+      if (batchTranslateOverlay) batchTranslateOverlay.onclick = function (e) { if (e.target === batchTranslateOverlay) closeBatchTranslateModal(); };
+      var bSubmit = document.getElementById('productParamValueBatchTranslateModalSubmit');
+      if (bSubmit) bSubmit.onclick = function () {
+        var langCbs = document.querySelectorAll('.ppv-batch-translate-lang-cb:checked');
+        var targetLangIds = [];
+        langCbs.forEach(function (cb) { targetLangIds.push(parseInt(cb.value, 10)); });
+        if (!targetLangIds.length) { alert('请至少选择一种目标语言'); return; }
+        var sourceIdsStr = batchTranslateOverlay && batchTranslateOverlay.dataset.sourceIds ? batchTranslateOverlay.dataset.sourceIds : '';
+        var sourceIds = sourceIdsStr.split(',').map(function (s) { return parseInt(s.trim(), 10); }).filter(function (n) { return !isNaN(n) && n > 0; });
+        if (!sourceIds.length) { alert('未找到要翻译的参数值'); return; }
+        var btn = bSubmit;
+        var oldText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = '翻译中...';
+        fetch('/admin/api/product-param-value/translate-batch', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json', 'csrf-token': csrfToken },
+          body: JSON.stringify({ _csrf: csrfToken, sourceIds: sourceIds, targetLangIds: targetLangIds })
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            btn.disabled = false;
+            btn.textContent = oldText;
+            if (d && d.ok) { alert(d.message || '翻译完成'); closeBatchTranslateModal(); window.location.reload(); }
+            else { alert(d && d.message ? d.message : '翻译失败'); }
+          })
+          .catch(function () { btn.disabled = false; btn.textContent = oldText; alert('请求失败'); });
+      };
+
+      var translateOverlay = document.getElementById('productParamValueTranslateModalOverlay');
+      var translateBody = document.getElementById('productParamValueTranslateModalBody');
+      var translateSourceId = 0;
+      function escapeHtml(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;').replace(/'/g, '&#039;'); }
+      function loadTranslateLangs() {
+        if (!translateBody || !translateSourceId) return;
+        var retranslateEl = document.getElementById('productParamValueTranslateRetranslateCb');
+        var retranslate = retranslateEl ? retranslateEl.checked : false;
+        translateBody.innerHTML = '<p class="admin-text-muted">加载中...</p>';
+        var url = '/admin/api/product-param-value/missing-langs?id=' + encodeURIComponent(translateSourceId);
+        if (retranslate) url += '&retranslate=1';
+        fetch(url, { credentials: 'same-origin' }).then(function (r) { return r.json(); })
+          .then(function (langs) {
+            if (!langs || !langs.length) { translateBody.innerHTML = '<p class="admin-text-muted">' + (retranslate ? '暂无其他语言。' : '暂无缺失语言。') + '</p>'; return; }
+            var html = '<p style="margin-bottom:0.5rem;">选择要翻译成的语言：</p><button type="button" class="btn btn-secondary btn-sm" id="productParamValueTranslateSelectAll">一键补充缺失的所有语言</button><div style="margin-top:0.75rem;max-height:200px;overflow:auto;">';
+            langs.forEach(function (l) { html += '<label style="display:block;margin-bottom:0.25rem;"><input type="checkbox" class="ppv-translate-cb" value="' + escapeHtml(String(l.id)) + '"> ' + escapeHtml(l.name) + ' (' + escapeHtml(l.code) + ')</label>'; });
+            html += '</div>';
+            translateBody.innerHTML = html;
+            var selAll = document.getElementById('productParamValueTranslateSelectAll');
+            if (selAll) selAll.onclick = function () { translateBody.querySelectorAll('.ppv-translate-cb').forEach(function (cb) { cb.checked = true; }); };
+          }).catch(function () { translateBody.innerHTML = '<p style="color:var(--admin-danger);">加载失败</p>'; });
+      }
+      function openTranslateModal(id) {
+        translateSourceId = id;
+        if (!translateOverlay || !translateBody) return;
+        var cb = document.getElementById('productParamValueTranslateRetranslateCb');
+        if (cb) cb.checked = false;
+        translateBody.innerHTML = '<p class="admin-text-muted">加载中...</p>';
+        translateOverlay.classList.add('open');
+        translateOverlay.setAttribute('aria-hidden', 'false');
+        loadTranslateLangs();
+      }
+      function closeTranslateModal() { if (translateOverlay) { translateOverlay.classList.remove('open'); translateOverlay.setAttribute('aria-hidden', 'true'); } }
+      var tClose = document.getElementById('productParamValueTranslateModalClose');
+      if (tClose) tClose.onclick = closeTranslateModal;
+      var tCancel = document.getElementById('productParamValueTranslateModalCancel');
+      if (tCancel) tCancel.onclick = closeTranslateModal;
+      if (translateOverlay) translateOverlay.onclick = function (e) { if (e.target === translateOverlay) closeTranslateModal(); };
+      var retranslateCb = document.getElementById('productParamValueTranslateRetranslateCb');
+      if (retranslateCb) retranslateCb.onchange = loadTranslateLangs;
+      document.querySelectorAll('.ppv-translate-link').forEach(function (a) {
+        a.onclick = function (e) { e.preventDefault(); var id = a.getAttribute('data-id'); if (id) openTranslateModal(parseInt(id, 10)); };
+      });
+      var tSubmit = document.getElementById('productParamValueTranslateModalSubmit');
+      if (tSubmit) tSubmit.onclick = function () {
+        var cbs = document.querySelectorAll('#productParamValueTranslateModalBody .ppv-translate-cb:checked');
+        var ids = [];
+        cbs.forEach(function (cb) { ids.push(parseInt(cb.value, 10)); });
+        if (!ids.length) { alert('请至少选择一种语言'); return; }
+        var btn = tSubmit;
+        var oldText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = '翻译中...';
+        fetch('/admin/api/product-param-value/translate', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json', 'csrf-token': csrfToken },
+          body: JSON.stringify({ _csrf: csrfToken, sourceId: translateSourceId, targetLangIds: ids })
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            btn.disabled = false;
+            btn.textContent = oldText;
+            if (d && d.ok) { alert(d.message || '翻译完成'); closeTranslateModal(); window.location.reload(); }
+            else { alert(d && d.message ? d.message : '翻译失败'); }
+          })
+          .catch(function () { btn.disabled = false; btn.textContent = oldText; alert('请求失败'); });
+      };
+
+      // 单个删除功能（AJAX）
+      document.querySelectorAll('.ppv-delete-btn').forEach(function (btn) {
+        btn.onclick = function () {
+          var id = btn.getAttribute('data-id');
+          var msg = btn.getAttribute('data-popconfirm') || '确定删除该参数值吗？';
+          var doDelete = function () {
+            fetch('/admin/product-param-values/delete/' + id, {
+              method: 'POST',
+              credentials: 'same-origin',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: '_csrf=' + encodeURIComponent(csrfToken || '')
+            })
+              .then(function (r) {
+                if (r.ok) {
+                  window.location.reload();
+                } else {
+                  alert('删除失败');
+                }
+              })
+              .catch(function () { alert('请求失败'); });
+          };
+          if (window.showConfirmModal) window.showConfirmModal(msg, doDelete);
+          else if (confirm(msg)) doDelete();
+        };
+      });
+    })();
+  </script>
+</body>
+</html>
+

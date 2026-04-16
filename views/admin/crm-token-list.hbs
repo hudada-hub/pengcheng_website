@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} - 鹏成后台</title>
+  <meta name="csrf-token" content="{{csrfToken}}">
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/admin/admin-theme.css">
+  <script src="/js/iconify-icon.min.js"></script>
+  <style>
+    .token-value {
+      font-family: monospace;
+      background: #f5f5f5;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      word-break: break-all;
+    }
+    .token-display {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .copy-btn {
+      padding: 4px 8px;
+      font-size: 12px;
+      cursor: pointer;
+      background: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+    .copy-btn:hover {
+      background: #0052a3;
+    }
+    .create-form {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .form-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .form-group {
+      flex: 1;
+      min-width: 200px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+      color: #333;
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+    .api-doc {
+      background: #f0f7ff;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border-left: 4px solid #0066cc;
+    }
+    .api-doc h3 {
+      margin: 0 0 12px 0;
+      color: #0066cc;
+    }
+    .api-doc pre {
+      background: #fff;
+      padding: 12px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-size: 13px;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    .status-normal {
+      background: #e6f7e6;
+      color: #52c41a;
+    }
+    .status-expired {
+      background: #fff1f0;
+      color: #ff4d4f;
+    }
+    .api-test-section {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .api-test-section h3 {
+      margin: 0 0 16px 0;
+      color: #333;
+    }
+    .api-test-container {
+      display: flex;
+      gap: 20px;
+    }
+    .api-test-left {
+      flex: 1;
+      min-width: 300px;
+    }
+    .api-test-right {
+      flex: 1;
+      min-width: 300px;
+    }
+    .test-form-group {
+      margin-bottom: 12px;
+    }
+    .test-form-group label {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+      color: #333;
+      font-weight: 500;
+    }
+    .test-form-group input,
+    .test-form-group select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .test-form-row {
+      display: flex;
+      gap: 12px;
+    }
+    .test-form-row .test-form-group {
+      flex: 1;
+    }
+    .test-btn {
+      width: 100%;
+      padding: 10px 20px;
+      background: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .test-btn:hover {
+      background: #0052a3;
+    }
+    .test-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .response-panel {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      border-radius: 8px;
+      padding: 16px;
+      min-height: 400px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 13px;
+      overflow-x: auto;
+    }
+    .response-panel .response-header {
+      color: #6cc644;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #333;
+    }
+    .response-panel .response-header.error {
+      color: #ff6b6b;
+    }
+    .response-panel pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .response-panel .loading {
+      color: #999;
+      text-align: center;
+      padding: 40px 0;
+    }
+    @media (max-width: 768px) {
+      .api-test-container {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body class="admin-layout">
+  {{> admin/header}}
+  <div class="admin-body">
+    {{> admin/sidebar}}
+    <main class="admin-main">
+      <div class="admin-page-toolbar">
+        <h1 style="margin:0;">{{title}}</h1>
+        <p style="margin:0;font-size:var(--font-size-sm);color:var(--admin-text-muted);">管理CRM接口访问Token</p>
+      </div>
+
+      <!-- API文档 -->
+      <div class="api-doc">
+        <h3>CRM接口文档</h3>
+        <p><strong>接口地址：</strong>POST /api/crm/data</p>
+        <p><strong>请求头：</strong>Authorization: Bearer {token}</p>
+        <p><strong>请求参数：</strong></p>
+        <pre>
+{
+  "type": 1,          // 类型：1=联系我们, 2=海外招募, 3=询价表单
+  "page": 1,          // 页码，默认1
+  "pageSize": 20,     // 每页条数，默认20，最大100
+  "startDate": "2024-01-01",  // 可选，开始日期
+  "endDate": "2024-12-31"     // 可选，结束日期
+}
+        </pre>
+      </div>
+
+      <!-- API测试区域 -->
+      <div class="api-test-section">
+        <h3>接口测试</h3>
+        <div class="api-test-container">
+          <!-- 左侧：请求表单 -->
+          <div class="api-test-left">
+            <div class="test-form-group">
+              <label>Token</label>
+              <input type="text" id="testToken" placeholder="输入你的Token">
+            </div>
+            <div class="test-form-group">
+              <label>数据类型</label>
+              <select id="testType">
+                <option value="1">1 - 联系我们</option>
+                <option value="2">2 - 海外招募</option>
+                <option value="3">3 - 询价表单</option>
+              </select>
+            </div>
+            <div class="test-form-row">
+              <div class="test-form-group">
+                <label>页码</label>
+                <input type="number" id="testPage" value="1" min="1">
+              </div>
+              <div class="test-form-group">
+                <label>每页条数</label>
+                <input type="number" id="testPageSize" value="20" min="1" max="100">
+              </div>
+            </div>
+            <div class="test-form-row">
+              <div class="test-form-group">
+                <label>开始日期（可选）</label>
+                <input type="date" id="testStartDate">
+              </div>
+              <div class="test-form-group">
+                <label>结束日期（可选）</label>
+                <input type="date" id="testEndDate">
+              </div>
+            </div>
+            <button type="button" class="test-btn" id="testBtn" onclick="sendApiRequest()">
+              <iconify-icon icon="mdi:send" style="vertical-align:middle;margin-right:4px;"></iconify-icon>
+              发送请求
+            </button>
+          </div>
+          <!-- 右侧：响应结果 -->
+          <div class="api-test-right">
+            <div class="response-panel" id="responsePanel">
+              <div class="response-header">响应结果</div>
+              <pre id="responseContent">点击"发送请求"按钮查看响应结果...</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 创建Token表单 -->
+      <div class="create-form">
+        <h3 style="margin:0 0 16px 0;">创建新Token</h3>
+        <form method="post" action="/admin/crm-tokens/create">
+          <input type="hidden" name="_csrf" value="{{csrfToken}}">
+          <div class="form-row">
+            <div class="form-group">
+              <label>名称（可选）</label>
+              <input type="text" name="name" placeholder="例如：CRM系统">
+            </div>
+            <div class="form-group" style="flex: 2;">
+              <label>描述（可选）</label>
+              <textarea name="description" placeholder="Token用途描述..."></textarea>
+            </div>
+          </div>
+          <div class="form-row">
+            <button type="submit" class="btn-primary">创建Token</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Token列表 -->
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>名称</th>
+              <th>Token</th>
+              <th>描述</th>
+              <th>状态</th>
+              <th>最后使用</th>
+              <th>创建时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each list}}
+            <tr>
+              <td>{{this.id}}</td>
+              <td>{{#if this.name}}{{this.name}}{{else}}<span style="color:#999;">-</span>{{/if}}</td>
+              <td>
+                <div class="token-display">
+                  <span class="token-value">{{this.token}}</span>
+                  <button type="button" class="copy-btn" onclick="copyToken('{{this.token}}')">复制</button>
+                </div>
+              </td>
+              <td>{{#if this.description}}{{this.description}}{{else}}<span style="color:#999;">-</span>{{/if}}</td>
+              <td>
+                <span class="status-badge status-normal">永久有效</span>
+              </td>
+              <td>{{this.lastUsedAtFormatted}}</td>
+              <td>{{this.createdAtFormatted}}</td>
+              <td class="actions">
+                <form method="post" action="/admin/crm-tokens/delete/{{this.id}}" style="display:inline;">
+                  <input type="hidden" name="_csrf" value="{{../csrfToken}}">
+                  <button type="submit" class="btn-link" data-popconfirm="确定删除该Token吗？删除后将无法恢复。">删除</button>
+                </form>
+              </td>
+            </tr>
+            {{else}}
+            <tr><td colspan="10" style="text-align:center;color:var(--admin-text-muted);">暂无Token，请创建</td></tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+
+      {{#if pagination}}
+      <div class="admin-pagination-wrap" style="margin-top:1rem;">
+        {{> admin/pagination currentPage=pagination.currentPage totalPages=pagination.totalPages baseUrl=pagination.baseUrl}}
+      </div>
+      <script>
+        (function () {
+          var paginationNav = document.querySelector('.admin-pagination');
+          if (!paginationNav) return;
+          var baseUrl = paginationNav.getAttribute('data-base-url');
+          var cur = parseInt(paginationNav.getAttribute('data-current'), 10) || 1;
+          var total = parseInt(paginationNav.getAttribute('data-total'), 10) || 1;
+          var prevBtn = paginationNav.querySelector('.admin-pagination-prev');
+          var nextBtn = paginationNav.querySelector('.admin-pagination-next');
+          if (prevBtn && baseUrl) prevBtn.onclick = function () { if (cur > 1) window.location.href = baseUrl + '&page=' + (cur - 1); };
+          if (nextBtn && baseUrl) nextBtn.onclick = function () { if (cur < total) window.location.href = baseUrl + '&page=' + (cur + 1); };
+        })();
+      </script>
+      {{/if}}
+    </main>
+  </div>
+  {{> admin/confirm-modal}}
+
+  <script>
+    function copyToken(token) {
+      navigator.clipboard.writeText(token).then(function() {
+        alert('Token已复制到剪贴板');
+      }).catch(function() {
+        // 降级方案
+        var textarea = document.createElement('textarea');
+        textarea.value = token;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        alert('Token已复制到剪贴板');
+      });
+    }
+
+    async function sendApiRequest() {
+      const token = document.getElementById('testToken').value.trim();
+      const type = document.getElementById('testType').value;
+      const page = document.getElementById('testPage').value;
+      const pageSize = document.getElementById('testPageSize').value;
+      const startDate = document.getElementById('testStartDate').value;
+      const endDate = document.getElementById('testEndDate').value;
+      const responseContent = document.getElementById('responseContent');
+      const responseHeader = document.querySelector('.response-header');
+      const testBtn = document.getElementById('testBtn');
+
+      if (!token) {
+        responseHeader.classList.add('error');
+        responseHeader.textContent = '错误：请输入Token';
+        responseContent.textContent = '';
+        return;
+      }
+
+      // 构建请求体
+      const requestBody = {
+        type: parseInt(type),
+        page: parseInt(page),
+        pageSize: parseInt(pageSize)
+      };
+      if (startDate) requestBody.startDate = startDate;
+      if (endDate) requestBody.endDate = endDate;
+
+      // 显示加载状态
+      testBtn.disabled = true;
+      testBtn.innerHTML = '<iconify-icon icon="mdi:loading" class="spin" style="vertical-align:middle;margin-right:4px;"></iconify-icon> 请求中...';
+      responseHeader.classList.remove('error');
+      responseHeader.textContent = '请求中...';
+      responseContent.innerHTML = '<div class="loading">正在发送请求...</div>';
+
+      try {
+        const startTime = Date.now();
+        const response = await fetch('/api/crm/data', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify(requestBody)
+        });
+        const endTime = Date.now();
+        const duration = endTime - startTime;
+
+        const data = await response.json();
+
+        // 显示结果
+        responseHeader.classList.remove('error');
+        if (response.ok) {
+          responseHeader.textContent = '✓ 请求成功 (' + duration + 'ms) - HTTP ' + response.status;
+        } else {
+          responseHeader.classList.add('error');
+          responseHeader.textContent = '✗ 请求失败 (' + duration + 'ms) - HTTP ' + response.status;
+        }
+        responseContent.textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        responseHeader.classList.add('error');
+        responseHeader.textContent = '✗ 网络错误';
+        responseContent.textContent = '错误信息：' + error.message;
+      } finally {
+        testBtn.disabled = false;
+        testBtn.innerHTML = '<iconify-icon icon="mdi:send" style="vertical-align:middle;margin-right:4px;"></iconify-icon> 发送请求';
+      }
+    }
+  </script>
+  <style>
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .spin {
+      animation: spin 1s linear infinite;
+      display: inline-block;
+    }
+  </style>
+</body>
+</html>

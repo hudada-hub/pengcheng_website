@@ -1,0 +1,38 @@
+{{!-- 穿梭框：idPrefix 唯一前缀，leftTitle/rightTitle 左右标题，inputName 隐藏域 name，leftItems/rightItems 为 {id, label} 数组，value 为已选 id 逗号拼接 --}}
+<div class="admin-transfer" id="{{idPrefix}}Transfer" data-id-prefix="{{idPrefix}}">
+  <input type="hidden" name="{{inputName}}" id="{{idPrefix}}TransferInput" value="{{value}}">
+  <div class="admin-transfer-panels">
+    <div class="admin-transfer-panel admin-transfer-left">
+      <div class="admin-transfer-panel-title">{{leftTitle}}</div>
+      <div class="admin-transfer-list" id="{{idPrefix}}TransferLeftList" data-side="left">
+        {{#each leftItems}}
+        <label class="admin-transfer-item" data-id="{{this.id}}">
+          <input type="checkbox" class="admin-transfer-cb"> <span class="admin-transfer-label">{{this.label}}</span>
+        </label>
+        {{else}}
+        <div class="admin-transfer-empty">暂无可选</div>
+        {{/each}}
+      </div>
+    </div>
+    <div class="admin-transfer-actions">
+      <button type="button" class="admin-transfer-btn admin-transfer-btn-right" id="{{idPrefix}}TransferBtnRight" title="添加到已选" aria-label="添加到已选">
+        <iconify-icon icon="mdi:chevron-right"></iconify-icon>
+      </button>
+      <button type="button" class="admin-transfer-btn admin-transfer-btn-left" id="{{idPrefix}}TransferBtnLeft" title="移出已选" aria-label="移出已选">
+        <iconify-icon icon="mdi:chevron-left"></iconify-icon>
+      </button>
+    </div>
+    <div class="admin-transfer-panel admin-transfer-right">
+      <div class="admin-transfer-panel-title">{{rightTitle}}</div>
+      <div class="admin-transfer-list" id="{{idPrefix}}TransferRightList" data-side="right">
+        {{#each rightItems}}
+        <label class="admin-transfer-item" data-id="{{this.id}}">
+          <input type="checkbox" class="admin-transfer-cb"> <span class="admin-transfer-label">{{this.label}}</span>
+        </label>
+        {{else}}
+        <div class="admin-transfer-empty">暂无已选</div>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+</div>

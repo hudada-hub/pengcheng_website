@@ -1,0 +1,391 @@
+/* Download 页 — UI 稿还原（浅灰底、白卡片、石板色选中、橙色下载按钮） */
+
+.g-download-page {
+  --dl-active: #3c4257;
+  --dl-active-hover: #323746;
+  --dl-surface: #ffffff;
+  --dl-page-bg: #f3f4f6;
+  --dl-chip-bg: #f3f4f6;
+  --dl-chip-text: #1f2937;
+  --dl-muted: #6b7280;
+  --dl-border: #e5e7eb;
+  --dl-orange: #f59e0b;
+  --dl-orange-hover: #d97706;
+  --dl-radius-lg: 12px;
+  --dl-radius-md: 8px;
+  --dl-radius-chip: 6px;
+}
+
+.g-download-page .g-main {
+  background: var(--dl-page-bg);
+}
+
+.g-download-layout {
+  padding: 2rem 0 3.5rem;
+}
+
+.g-download-layout__inner {
+  max-width: 1200px;
+}
+
+/* 页标题 */
+.g-download-page__title {
+  font-family: 'Exo', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  line-height: 1.2;
+  color: #111827;
+  margin: 0 0 1.25rem;
+  letter-spacing: -0.02em;
+}
+
+/* 白卡片容器 */
+.g-download-panel {
+  background: var(--dl-surface);
+  border-radius: var(--dl-radius-lg);
+  padding: 1.5rem 1.5rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.g-download-panel--filters {
+  padding-bottom: 0.25rem;
+}
+
+.g-download-panel--results {
+  padding-bottom: 1.5rem;
+}
+
+/* 顶栏 Tab：等分宽度 */
+.g-download-tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  width: 100%;
+  margin-bottom: 0;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--dl-border);
+}
+
+@media (max-width: 767.98px) {
+  .g-download-tabs {
+    flex-wrap: wrap;
+  }
+
+  .g-download-tabs__item {
+    flex: 1 1 calc(50% - 0.25rem) !important;
+    min-width: 140px;
+  }
+}
+
+.g-download-tabs__item {
+  flex: 1 1 0;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0.75rem 1rem;
+  border-radius: var(--dl-radius-md);
+  font-family: 'Exo', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  line-height: 1.3;
+  text-decoration: none;
+  color: var(--dl-chip-text);
+  background: var(--dl-chip-bg);
+  border: 1px solid transparent;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.g-download-tabs__item:hover {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.g-download-tabs__item--active {
+  background: var(--dl-active);
+  color: #fff;
+}
+
+.g-download-tabs__item--active:hover {
+  background: var(--dl-active-hover);
+  color: #fff;
+}
+
+/* 筛选：行间浅分割线 */
+.g-download-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 0;
+}
+
+.g-download-filters__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.75rem 1rem;
+  padding: 1.125rem 0;
+  border-bottom: 1px solid var(--dl-border);
+}
+
+.g-download-filters__row:last-child {
+  border-bottom: none;
+  padding-bottom: 0.5rem;
+}
+
+.g-download-filters__label {
+  flex: 0 0 auto;
+  min-width: 6.5rem;
+  font-family: 'Exo', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: #111827;
+  padding-top: 0.4rem;
+}
+
+.g-download-filters__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.5rem;
+  flex: 1;
+  min-width: 0;
+}
+
+/* 标签：小圆角矩形（非胶囊） */
+.g-download-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--dl-radius-chip);
+  font-family: 'Exo', system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.35;
+  text-decoration: none;
+  color: var(--dl-chip-text);
+  background: var(--dl-chip-bg);
+  border: 1px solid transparent;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.g-download-chip:hover {
+  background: #e5e7eb;
+}
+
+.g-download-chip--active {
+  background: var(--dl-active);
+  color: #fff;
+}
+
+.g-download-chip--active:hover {
+  background: var(--dl-active-hover);
+  color: #fff;
+}
+
+/* 搜索结果 */
+.g-download-results__title {
+  font-family: 'Exo', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1.0625rem;
+  color: #111827;
+  margin: 0 0 1rem;
+}
+
+.g-download-table-wrap {
+  background: var(--dl-surface);
+  border-radius: var(--dl-radius-md);
+  overflow: hidden;
+  border: 1px solid var(--dl-border);
+}
+
+.g-download-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+  font-family: 'Exo', system-ui, sans-serif;
+  font-size: 0.875rem;
+}
+
+.g-download-table thead th {
+  padding: 0.95rem 0.75rem;
+  background: var(--dl-chip-bg);
+  color: #374151;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  letter-spacing: 0.01em;
+  border: none;
+  border-bottom: 1px solid var(--dl-border);
+  vertical-align: middle;
+}
+
+.g-download-table thead th:first-child {
+  text-align: left;
+  padding-left: 1.25rem;
+  border-radius: var(--dl-radius-md) 0 0 var(--dl-radius-md);
+}
+
+.g-download-table thead th:last-child {
+  padding-right: 1.25rem;
+  border-radius: 0 var(--dl-radius-md) var(--dl-radius-md) 0;
+}
+
+.g-download-table thead th:nth-child(n + 2) {
+  text-align: center;
+}
+
+.g-download-table thead th:nth-child(5) {
+  width: 9.5rem;
+}
+
+.g-download-table tbody td {
+  padding: 1.05rem 0.75rem;
+  border-bottom: 1px solid var(--dl-border);
+  color: #111827;
+  vertical-align: middle;
+  word-wrap: break-word;
+}
+
+.g-download-table tbody td:first-child {
+  text-align: left;
+  padding-left: 1.25rem;
+}
+
+.g-download-table tbody td:nth-child(n + 2) {
+  text-align: center;
+}
+
+.g-download-table tbody td:nth-child(3) {
+  max-width: 0;
+  line-height: 1.45;
+}
+
+.g-download-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.g-download-table tbody tr:hover td {
+  background: #fafafa;
+}
+
+.g-download-table__lang {
+  display: inline-block;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  color: var(--dl-muted);
+}
+
+.g-download-table__empty {
+  text-align: center;
+  padding: 2.5rem 1rem !important;
+  color: var(--dl-muted);
+}
+
+.g-download-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  font-family: 'Exo', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  text-decoration: none;
+  white-space: nowrap;
+  color: #fff;
+  background: var(--dl-orange);
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.g-download-btn:hover {
+  background: var(--dl-orange-hover);
+  color: #fff;
+}
+
+.g-download-btn__icon {
+  flex-shrink: 0;
+}
+
+.g-download-results__footer {
+  text-align: center;
+  margin: 1.35rem 0 0;
+  font-family: 'Exo', system-ui, sans-serif;
+  font-size: 0.875rem;
+  color: var(--dl-muted);
+  letter-spacing: 0.02em;
+}
+
+/* 移动端：卡片式行 */
+@media (max-width: 767.98px) {
+  .g-download-layout {
+    padding: 1.25rem 0 2.5rem;
+  }
+
+  .g-download-panel {
+    padding: 1.25rem 1rem;
+  }
+
+  .g-download-table thead {
+    display: none;
+  }
+
+  .g-download-table tbody tr {
+    display: block;
+    border-bottom: 1px solid var(--dl-border);
+    padding: 0.75rem 0;
+  }
+
+  .g-download-table tbody td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.4rem 0.75rem;
+    border: none;
+    text-align: right !important;
+    max-width: none !important;
+  }
+
+  .g-download-table tbody td:first-child {
+    padding-left: 0.75rem;
+  }
+
+  .g-download-table tbody td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--dl-muted);
+    flex-shrink: 0;
+    text-align: left;
+  }
+
+  .g-download-table tbody td:last-child {
+    justify-content: flex-end;
+  }
+
+  .g-download-table tbody td:last-child::before {
+    display: none;
+  }
+
+  .g-download-table__empty {
+    display: block;
+    text-align: center;
+  }
+
+  .g-download-table__empty::before {
+    display: none !important;
+  }
+
+  .g-download-filters__label {
+    width: 100%;
+    padding-top: 0;
+  }
+}
+
+/* :has() 降级：无 Tab 时由首块筛选自行顶格 */

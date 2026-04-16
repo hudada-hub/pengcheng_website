@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="{{locale}}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  {{#if description}}<meta name="description" content="{{description}}">{{/if}}
+  {{#if keywords}}<meta name="keywords" content="{{keywords}}">{{/if}}
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/bootstrap-grid.css">
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/grid.css">
+  <link rel="stylesheet" href="/css/global/common-global.css">
+  <link rel="stylesheet" href="/css/global/member-orders.css">
+  
+  <link rel="stylesheet" href="/css/exo.css">
+</head>
+<body class="g-member-page" data-base-path="{{basePath}}">
+  {{> website/common/nav-drawer}}
+  {{> website/common/header}}
+
+  <main class="g-main g-member-main">
+    <div class="container member-orders-layout">
+      <!-- 左侧菜单 -->
+      <aside class="member-sidebar">
+        <div class="member-user-info">
+          <div class="member-avatar">
+            <iconify-icon icon="mdi:account-circle" class="avatar-svg"></iconify-icon>
+          </div>
+          <div class="member-user-details">
+            <h3 class="member-user-name">{{memberEmail}}</h3>
+            <p class="member-user-id">ID:{{memberId}}</p>
+          </div>
+        </div>
+        <nav class="member-menu">
+          <a href="{{basePath}}/member/orders" class="member-menu-item">
+            <iconify-icon icon="mdi:cart-outline"></iconify-icon>
+            <span>{{texts.text_1}}</span>
+          </a>
+          <a href="{{basePath}}/member/security" class="member-menu-item active">
+            <iconify-icon icon="mdi:shield-account-outline"></iconify-icon>
+            <span>{{texts.text_2}}</span>
+          </a>
+        </nav>
+      </aside>
+
+      <!-- 右侧内容 -->
+      <section class="member-content">
+        <h1 class="member-page-title">{{texts.text_11}}</h1>
+        
+        <div class="security-form-wrap">
+          <form id="changePasswordForm" class="security-form">
+            <div class="form-group">
+              <label class="form-label">{{texts.text_12}}</label>
+              <div class="form-input-wrap">
+                <input type="password" name="currentPassword" class="form-input" placeholder="" required>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">New Password</label>
+              <div class="form-input-wrap">
+                <input type="password" name="newPassword" class="form-input" placeholder="{{texts.text_15}}" required>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">{{texts.text_13}}</label>
+              <div class="form-input-wrap">
+                <input type="password" name="confirmPassword" class="form-input" placeholder="{{texts.text_16}}" required>
+              </div>
+            </div>
+            
+            <div class="form-actions">
+              <button type="submit" class="btn-save" id="saveBtn">
+                <span class="btn-text">{{texts.text_14}}</span>
+                <span class="btn-loading" style="display:none;">
+                  <iconify-icon icon="mdi:loading" class="spin"></iconify-icon>
+                </span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </div>
+    {{> website/common/footer}}
+  </main>
+
+  <!-- 提示消息 -->
+  <div class="toast-message" id="toastMessage" style="display:none;">
+    <span class="toast-text"></span>
+  </div>
+
+  <script src="/js/iconify-icon.min.js"></script>
+  <script>
+    (function() {
+      const form = document.getElementById('changePasswordForm');
+      const saveBtn = document.getElementById('saveBtn');
+      const toast = document.getElementById('toastMessage');
+      const toastText = toast.querySelector('.toast-text');
+
+      function showToast(message, type) {
+        toastText.textContent = message;
+        toast.className = 'toast-message ' + type;
+        toast.style.display = 'block';
+        setTimeout(() => {
+          toast.style.display = 'none';
+        }, 3000);
+      }
+
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const currentPassword = form.currentPassword.value.trim();
+        const newPassword = form.newPassword.value.trim();
+        const confirmPassword = form.confirmPassword.value.trim();
+
+        if (!currentPassword || !newPassword || !confirmPassword) {
+          showToast('{{texts.text_19}}', 'error');
+          return;
+        }
+
+        if (newPassword !== confirmPassword) {
+          showToast('{{texts.text_17}}', 'error');
+          return;
+        }
+
+        if (newPassword.length < 6) {
+          showToast('{{texts.text_18}}', 'error');
+          return;
+        }
+
+        // 显示加载状态
+        saveBtn.disabled = true;
+        saveBtn.querySelector('.btn-text').style.display = 'none';
+        saveBtn.querySelector('.btn-loading').style.display = 'inline-flex';
+
+        try {
+          const response = await fetch('/api/member/change-password', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              currentPassword,
+              newPassword
+            })
+          });
+
+          const data = await response.json();
+
+          if (response.ok && data.success) {
+            showToast(data.message || 'Password changed successfully', 'success');
+            form.reset();
+          } else {
+            showToast(data.message || 'Failed to change password', 'error');
+          }
+        } catch (error) {
+          showToast('Network error', 'error');
+        } finally {
+          saveBtn.disabled = false;
+          saveBtn.querySelector('.btn-text').style.display = 'inline';
+          saveBtn.querySelector('.btn-loading').style.display = 'none';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

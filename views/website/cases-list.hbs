@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="{{locale}}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  {{#if description}}<meta name="description" content="{{description}}">{{/if}}
+  {{#if keywords}}<meta name="keywords" content="{{keywords}}">{{/if}}
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/bootstrap-grid.css">
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/grid.css">
+  <link rel="stylesheet" href="/css/global/common-global.css">
+  <link rel="stylesheet" href="/css/global/products-global.css">
+  <link rel="stylesheet" href="/css/global/solutions-global.css">
+  <link rel="stylesheet" href="/css/global/cases-global.css">
+  <link rel="stylesheet" href="/css/other/animate.min.css">
+  <link rel="stylesheet" href="/css/exo.css">
+</head>
+<body class="g-products-page g-cases-page">
+  {{> website/common/nav-drawer}}
+  {{> website/common/header}}
+
+  <main class="g-main" style="background-color: #f5f5f5;">
+    <section class="g-cases-hero" {{#if casesBannerUrl}}style="background-image: url({{casesBannerUrl}}); background-size: cover; background-repeat: no-repeat;"{{/if}}>
+
+    </section>
+    <nav class="g-products-breadcrumb" aria-label="Breadcrumb">
+      <div class="container">
+        <ol class="g-products-breadcrumb__list">
+          <li class="g-products-breadcrumb__item">
+            <a href="{{#if basePath}}{{basePath}}{{else}}/{{/if}}" class="g-products-breadcrumb__link">
+              {{#if (eq locale "zh-CN")}}首页{{else}}Home{{/if}}
+            </a>
+          </li>
+          <li class="g-products-breadcrumb__separator">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </li>
+          <li class="g-products-breadcrumb__item g-products-breadcrumb__item--active">
+            <span class="g-products-breadcrumb__link--current">{{#if (eq locale "zh-CN")}}应用案例{{else}}Cases{{/if}}</span>
+          </li>
+        </ol>
+      </div>
+    </nav>
+    <div class="container">
+      <div class="g-products-layout g-cases-layout">
+        <div class="g-products-layout__inner">
+          <!-- 分类侧边栏 -->
+          <aside class="g-products-sidebar g-cases-sidebar" aria-label="{{caseListTexts.categoryTitle}}">
+            <div class="g-products-sidebar__inner">
+              <div class="g-products-sidebar__header">
+                <button type="button" class="g-products-sidebar__toggle" id="categoryToggleBtn" aria-expanded="false" aria-controls="categoryList">
+                  <span class="g-products-sidebar__title">
+                    {{caseListTexts.categoryTitle}}
+                  </span>
+                </button>
+              </div>
+              <div class="g-products-sidebar__content" id="categoryList">
+                <!-- 全部分类 -->
+                <div class="g-cases-sidebar__row">
+                  <a href="{{casesListUrl}}" class="g-cases-sidebar__link{{#if (eq selectedCategoryId null)}} is-active{{/if}}">
+                    {{caseListTexts.allCategories}}
+                    {{#if totalCount}}
+                      <span class="g-cases-sidebar__count">{{totalCount}}</span>
+                    {{/if}}
+                  </a>
+                </div>
+                
+                <!-- 业务板块分类 -->
+                {{#each categories}}
+                  <div class="g-cases-sidebar__row">
+                    <a href="{{casesListUrl}}?categoryId={{this.id}}" class="g-cases-sidebar__link{{#if (eq selectedCategoryId this.id)}} is-active{{/if}}">
+                      {{this.title}}
+                      {{#if this.count}}
+                        <span class="g-cases-sidebar__count">{{this.count}}</span>
+                      {{/if}}
+                    </a>
+                  </div>
+                {{/each}}
+              </div>
+            </div>
+          </aside>
+          
+          <!-- 案例列表 -->
+          <div class="g-products-layout__content">
+            <div class="g-cases-list-grid">
+              {{#each casesList}}
+              {{> website/cases/cases-list-card-item}}
+              {{else}}
+              <p style="grid-column:1/-1;text-align:center;color:#888;padding:2rem 0;">{{#if (eq locale "zh-CN")}}暂无案例{{else}}No cases yet.{{/if}}</p>
+              {{/each}}
+            </div>
+            {{#if pagination}}{{> website/common/list-pagination pagination locale=locale}}{{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
+    {{> website/common/footer}}
+  </main>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // 分类侧边栏折叠功能
+      const categoryToggleBtn = document.getElementById('categoryToggleBtn');
+      const categoryList = document.getElementById('categoryList');
+      
+      if (categoryToggleBtn && categoryList) {
+        categoryToggleBtn.addEventListener('click', function() {
+          const expanded = this.getAttribute('aria-expanded') === 'true';
+          this.setAttribute('aria-expanded', !expanded);
+          categoryList.style.display = !expanded ? 'block' : 'none';
+        });
+      }
+    });
+  </script>
+</body>
+</html>

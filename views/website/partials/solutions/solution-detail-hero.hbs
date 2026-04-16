@@ -1,0 +1,19 @@
+<section class="g-solution-detail-hero">
+  <div class="g-solution-detail-hero__bg"></div>
+  {{#if bannerImageUrl}}
+  <div class="g-solution-detail-hero__image-container">
+    <img src="{{bannerImageUrl}}" alt="" class="g-solution-detail-hero__image" loading="eager" />
+  </div>
+  {{else}}
+  <div class="g-solution-detail-hero__placeholder"></div>
+  {{/if}}
+  <div class="container g-solution-detail-hero__inner">
+    <div class="g-solution-detail-hero__text">
+      <h1 class="g-solution-detail-hero__title">{{solutionHeroTitle}}</h1>
+      <div class="g-solution-detail-hero__rule" aria-hidden="true"></div>
+      {{#if solutionHeroDesc}}
+      <p class="g-solution-detail-hero__desc">{{solutionHeroDesc}}</p>
+      {{/if}}
+    </div>
+  </div>
+</section>

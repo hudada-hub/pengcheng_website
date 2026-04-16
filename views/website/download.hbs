@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="{{locale}}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  {{#if description}}<meta name="description" content="{{description}}">{{/if}}
+  {{#if keywords}}<meta name="keywords" content="{{keywords}}">{{/if}}
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/bootstrap-grid.css">
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/grid.css">
+  <link rel="stylesheet" href="/css/global/common-global.css">
+  <link rel="stylesheet" href="/css/global/download-global.css">
+  <link rel="stylesheet" href="/css/other/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/exo.css">
+</head>
+<body class="g-download-page">
+  {{> website/common/nav-drawer}}
+  {{> website/common/header}}
+
+  <main class="g-main">
+    <div class="g-download-layout">
+      <div class="container g-download-layout__inner">
+        <h1 class="g-download-page__title">
+          {{#if downloadTexts.download}}{{downloadTexts.download}}{{else}}{{#if (eq locale "zh-CN")}}下载{{else}}Download{{/if}}{{/if}}
+        </h1>
+
+        <div class="g-download-panel g-download-panel--filters">
+          {{#if tabLinks.length}}
+          <div class="g-download-tabs" role="tablist" aria-label="{{#if downloadTexts.download}}{{downloadTexts.download}}{{else}}{{#if (eq locale "zh-CN")}}下载分类{{else}}Download categories{{/if}}{{/if}}">
+            {{#each tabLinks}}
+            <a
+              role="tab"
+              class="g-download-tabs__item{{#if active}} g-download-tabs__item--active{{/if}}"
+              href="{{url}}"
+              {{#if active}}aria-selected="true"{{else}}aria-selected="false"{{/if}}
+            >{{name}}</a>
+            {{/each}}
+          </div>
+          {{/if}}
+
+          <div class="g-download-filters">
+            <div class="g-download-filters__row">
+            <span class="g-download-filters__label">
+              {{#if downloadTexts.productType}}{{downloadTexts.productType}}{{else}}{{#if (eq locale "zh-CN")}}产品类型{{else}}Product Type{{/if}}{{/if}}
+            </span>
+            <div class="g-download-filters__chips">
+              {{#each seriesLinks}}
+              <a
+                class="g-download-chip{{#if active}} g-download-chip--active{{/if}}"
+                href="{{url}}"
+              >{{#if name}}{{name}}{{else}}{{#if (eq ../locale "zh-CN")}}全部{{else}}All{{/if}}{{/if}}</a>
+              {{/each}}
+            </div>
+          </div>
+          <div class="g-download-filters__row">
+            <span class="g-download-filters__label">
+              {{#if downloadTexts.fileType}}{{downloadTexts.fileType}}{{else}}{{#if (eq locale "zh-CN")}}文件类型{{else}}File Type{{/if}}{{/if}}
+            </span>
+            <div class="g-download-filters__chips">
+              {{#each fileTypeLinks}}
+              <a
+                class="g-download-chip{{#if active}} g-download-chip--active{{/if}}"
+                href="{{url}}"
+              >{{#if name}}{{name}}{{else}}{{#if (eq ../locale "zh-CN")}}全部{{else}}All{{/if}}{{/if}}</a>
+              {{/each}}
+            </div>
+          </div>
+          <div class="g-download-filters__row">
+            <span class="g-download-filters__label">
+              {{#if downloadTexts.language}}{{downloadTexts.language}}{{else}}{{#if (eq locale "zh-CN")}}语言{{else}}Language{{/if}}{{/if}}
+            </span>
+            <div class="g-download-filters__chips">
+              {{#each langLinks}}
+              <a
+                class="g-download-chip{{#if active}} g-download-chip--active{{/if}}"
+                href="{{url}}"
+              >{{name}}</a>
+              {{/each}}
+            </div>
+          </div>
+            </div>
+        </div>
+
+        <section class="g-download-panel g-download-panel--results" aria-labelledby="g-download-results-heading">
+          <h2 id="g-download-results-heading" class="g-download-results__title">
+            {{#if downloadTexts.searchResults}}{{downloadTexts.searchResults}}{{else}}{{#if (eq locale "zh-CN")}}搜索结果：{{else}}Search Results:{{/if}}{{/if}}
+          </h2>
+
+          <div class="g-download-table-wrap">
+            <table class="g-download-table">
+              <thead>
+                <tr>
+                  <th scope="col">{{#if downloadTexts.fileName}}{{downloadTexts.fileName}}{{else}}{{#if (eq locale "zh-CN")}}文件名{{else}}File Name{{/if}}{{/if}}</th>
+                  <th scope="col">{{#if downloadTexts.fileType}}{{downloadTexts.fileType}}{{else}}{{#if (eq locale "zh-CN")}}文件类型{{else}}File Type{{/if}}{{/if}}</th>
+                  <th scope="col">{{#if downloadTexts.productType}}{{downloadTexts.productType}}{{else}}{{#if (eq locale "zh-CN")}}产品类型{{else}}Product Type{{/if}}{{/if}}</th>
+                  <th scope="col">{{#if downloadTexts.language}}{{downloadTexts.language}}{{else}}{{#if (eq locale "zh-CN")}}语言{{else}}Language{{/if}}{{/if}}</th>
+                  <th scope="col">{{#if downloadTexts.download}}{{downloadTexts.download}}{{else}}{{#if (eq locale "zh-CN")}}下载{{else}}Download{{/if}}{{/if}}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each resultRows}}
+                <tr>
+                  <td data-label="{{#if ../downloadTexts.fileName}}{{../downloadTexts.fileName}}{{else}}{{#if (eq ../locale "zh-CN")}}文件名{{else}}File Name{{/if}}{{/if}}">{{fileName}}</td>
+                  <td data-label="{{#if ../downloadTexts.fileType}}{{../downloadTexts.fileType}}{{else}}{{#if (eq ../locale "zh-CN")}}文件类型{{else}}File Type{{/if}}{{/if}}">{{fileTypeLabel}}</td>
+                  <td data-label="{{#if ../downloadTexts.productType}}{{../downloadTexts.productType}}{{else}}{{#if (eq ../locale "zh-CN")}}产品类型{{else}}Product Type{{/if}}{{/if}}">{{productTypeLabel}}</td>
+                  <td data-label="{{#if ../downloadTexts.language}}{{../downloadTexts.language}}{{else}}{{#if (eq ../locale "zh-CN")}}语言{{else}}Language{{/if}}{{/if}}"><span class="g-download-table__lang">{{langBadge}}</span></td>
+                  <td data-label="{{#if ../downloadTexts.download}}{{../downloadTexts.download}}{{else}}{{#if (eq ../locale "zh-CN")}}下载{{else}}Download{{/if}}{{/if}}">
+                    <a class="g-download-btn" href="{{downloadUrl}}" download rel="noopener noreferrer" data-file-id="{{id}}">
+                      <svg class="g-download-btn__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M12 3v12m0 0l4-4m-4 4l-4-4M5 19h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                      {{#if ../downloadTexts.download}}{{../downloadTexts.download}}{{else}}{{#if (eq ../locale "zh-CN")}}下载{{else}}Download{{/if}}{{/if}}
+                    </a>
+                  </td>
+                </tr>
+                {{else}}
+                <tr>
+                  <td colspan="5" class="g-download-table__empty">
+                    {{#if downloadTexts.noFiles}}{{downloadTexts.noFiles}}{{else}}{{#if (eq locale "zh-CN")}}暂无文件{{else}}No files found.{{/if}}{{/if}}
+                  </td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+
+          {{#if pagination}}
+          {{> website/common/list-pagination pagination locale=locale}}
+          {{/if}}
+
+         
+
+        </section>
+      </div>
+    </div>
+
+    {{> website/common/footer}}
+  </main>
+
+  <script>
+    (function () {
+      try {
+        var ref = document.referrer || '';
+        if (ref) sessionStorage.setItem('pc_dl_from', ref);
+      } catch (e) {}
+    })();
+    (function () {
+      var nav = document.querySelector('.g-download-page .pc-nav');
+      if (!nav) return;
+      function onScroll() {
+        nav.classList.toggle('nav-scrolled', window.scrollY > 10);
+      }
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    })();
+    (function () {
+      function postRecord(fileId, fromUrl) {
+        var payload = JSON.stringify({
+          downloadId: fileId,
+          fromPageUrl: fromUrl || '',
+        });
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon(
+            '/api/download-file-record',
+            new Blob([payload], { type: 'application/json' }),
+          );
+        } else {
+          fetch('/api/download-file-record', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: payload,
+            keepalive: true,
+          }).catch(function () {});
+        }
+      }
+      document.querySelectorAll('.g-download-btn[data-file-id]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          var id = parseInt(el.getAttribute('data-file-id') || '', 10);
+          if (!id) return;
+          var fromUrl = '';
+          try {
+            fromUrl = sessionStorage.getItem('pc_dl_from') || '';
+          } catch (err) {}
+          postRecord(id, fromUrl);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

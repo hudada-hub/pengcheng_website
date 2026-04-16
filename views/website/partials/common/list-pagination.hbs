@@ -1,0 +1,66 @@
+{{!--
+  前台统一分页：首�?« / 上一�?�?/ 数字 �?/ 下一�?�?/ 末页 » + 可选总条�?  用法：{{> website/common/list-pagination pagination locale=locale}}
+  执行上下文即�?pagination 对象；外层可 {{#if pagination}} 包住；可�?ariaLabel
+--}}
+{{#if slots}}
+<nav class="g-list-pagination" aria-label="{{#if ariaLabel}}{{ariaLabel}}{{else}}{{#if (eq locale 'zh-CN')}}分页{{else}}Pagination{{/if}}{{/if}}">
+  <div class="g-list-pagination__row">
+    {{#if firstUrl}}
+    <a href="{{firstUrl}}" class="g-list-pagination__btn g-list-pagination__btn--icon" aria-label="{{firstAriaLabel}}">
+      <svg class="g-list-pagination__svg" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 7.5L6 12l4.5 4.5M17.5 7.5L13 12l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    {{else}}
+    <span class="g-list-pagination__btn g-list-pagination__btn--icon g-list-pagination__btn--disabled" aria-hidden="true">
+      <svg class="g-list-pagination__svg" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 7.5L6 12l4.5 4.5M17.5 7.5L13 12l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+    {{/if}}
+
+    {{#if prevUrl}}
+    <a href="{{prevUrl}}" class="g-list-pagination__btn g-list-pagination__btn--icon" aria-label="{{prevAriaLabel}}">
+      <svg class="g-list-pagination__svg" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 7l-5 5 5 5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    {{else}}
+    <span class="g-list-pagination__btn g-list-pagination__btn--icon g-list-pagination__btn--disabled" aria-hidden="true">
+      <svg class="g-list-pagination__svg" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 7l-5 5 5 5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+    {{/if}}
+
+    <ul class="g-list-pagination__pages" role="list">
+      {{#each slots}}
+        {{#if (eq this.type 'ellipsis')}}
+      <li class="g-list-pagination__li" role="presentation"><span class="g-list-pagination__btn g-list-pagination__btn--ellipsis" aria-hidden="true">...</span></li>
+        {{else}}
+      <li class="g-list-pagination__li">
+          {{#if this.isCurrent}}
+        <span class="g-list-pagination__btn is-current" aria-current="page">{{this.num}}</span>
+          {{else}}
+        <a href="{{this.url}}" class="g-list-pagination__btn">{{this.num}}</a>
+          {{/if}}
+      </li>
+        {{/if}}
+      {{/each}}
+    </ul>
+
+    {{#if nextUrl}}
+    <a href="{{nextUrl}}" class="g-list-pagination__btn g-list-pagination__btn--icon" aria-label="{{nextAriaLabel}}">
+      <svg class="g-list-pagination__svg" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 7l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    {{else}}
+    <span class="g-list-pagination__btn g-list-pagination__btn--icon g-list-pagination__btn--disabled" aria-hidden="true">
+      <svg class="g-list-pagination__svg" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 7l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+    {{/if}}
+
+    {{#if lastUrl}}
+    <a href="{{lastUrl}}" class="g-list-pagination__btn g-list-pagination__btn--icon" aria-label="{{lastAriaLabel}}">
+      <svg class="g-list-pagination__svg" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 7.5L11 12l-4.5 4.5M13.5 7.5L18 12l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    {{else}}
+    <span class="g-list-pagination__btn g-list-pagination__btn--icon g-list-pagination__btn--disabled" aria-hidden="true">
+      <svg class="g-list-pagination__svg" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 7.5L11 12l-4.5 4.5M13.5 7.5L18 12l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+    {{/if}}
+  </div>
+
+</nav>
+{{/if}}

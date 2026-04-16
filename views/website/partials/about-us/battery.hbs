@@ -1,0 +1,56 @@
+{{!-- 配置 about-us-battery：type 5 数组 title/content/pic1Url；bg_pic_url 区块背景 cover；link_url 右侧大图 --}}
+{{#if hasAboutUsBattery}}
+<section
+  id="{{aboutUsBatterySectionId}}"
+  class="g-about-us-battery index_intelligent_warp index_intelligent_warp--pending g-about-us-anchor-target"
+  {{#if aboutUsBatteryHeroUrl}}
+  style="background-image: url('{{aboutUsBatteryHeroUrl}}');"
+  {{/if}}
+  aria-labelledby="g-about-us-battery-title"
+>
+  <div class="layout">
+    <div class="index_intelligent_main index_flex">
+      {{#if aboutUsBatteryItems}}
+      <ul class="index_intelligent_list" role="list">
+        {{#each aboutUsBatteryItems}}
+        <li class="index_intelligent_slide index_flex" role="listitem">
+          {{#if iconUrl}}
+          <div class="item_icon">
+            <img src="{{iconUrl}}" alt="{{itemTitle}}" loading="lazy" decoding="async" />
+          </div>
+          {{/if}}
+          <div class="item_text">
+            <h2>{{itemTitle}}</h2>
+            {{#if text}}
+            <p>{{text}}</p>
+            {{/if}}
+          </div>
+        </li>
+        {{/each}}
+      </ul>
+      {{/if}}
+      <div class="index_intelligent_box">
+        {{#if aboutUsBatteryDisplayTitle}}
+        <h2 id="g-about-us-battery-title">{{aboutUsBatteryDisplayTitle}}</h2>
+        {{/if}}
+        {{#if aboutUsBatteryIntro}}
+        <p>{{aboutUsBatteryIntro}}</p>
+        {{/if}}
+        {{#if aboutUsBatteryPatternUrl}}
+        <div class="item_img">
+          <img src="{{aboutUsBatteryPatternUrl}}" alt="" loading="lazy" decoding="async" />
+        </div>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+  <noscript>
+    <style>
+      .g-about-us-battery.index_intelligent_warp.index_intelligent_warp--pending {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    </style>
+  </noscript>
+</section>
+{{/if}}

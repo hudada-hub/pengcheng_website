@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head><body><div id="admin-form-fragment">
+  <div class="admin-card">
+    <form class="admin-form admin-form-modal" method="post" action="/admin/system-config/save">
+      <div class="admin-modal-form-scroll">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        {{#if config}}<input type="hidden" name="id" value="{{config.id}}">{{/if}}
+
+        <section class="admin-form-section">
+          <div class="admin-form-section-title">基础信息</div>
+          <div class="admin-form-grid admin-form-grid-2">
+            <div class="form-group admin-col-span-2">
+              <label>名称 <span class="admin-required">*</span></label>
+              {{#if config}}
+              <input type="text" value="{{config.name}}" disabled style="background:var(--admin-bg);cursor:not-allowed;">
+              {{else}}
+              <input type="text" name="name" required placeholder="配置项标识，如 smtp_host">
+              {{/if}}
+              <p class="admin-form-help">唯一标识系统配置项，创建后不可修改。</p>
+            </div>
+
+            <div class="form-group admin-col-span-2">
+              <label>说明</label>
+              <input type="text" name="hint" value="{{#if config}}{{#if config.hint}}{{config.hint}}{{/if}}{{/if}}" placeholder="配置项说明，便于后台维护">
+            </div>
+
+            <div class="form-group">
+              <label>类型</label>
+              {{#if config}}
+              <input type="text" value="{{#if (eq config.type 1)}}数字{{else}}{{#if (eq config.type 2)}}字符串{{else}}{{#if (eq config.type 3)}}布尔{{else}}日期{{/if}}{{/if}}{{/if}}" disabled style="background:var(--admin-bg);cursor:not-allowed;">
+              {{else}}
+              <select name="type">
+                <option value="1">数字</option>
+                <option value="2" selected>字符串</option>
+                <option value="3">布尔</option>
+                <option value="4">日期</option>
+              </select>
+              {{/if}}
+            </div>
+          </div>
+        </section>
+
+        <section class="admin-form-section admin-form-section-last">
+          <div class="admin-form-section-title">配置值</div>
+          <div class="admin-form-grid admin-form-grid-2">
+            <div class="form-group admin-col-span-2">
+              <label>值</label>
+              {{#if config}}
+              {{#if (eq config.type 3)}}
+              <select name="value">
+                <option value="0" {{#if (eq config.value "0")}}selected{{/if}}>否</option>
+                <option value="1" {{#if (eq config.value "1")}}selected{{/if}}>是</option>
+              </select>
+              {{else}}
+              <input type="{{#if (eq config.type 1)}}number{{else}}text{{/if}}" name="value" value="{{#if config.value}}{{config.value}}{{/if}}" placeholder="配置值">
+              {{/if}}
+              {{else}}
+              <input type="text" name="value" placeholder="配置值">
+              {{/if}}
+              <p class="admin-form-help">不同类型的配置项，值的格式请保持与业务逻辑约定一致。</p>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">保存</button>
+        <button type="button" class="btn admin-modal-form-cancel">取消</button>
+      </div>
+    </form>
+  </div>
+</div></body></html>
+

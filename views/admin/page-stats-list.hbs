@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} - 鹏成后台</title>
+  <meta name="csrf-token" content="{{csrfToken}}">
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/admin/admin-theme.css">
+  <script src="/js/iconify-icon.min.js"></script>
+  <script src="/js/univerjs/echarts.min.js"></script>
+  <style>
+    .page-stats-chart-card {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: var(--admin-card);
+      border: 1px solid var(--admin-border);
+      border-radius: var(--admin-radius);
+    }
+    .page-stats-chart-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 0.75rem;
+    }
+    .page-stats-chart-head h2 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--admin-text);
+    }
+    .page-stats-chart-lang {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      max-width: min(560px, 100%);
+    }
+    .page-stats-chart-lang__row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      justify-content: flex-end;
+    }
+    .page-stats-chart-lang__label {
+      font-size: var(--font-size-sm);
+      color: var(--admin-text-muted);
+      white-space: nowrap;
+    }
+    .page-stats-chart-lang__actions {
+      display: inline-flex;
+      gap: 10px;
+      font-size: var(--font-size-sm);
+    }
+    .page-stats-chart-lang__actions button {
+      padding: 0;
+      background: none;
+      border: none;
+      color: var(--admin-primary, #1677ff);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .page-stats-chart-lang__actions button:hover {
+      opacity: 0.85;
+    }
+    .page-stats-chart-lang__checks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      justify-content: flex-end;
+    }
+    .page-stats-chart-lang__checks label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--font-size-sm);
+      color: var(--admin-text);
+      cursor: pointer;
+      user-select: none;
+    }
+    .page-stats-chart-lang__checks input {
+      margin: 0;
+    }
+    #pageStatsChartBar {
+      width: 100%;
+      height: 420px;
+      min-height: 280px;
+    }
+    .page-stats-detail-modal.admin-modal-overlay { z-index: 11000; }
+    .page-stats-detail-modal .admin-modal-dialog.admin-modal-form {
+      max-width: min(960px, 96vw);
+      width: 92%;
+      height: auto;
+      max-height: 88vh;
+    }
+    .page-stats-detail-body {
+      padding: 0 1rem 1rem;
+      overflow: auto;
+      flex: 1;
+      min-height: 0;
+    }
+    .page-stats-detail-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0.5rem 0 0.75rem;
+      font-size: var(--font-size-sm);
+      color: var(--admin-text-muted);
+    }
+    .page-stats-detail-pager {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .page-stats-detail-pager button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .page-stats-table-card {
+      margin-bottom: 0;
+    }
+    .page-stats-table-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      margin-bottom: 0.65rem;
+    }
+    .page-stats-table-toolbar label {
+      font-size: var(--font-size-sm);
+      color: var(--admin-text-muted);
+      margin: 0;
+      white-space: nowrap;
+    }
+    .page-stats-table-toolbar select {
+      min-width: 200px;
+      max-width: min(360px, 100%);
+      padding: 0.35rem 0.5rem;
+      font-size: var(--font-size-sm);
+      border: 1px solid var(--admin-border);
+      border-radius: var(--admin-radius, 4px);
+      background: var(--admin-bg, #fff);
+      color: var(--admin-text);
+    }
+  </style>
+</head>
+<body class="admin-layout">
+  {{> admin/header}}
+  <div class="admin-body">
+    {{> admin/sidebar}}
+    <main class="admin-main">
+      <div class="admin-page-toolbar">
+        <h1 style="margin:0;">{{title}}</h1>
+        <p style="margin:0;font-size:var(--font-size-sm);color:var(--admin-text-muted);">按语言与页面类型汇总；点击「查看详情」可分页查看单次访问明细。</p>
+      </div>
+
+      <div class="page-stats-table-card">
+        <div class="page-stats-table-toolbar">
+          <label for="pageStatsTableLangFilter">表格 · 语言筛选</label>
+          <select id="pageStatsTableLangFilter" name="langId" aria-label="按语言筛选汇总表">
+            <option value="" {{#unless selectedTableLangId}}selected{{/unless}}>全部语言</option>
+            {{#each tableLangOptions}}
+            <option value="{{this.id}}" {{#if (eq ../selectedTableLangId this.id)}}selected{{/if}}>{{this.label}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>语言</th>
+              <th>页面类型</th>
+              <th>访问量</th>
+              <th>最近访问</th>
+              <th>用户（邮箱）</th>
+              <th style="width:120px;text-align:right;">操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each summaryList}}
+            <tr>
+              <td>{{this.id}}</td>
+              <td>{{this.langLabel}}</td>
+              <td>
+                <span style="font-size:var(--font-size-sm);">{{this.pageTypeLabel}}</span>
+                {{#unless (eq this.pageTypeLabel this.pageType)}}
+                <code style="display:block;margin-top:2px;font-size:11px;color:var(--admin-text-muted);" title="page_type">{{this.pageType}}</code>
+                {{/unless}}
+              </td>
+              <td>{{this.viewCount}}</td>
+              <td>{{this.lastViewAtFormatted}}</td>
+              <td style="font-size:var(--font-size-sm);word-break:break-all;" title="{{this.memberUserDisplay}}">{{this.memberUserDisplay}}</td>
+              <td style="text-align:right;">
+                <button
+                  type="button"
+                  class="btn btn-link page-stats-open-detail"
+                  style="padding:0;white-space:nowrap;"
+                  data-stat-id="{{this.id}}"
+                  data-detail-title="{{this.langLabel}} · {{this.pageTypeLabel}}"
+                >查看详情</button>
+              </td>
+            </tr>
+            {{else}}
+            <tr><td colspan="7" style="text-align:center;color:var(--admin-text-muted);">暂无汇总数据</td></tr>
+            {{/each}}
+          </tbody>
+        </table>
+        </div>
+      </div>
+
+      <script>
+        (function () {
+          var sel = document.getElementById('pageStatsTableLangFilter');
+          if (!sel) return;
+          sel.addEventListener('change', function () {
+            var v = (sel.value || '').trim();
+            var url = '/admin/page-stats';
+            if (v) url += '?langId=' + encodeURIComponent(v);
+            window.location.href = url;
+          });
+        })();
+      </script>
+
+      <div class="page-stats-chart-card">
+        <div class="page-stats-chart-head">
+          <h2>访问量分布（条形图）</h2>
+          <div class="page-stats-chart-lang" id="pageStatsChartLangWrap">
+            <div class="page-stats-chart-lang__row">
+              <span class="page-stats-chart-lang__label">显示语言（可多选）</span>
+              <div class="page-stats-chart-lang__actions">
+                <button type="button" id="pageStatsChartLangAll">全选</button>
+                <button type="button" id="pageStatsChartLangNone">全不选</button>
+              </div>
+            </div>
+            <div class="page-stats-chart-lang__checks" id="pageStatsChartLangChecks" aria-label="图表语言筛选"></div>
+          </div>
+        </div>
+        <p style="margin:0 0 0.5rem;font-size:var(--font-size-sm);color:var(--admin-text-muted);">按所选语言筛选汇总数据，按访问量降序最多展示 40 条。</p>
+        <div id="pageStatsChartBar" role="img" aria-label="页面访问量条形图"></div>
+      </div>
+    </main>
+  </div>
+
+  <div
+    class="admin-modal-overlay page-stats-detail-modal"
+    id="pageStatsDetailOverlay"
+    aria-hidden="true"
+  >
+    <div class="admin-modal-dialog admin-modal-form" role="dialog" aria-modal="true" aria-labelledby="pageStatsDetailTitle">
+      <div class="admin-modal-header">
+        <h2 class="admin-modal-title" id="pageStatsDetailTitle">访问明细</h2>
+        <button type="button" class="admin-modal-close" id="pageStatsDetailClose" aria-label="关闭">
+          <iconify-icon icon="mdi:close"></iconify-icon>
+        </button>
+      </div>
+      <div class="page-stats-detail-body">
+        <div class="page-stats-detail-toolbar">
+          <span id="pageStatsDetailMeta"></span>
+          <div class="page-stats-detail-pager">
+            <button type="button" class="btn" id="pageStatsDetailPrev">上一页</button>
+            <span id="pageStatsDetailPageInfo"></span>
+            <button type="button" class="btn" id="pageStatsDetailNext">下一页</button>
+          </div>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>时间</th>
+                <th>URL</th>
+                <th>IP</th>
+                <th>User-Agent</th>
+                <th>用户（邮箱）</th>
+              </tr>
+            </thead>
+            <tbody id="pageStatsDetailTbody">
+              <tr><td colspan="6" style="text-align:center;color:var(--admin-text-muted);padding:1rem;">加载中…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script id="pageStatsChartRowsJson" type="application/json">{{{chartRowsJson}}}</script>
+  <script id="pageStatsChartLangsJson" type="application/json">{{{chartLangsJson}}}</script>
+  <script>
+    (function () {
+      function esc(s) {
+        return String(s == null ? '' : s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      var chartEl = document.getElementById('pageStatsChartBar');
+      var rowsScript = document.getElementById('pageStatsChartRowsJson');
+      var langsScript = document.getElementById('pageStatsChartLangsJson');
+      var langChecksWrap = document.getElementById('pageStatsChartLangChecks');
+      var btnLangAll = document.getElementById('pageStatsChartLangAll');
+      var btnLangNone = document.getElementById('pageStatsChartLangNone');
+
+      if (chartEl && rowsScript && typeof echarts !== 'undefined') {
+        try {
+          var fullRows = JSON.parse(rowsScript.textContent || '[]');
+          if (!Array.isArray(fullRows)) fullRows = [];
+          var langOptions = [];
+          try {
+            langOptions = JSON.parse((langsScript && langsScript.textContent) || '[]');
+          } catch (e2) {
+            langOptions = [];
+          }
+          if (!Array.isArray(langOptions)) langOptions = [];
+
+          var chart = echarts.init(chartEl);
+          var CHART_TOP_N = 40;
+
+          function getSelectedLangIds() {
+            var set = new Set();
+            if (!langChecksWrap) return set;
+            var boxes = langChecksWrap.querySelectorAll('input[type="checkbox"][data-lang-id]');
+            if (!boxes.length) {
+              fullRows.forEach(function (r) {
+                var lid = Number(r.langId);
+                if (lid) set.add(lid);
+              });
+              return set;
+            }
+            boxes.forEach(function (inp) {
+              if (inp.checked) {
+                var id = parseInt(inp.getAttribute('data-lang-id') || '0', 10);
+                if (id) set.add(id);
+              }
+            });
+            return set;
+          }
+
+          function refreshChart() {
+            var selected = getSelectedLangIds();
+            var filtered = fullRows.filter(function (r) {
+              return selected.has(Number(r.langId));
+            });
+            filtered.sort(function (a, b) {
+              return (Number(b.value) || 0) - (Number(a.value) || 0);
+            });
+            var top = filtered.slice(0, CHART_TOP_N);
+            var names = top.map(function (x) { return x.name || ''; });
+            var values = top.map(function (x) { return Number(x.value) || 0; });
+
+            if (!top.length) {
+              chart.setOption({
+                grid: { left: 12, right: 20, top: 24, bottom: 48, containLabel: true },
+                xAxis: { type: 'category', data: [] },
+                yAxis: { type: 'value', minInterval: 1 },
+                series: [{ name: '访问量', type: 'bar', data: [] }],
+                graphic: [
+                  {
+                    type: 'text',
+                    left: 'center',
+                    top: 'middle',
+                    style: { text: '请至少选择一种语言', fill: '#999', fontSize: 14 },
+                  },
+                ],
+              });
+              return;
+            }
+
+            chart.setOption({
+              graphic: [],
+              grid: { left: 12, right: 20, top: 24, bottom: names.length > 12 ? 120 : 56, containLabel: true },
+              tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+              xAxis: {
+                type: 'category',
+                data: names,
+                axisLabel: { rotate: names.length > 10 ? 38 : 0, fontSize: 11, interval: 0 },
+              },
+              yAxis: { type: 'value', minInterval: 1 },
+              series: [
+                {
+                  name: '访问量',
+                  type: 'bar',
+                  data: values,
+                  itemStyle: { color: '#1677ff', borderRadius: [4, 4, 0, 0] },
+                },
+              ],
+            });
+          }
+
+          if (langChecksWrap && langOptions.length) {
+            langChecksWrap.innerHTML = langOptions
+              .map(function (L) {
+                var id = L.id;
+                var idStr = String(id);
+                var label = esc(L.label || idStr);
+                return (
+                  '<label>' +
+                  '<input type="checkbox" data-lang-id="' +
+                  idStr +
+                  '" checked />' +
+                  '<span>' +
+                  label +
+                  '</span></label>'
+                );
+              })
+              .join('');
+            langChecksWrap.querySelectorAll('input[type="checkbox"]').forEach(function (inp) {
+              inp.addEventListener('change', refreshChart);
+            });
+          } else if (langChecksWrap) {
+            langChecksWrap.innerHTML =
+              '<span style="font-size:var(--font-size-sm);color:var(--admin-text-muted);">暂无语言数据</span>';
+          }
+
+          if (btnLangAll && langChecksWrap) {
+            btnLangAll.addEventListener('click', function () {
+              langChecksWrap.querySelectorAll('input[type="checkbox"]').forEach(function (inp) {
+                inp.checked = true;
+              });
+              refreshChart();
+            });
+          }
+          if (btnLangNone && langChecksWrap) {
+            btnLangNone.addEventListener('click', function () {
+              langChecksWrap.querySelectorAll('input[type="checkbox"]').forEach(function (inp) {
+                inp.checked = false;
+              });
+              refreshChart();
+            });
+          }
+
+          refreshChart();
+          window.addEventListener('resize', function () {
+            chart.resize();
+          });
+        } catch (e) {
+          chartEl.textContent = '图表加载失败';
+        }
+      }
+
+      var overlay = document.getElementById('pageStatsDetailOverlay');
+      var closeBtn = document.getElementById('pageStatsDetailClose');
+      var tbody = document.getElementById('pageStatsDetailTbody');
+      var titleEl = document.getElementById('pageStatsDetailTitle');
+      var metaEl = document.getElementById('pageStatsDetailMeta');
+      var pageInfo = document.getElementById('pageStatsDetailPageInfo');
+      var btnPrev = document.getElementById('pageStatsDetailPrev');
+      var btnNext = document.getElementById('pageStatsDetailNext');
+
+      var state = { statId: 0, title: '', page: 1, pageSize: 15, totalPages: 1, loading: false };
+
+      function setOpen(open) {
+        if (!overlay) return;
+        overlay.classList.toggle('open', open);
+        overlay.setAttribute('aria-hidden', open ? 'false' : 'true');
+      }
+
+      function renderRows(list) {
+        if (!tbody) return;
+        if (!list || !list.length) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--admin-text-muted);">暂无明细</td></tr>';
+          return;
+        }
+        tbody.innerHTML = list
+          .map(function (r) {
+            return (
+              '<tr>' +
+              '<td>' + esc(r.id) + '</td>' +
+              '<td style="font-size:var(--font-size-sm);white-space:nowrap;">' + esc(r.createdAtFormatted) + '</td>' +
+              '<td style="max-width:260px;word-break:break-all;font-size:var(--font-size-sm);" title="' + esc(r.pageUrl) + '"><a href="' + esc(r.pageUrl) + '" target="_blank">' + esc(r.pageUrlShort) + '</a></td>' +
+              '<td style="font-size:var(--font-size-sm);">' + esc(r.clientIp) + '</td>' +
+              '<td style="max-width:240px;word-break:break-all;font-size:var(--font-size-sm);" title="' + esc(r.userAgentShort) + '">' + esc(r.userAgentShort) + '</td>' +
+              '<td style="font-size:var(--font-size-sm);word-break:break-all;" title="' + esc(r.userDisplay) + '">' + esc(r.userDisplay) + '</td>' +
+              '</tr>'
+            );
+          })
+          .join('');
+      }
+
+      function renderPager() {
+        if (pageInfo) pageInfo.textContent = '第 ' + state.page + ' / ' + state.totalPages + ' 页';
+        if (btnPrev) btnPrev.disabled = state.page <= 1 || state.loading;
+        if (btnNext) btnNext.disabled = state.page >= state.totalPages || state.loading;
+      }
+
+      function loadPage(p) {
+        if (!state.statId || state.loading) return;
+        state.loading = true;
+        renderPager();
+        if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">加载中…</td></tr>';
+        var u =
+          '/admin/api/page-visit-logs?statId=' +
+          encodeURIComponent(String(state.statId)) +
+          '&page=' +
+          encodeURIComponent(String(p)) +
+          '&pageSize=' +
+          encodeURIComponent(String(state.pageSize));
+        fetch(u, { credentials: 'same-origin' })
+          .then(function (r) {
+            return r.json();
+          })
+          .then(function (data) {
+            state.loading = false;
+            if (!data || !data.ok) {
+              if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#f5222d;">' + esc(data && data.message ? data.message : '加载失败') + '</td></tr>';
+              return;
+            }
+            state.page = data.page || 1;
+            state.totalPages = data.totalPages || 1;
+            if (metaEl) metaEl.textContent = '共 ' + (data.total != null ? data.total : 0) + ' 条明细';
+            renderRows(data.list);
+            renderPager();
+          })
+          .catch(function () {
+            state.loading = false;
+            if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#f5222d;">网络错误</td></tr>';
+            renderPager();
+          });
+      }
+
+      document.querySelectorAll('.page-stats-open-detail').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var sid = parseInt(btn.getAttribute('data-stat-id') || '0', 10);
+          var t = btn.getAttribute('data-detail-title') || '访问明细';
+          if (!sid) return;
+          state.statId = sid;
+          state.title = t;
+          state.page = 1;
+          if (titleEl) titleEl.textContent = '访问明细 — ' + t;
+          setOpen(true);
+          loadPage(1);
+        });
+      });
+
+      if (overlay) {
+        overlay.addEventListener('click', function (e) {
+          if (e.target === overlay) setOpen(false);
+        });
+      }
+      if (closeBtn) closeBtn.addEventListener('click', function () { setOpen(false); });
+      if (btnPrev) btnPrev.addEventListener('click', function () { if (state.page > 1) loadPage(state.page - 1); });
+      if (btnNext) btnNext.addEventListener('click', function () { if (state.page < state.totalPages) loadPage(state.page + 1); });
+    })();
+  </script>
+  {{> admin/confirm-modal}}
+</body>
+</html>

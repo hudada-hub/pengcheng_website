@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head><body><div id="admin-form-fragment">
+  <div class="admin-card">
+    <form class="admin-form admin-form-modal admin-form-modal--with-richtext" method="post" action="/admin/activity-calendar/save" id="activityCalendarEditForm">
+      <div class="admin-modal-form-scroll-wrapper">
+        <div class="admin-modal-form-scroll">
+          <input type="hidden" name="_csrf" value="{{csrfToken}}">
+          {{#if activity}}<input type="hidden" name="id" value="{{activity.id}}">{{/if}}
+          <div class="form-group">
+            <label>标题</label>
+            <input type="text" name="title" id="activityTitle" value="{{#if activity}}{{activity.title}}{{/if}}" placeholder="活动标题">
+          </div>
+          <div class="form-group">
+            <label>活动开始日期 <span style="color:var(--admin-danger);">*</span></label>
+            <input type="date" name="eventDateStart" id="activityEventDateStart" required value="{{#if activity}}{{eventDateStartStr}}{{/if}}" aria-label="活动开始日期">
+          </div>
+          <div class="form-group">
+            <label>活动结束日期 <span style="color:var(--admin-danger);">*</span></label>
+            <input type="date" name="eventDateEnd" id="activityEventDateEnd" required value="{{#if activity}}{{eventDateEndStr}}{{/if}}" aria-label="活动结束日期">
+            <span id="activityDateError" class="form-error" style="display:none;color:var(--admin-danger);font-size:var(--font-size-sm);">结束日期不能早于开始日期</span>
+          </div>
+          <div class="form-group">
+            <label>地点</label>
+            <input type="text" name="location" value="{{#if activity}}{{activity.location}}{{/if}}" placeholder="活动地点">
+          </div>
+          <div class="form-group">
+            <label>活动链接地址（点击跳转）</label>
+            <input type="text" name="url" value="{{#if activity}}{{activity.url}}{{/if}}" placeholder="https://...">
+            <small style="color:var(--admin-text-muted);">前台卡片「访问活动页」按钮；留空则仅显示「活动详情」</small>
+          </div>
+          <div class="form-group">
+            <label>活动详情（富文本）</label>
+            <div class="activity-editor-toolbar-row" style="display:flex;align-items:center;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.5rem;">
+              <div id="activity-toolbar-container" style="flex:1;min-width:0;"></div>
+            </div>
+            <div id="activity-editor-container" style="min-height:280px;"></div>
+            <textarea name="content" id="activityContentTa" style="display:none;">{{#if activity}}{{activity.content}}{{/if}}</textarea>
+          </div>
+          <div class="form-group">
+            <label>缩略图</label>
+            <div class="admin-input-row">
+              <input type="text" name="thumbUrl" id="activityThumbUrl" value="{{#if activity}}{{activity.thumbUrl}}{{/if}}" placeholder="点击选择">
+              <button type="button" class="btn" id="activityBtnPickThumb"><iconify-icon icon="mdi:image-search-outline"></iconify-icon> 选择</button>
+              <span class="admin-input-preview" id="activityThumbPreview">{{#if activity}}{{#if activity.thumbUrl}}<img src="{{activity.thumbUrl}}" alt="">{{/if}}{{/if}}</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>语言 <span style="color:var(--admin-danger);">*</span></label>
+            <select name="langId" required>
+              {{#each langs}}
+                <option value="{{this.id}}" {{#if (eq this.id ../defaultLangId)}}selected{{/if}}>{{this.name}} ({{this.code}})</option>
+              {{/each}}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>状态</label>
+            <select name="status">
+              <option value="1" {{#if activity}}{{#if (eq activity.status 1)}}selected{{/if}}{{else}}selected{{/if}}>正常</option>
+              <option value="0" {{#if activity}}{{#if (eq activity.status 0)}}selected{{/if}}{{/if}}>隐藏</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>置顶</label>
+            <select name="isTop">
+              <option value="1" {{#if activity}}{{#if (eq activity.isTop 1)}}selected{{/if}}{{/if}}>置顶</option>
+              <option value="0" {{#if activity}}{{#if (eq activity.isTop 0)}}selected{{/if}}{{else}}selected{{/if}}>普通</option>
+            </select>
+            <small style="color:var(--admin-text-muted);">置顶的活动会显示在首页活动列表中</small>
+          </div>
+          <div class="form-group">
+            <label>排序</label>
+            <input type="number" name="sort" id="activitySort" value="{{#if activity}}{{activity.sort}}{{else}}0{{/if}}" placeholder="数值越大越靠前">
+            <small style="color:var(--admin-text-muted);">排序值越大，在列表中显示越靠前。</small>
+          </div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">保存</button>
+        <button type="button" class="btn admin-modal-form-cancel">取消</button>
+      </div>
+    </form>
+  </div>
+</div></body></html>

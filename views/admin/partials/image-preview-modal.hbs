@@ -1,0 +1,130 @@
+<div id="adminImagePreviewOverlay" class="admin-image-preview-overlay" aria-hidden="true" style="display:none;">
+  <div class="admin-image-preview-backdrop"></div>
+  <div class="admin-image-preview-inner" role="dialog" aria-modal="true" aria-label="图片预览">
+    <button type="button" class="admin-image-preview-close" aria-label="关闭预览">&times;</button>
+    <div class="admin-image-preview-body">
+      <img id="adminImagePreviewImg" src="" alt="预览图片">
+    </div>
+  </div>
+</div>
+
+<style>
+.admin-image-preview-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+}
+.admin-image-preview-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+}
+.admin-image-preview-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  pointer-events: none;
+}
+.admin-image-preview-body {
+  max-width: 90vw;
+  max-height: 90vh;
+  background: #111;
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+  pointer-events: auto;
+}
+.admin-image-preview-body img {
+  display: block;
+  max-width: 86vw;
+  max-height: 86vh;
+  margin: 0 auto;
+  object-fit: contain;
+  background: #000;
+}
+.admin-image-preview-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  border: none;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  pointer-events: auto;
+}
+.admin-image-preview-close:hover {
+  background: rgba(0, 0, 0, 0.9);
+}
+.admin-thumb-clickable {
+  cursor: zoom-in;
+}
+</style>
+
+<script>
+(function () {
+  function getOverlay() {
+    return document.getElementById('adminImagePreviewOverlay');
+  }
+  function getImg() {
+    return document.getElementById('adminImagePreviewImg');
+  }
+
+  function open(url) {
+    var overlay = getOverlay();
+    var img = getImg();
+    if (!overlay || !img || !url) return;
+    img.src = url;
+    overlay.style.display = 'block';
+    overlay.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function close() {
+    var overlay = getOverlay();
+    var img = getImg();
+    if (!overlay || !img) return;
+    overlay.style.display = 'none';
+    overlay.setAttribute('aria-hidden', 'true');
+    img.removeAttribute('src');
+    document.body.style.overflow = '';
+  }
+
+  window.AdminImagePreview = {
+    open: open,
+    close: close,
+  };
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var overlay = getOverlay();
+    if (!overlay) return;
+    var closeBtn = overlay.querySelector('.admin-image-preview-close');
+    var backdrop = overlay.querySelector('.admin-image-preview-backdrop');
+    if (closeBtn) closeBtn.addEventListener('click', close);
+    if (backdrop) backdrop.addEventListener('click', close);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') close();
+    });
+  });
+
+  // 全局代理：点击任何带 data-image-preview 的元素打开大图
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest('[data-image-preview]');
+    if (!el) return;
+    var url = el.getAttribute('data-image-preview') || el.getAttribute('src') || el.getAttribute('data-src');
+    if (!url) return;
+    e.preventDefault();
+    if (window.AdminImagePreview && typeof window.AdminImagePreview.open === 'function') {
+      window.AdminImagePreview.open(url);
+    }
+  }, true);
+})();
+</script>
+

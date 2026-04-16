@@ -1,0 +1,57 @@
+<div class="afm-overlay" id="afmOverlay" aria-hidden="true">
+  <div class="afm-dialog" role="dialog" aria-modal="true" aria-label="素材库">
+    <div class="afm-header">
+      <div class="afm-title">
+        <iconify-icon icon="mdi:image-multiple"></iconify-icon>
+        <span>选择文件</span>
+      </div>
+      <div class="afm-header-actions">
+        <div class="afm-move-wrap" style="position:relative;display:inline-block;">
+          <button type="button" class="btn" id="afmBtnMoveToCat" disabled title="先多选文件再转移"><iconify-icon icon="mdi:folder-move-outline"></iconify-icon> 转移到分类</button>
+          <div class="afm-move-dropdown" id="afmMoveDropdown" aria-hidden="true">
+            <button type="button" class="afm-move-opt" data-id="">无分类</button>
+            <div id="afmMoveCatList"></div>
+          </div>
+        </div>
+        <button type="button" class="btn" id="afmBtnNewCategory"><iconify-icon icon="mdi:folder-plus-outline"></iconify-icon> 新建分类</button>
+        <button type="button" class="btn btn-primary" id="afmBtnUpload"><iconify-icon icon="mdi:upload"></iconify-icon> 上传文件</button>
+        <button type="button" class="btn" id="afmBtnClose"><iconify-icon icon="mdi:close"></iconify-icon></button>
+        <input type="file" id="afmUploadInput" multiple style="display:none;" />
+      </div>
+    </div>
+
+    <div class="afm-body">
+      <aside class="afm-sidebar">
+        <div class="afm-sidebar-title">文件分类</div>
+        <ul class="afm-cat-list" id="afmCatList">
+          <li><button type="button" class="afm-cat active" data-id="">全部</button></li>
+        </ul>
+      </aside>
+
+      <section class="afm-content">
+        <div class="afm-toolbar">
+          <div class="afm-search">
+            <iconify-icon icon="mdi:magnify"></iconify-icon>
+            <input type="text" id="afmKeyword" placeholder="请输入图片/文件名" />
+          </div>
+        </div>
+
+        <div class="afm-grid" id="afmGrid"></div>
+
+        <div class="afm-footer">
+          <div class="afm-meta" id="afmMeta">-</div>
+          <div class="afm-pager" id="afmPager">
+            <button type="button" class="btn afm-pager__prev" id="afmPrev" aria-label="上一页">
+              <iconify-icon icon="mdi:chevron-left"></iconify-icon>
+            </button>
+            <div class="afm-pager__pages" id="afmPageNumbers"></div>
+            <button type="button" class="btn afm-pager__next" id="afmNext" aria-label="下一页">
+              <iconify-icon icon="mdi:chevron-right"></iconify-icon>
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head><body><div id="admin-form-fragment">
+  <div class="admin-card">
+    <form class="admin-form admin-form-modal industry-case-form" method="post" action="/admin/industry-cases/save" id="industryCaseEditForm">
+      <div class="admin-modal-form-scroll">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        {{#if industryCase}}<input type="hidden" name="id" value="{{industryCase.id}}">{{/if}}
+
+        <section class="admin-form-section">
+          <div class="admin-form-section-title">基础信息</div>
+          <div class="admin-form-grid admin-form-grid-2">
+            <div class="form-group admin-col-span-2">
+              <label>标题 <span class="admin-required">*</span></label>
+              <input type="text" name="title" id="industryCaseTitle" required value="{{#if industryCase}}{{industryCase.title}}{{/if}}" placeholder="案例标题">
+            </div>
+
+            <div class="form-group admin-col-span-2">
+              <label>规格文案</label>
+              <input type="text" name="specLine" value="{{#if industryCase}}{{industryCase.specLine}}{{/if}}" placeholder="如 600kW/1290kWh（列表与解决方案详情卡片展示）">
+            </div>
+
+            <div class="form-group admin-col-span-2">
+              <label>正文（富文本）</label>
+              <div id="industry-case-toolbar-container"></div>
+              <div id="industry-case-editor-container" style="min-height:360px;"></div>
+              <textarea name="content" id="industryCaseContentTa" style="display:none;">{{#if industryCase}}{{industryCase.content}}{{/if}}</textarea>
+            </div>
+
+            <div class="form-group">
+              <label>语言 <span class="admin-required">*</span></label>
+              <select name="langId" required>
+                {{#each langs}}
+                  <option value="{{this.id}}" {{#if (eq this.id ../defaultLangId)}}selected{{/if}}>{{this.name}} ({{this.code}})</option>
+                {{/each}}
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>是否置顶</label>
+              <select name="isTop">
+                <option value="0" {{#if industryCase}}{{#if (eq industryCase.isTop 0)}}selected{{/if}}{{else}}selected{{/if}}>否</option>
+                <option value="1" {{#if industryCase}}{{#if (eq industryCase.isTop 1)}}selected{{/if}}{{/if}}>是</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>排序</label>
+              <input type="number" name="sort" value="{{#if industryCase}}{{industryCase.sort}}{{else}}0{{/if}}" min="0" placeholder="数值越大越靠前">
+              <div class="admin-form-help">排序值越大，在列表中显示越靠前。</div>
+            </div>
+
+            <div class="form-group">
+              <label>状态</label>
+              <select name="status">
+                <option value="1" {{#if industryCase}}{{#if (eq industryCase.status 1)}}selected{{/if}}{{else}}selected{{/if}}>正常</option>
+                <option value="0" {{#if industryCase}}{{#if (eq industryCase.status 0)}}selected{{/if}}{{/if}}>隐藏</option>
+              </select>
+            </div>
+
+            <div class="form-group admin-col-span-2">
+              <label>分类</label>
+              <select name="categoryId">
+                <option value="">请选择分类</option>
+                {{#each categories}}
+                  <option value="{{this.id}}" {{#if ../industryCase}}{{#if (contains ../industryCase.categoryId this.id)}}selected{{/if}}{{/if}}>{{this.title}}</option>
+                {{/each}}
+              </select>
+              <div class="admin-form-help">分类数据来自解决方案分类（类型为业务板块）。</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="admin-form-section">
+          <div class="admin-form-section-title">图片与关联</div>
+          <div class="admin-form-grid admin-form-grid-2">
+            <div class="form-group">
+              <label>缩略图 URL</label>
+              <div class="admin-input-row">
+                <input type="text" name="thumbnail" id="industryCaseThumbnail" value="{{#if industryCase}}{{industryCase.thumbnail}}{{/if}}" placeholder="可选，或点击选择">
+                <button type="button" class="btn" id="industryCaseBtnPickThumbnail"><iconify-icon icon="mdi:image-search-outline"></iconify-icon> 选择</button>
+                <span class="admin-input-preview" id="industryCaseThumbnailPreview">{{#if industryCase}}{{#if industryCase.thumbnail}}<img src="{{industryCase.thumbnail}}" alt="">{{/if}}{{/if}}</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Banner 图 URL</label>
+              <div class="admin-input-row">
+                <input type="text" name="bannerUrl" id="industryCaseBannerUrl" value="{{#if industryCase}}{{industryCase.bannerUrl}}{{/if}}" placeholder="可选，或点击选择">
+                <button type="button" class="btn" id="industryCaseBtnPickBanner"><iconify-icon icon="mdi:image-search-outline"></iconify-icon> 选择</button>
+                <span class="admin-input-preview" id="industryCaseBannerPreview">{{#if industryCase}}{{#if industryCase.bannerUrl}}<img src="{{industryCase.bannerUrl}}" alt="">{{/if}}{{/if}}</span>
+              </div>
+            </div>
+
+            <div class="form-group admin-col-span-2">
+              <label>Banner 标题</label>
+              <input type="text" name="bannerTitle" value="{{#if industryCase}}{{industryCase.bannerTitle}}{{/if}}" placeholder="可选，显示在 Banner 图上的标题">
+            </div>
+
+            <div class="form-group admin-col-span-2">
+              <label>标签</label>
+              <input type="text" name="tags" id="industryCaseTags" value="{{tagsStr}}" placeholder="多个标签用逗号分隔，如：行业,地区,产品线">
+              <div class="admin-form-help">用于前台筛选或快速检索。</div>
+            </div>
+
+            <div class="form-group admin-col-span-2">
+              <label>关联产品与解决方案</label>
+              <p class="admin-form-help" style="margin-bottom:0.75rem;">多语言匹配：当前语言的行业应用案例仅关联当前语言下的产品与解决方案。左侧可选，右侧已选。</p>
+              <div style="margin-bottom:0.75rem;">
+                <label style="font-size:13px;color:var(--admin-text-muted);">关联产品</label>
+                {{> admin/transfer idPrefix="industryCaseProducts" leftTitle=transferProducts.leftTitle rightTitle=transferProducts.rightTitle inputName=transferProducts.inputName leftItems=transferProducts.leftItems rightItems=transferProducts.rightItems value=transferProducts.value}}
+              </div>
+              <div>
+                <label style="font-size:13px;color:var(--admin-text-muted);">关联解决方案</label>
+                {{> admin/transfer idPrefix="industryCaseSolutions" leftTitle=transferSolutions.leftTitle rightTitle=transferSolutions.rightTitle inputName=transferSolutions.inputName leftItems=transferSolutions.leftItems rightItems=transferSolutions.rightItems value=transferSolutions.value}}
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <section class="admin-form-section admin-form-section-last">
+          <div class="admin-form-section-title">SEO（可选）</div>
+          <div class="admin-form-grid admin-form-grid-2">
+            <div class="form-group admin-col-span-2">
+              <label>SEO 标题</label>
+              <input type="text" name="metaTitle" id="industryCaseMetaTitle" value="{{#if industryCase}}{{#if industryCase.metaTitle}}{{industryCase.metaTitle}}{{else}}{{industryCase.title}}{{/if}}{{/if}}" placeholder="留空则使用标题">
+            </div>
+            <div class="form-group admin-col-span-2">
+              <label>SEO 关键词</label>
+              <textarea name="metaKeywords" rows="2">{{#if industryCase}}{{industryCase.metaKeywords}}{{/if}}</textarea>
+            </div>
+            <div class="form-group admin-col-span-2">
+              <label>SEO 描述</label>
+              <textarea name="metaDescription" rows="2">{{#if industryCase}}{{industryCase.metaDescription}}{{/if}}</textarea>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">保存</button>
+        <button type="button" class="btn admin-modal-form-cancel">取消</button>
+      </div>
+    </form>
+  </div>
+</div></body></html>
+

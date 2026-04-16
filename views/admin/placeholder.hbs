@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} - 鹏成后台</title>
+  <meta name="csrf-token" content="{{csrfToken}}">
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/admin/admin-theme.css">
+  <script src="/js/iconify-icon.min.js"></script>
+</head>
+<body class="admin-layout">
+  {{> admin/header}}
+  <div class="admin-body">
+    {{> admin/sidebar}}
+    <main class="admin-main">
+      <h1>{{title}}</h1>
+      <div class="admin-card">
+        <p>{{#if message}}{{message}}{{else}}该功能页面开发中，敬请期待。{{/if}}</p>
+      </div>
+    </main>
+  </div>
+  <script>
+    (function () {
+      var csrfMeta = document.querySelector('meta[name="csrf-token"]');
+      var csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : '';
+      var btn = document.getElementById('btn-clear-cache');
+      if (btn) btn.onclick = function () {
+        fetch('/admin/clear-cache', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ _csrf: csrfToken })
+        }).then(function (r) { return r.json(); }).then(function (d) { alert(d.message || '完成'); }).catch(function () { alert('请求失败'); });
+      };
+    })();
+  </script>
+</body>
+</html>

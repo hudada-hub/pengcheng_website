@@ -1,0 +1,61 @@
+{{!-- 配置 about-us-lead-energy：type 5 数组 title=标签 content=数值文�?pic1Url=图标；区�?title/description=左主标题/右说明（样式参�?about_company_warp�?--}}
+{{#if hasAboutUsLeadEnergy}}
+<section
+  id="{{aboutUsLeadEnergySectionId}}"
+  class="g-about-us-lead about_company_warp about_company_warp--pending about_scrool g-about-us-anchor-target"
+  aria-labelledby="g-about-us-lead-title"
+>
+  <div class="layout">
+    <div class="about_company_box index_flex">
+      <div class="item_title">
+        {{#if aboutUsLeadEnergyTitle}}
+        <h2 id="g-about-us-lead-title">{{aboutUsLeadEnergyTitle}}</h2>
+        {{/if}}
+        <h4 class="g-about-us-lead__key-heading">{{aboutUsLeadEnergyKeyNumbersLabel}}</h4>
+        <span class="item_jiantou" aria-hidden="true">
+          <span class="item_jiantou__line"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false"><path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="item_jiantou__line"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false"><path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="item_jiantou__line"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false"><path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="item_jiantou__line"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false"><path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </span>
+      </div>
+      <div class="item_text">
+        {{#if aboutUsLeadEnergyIntro}}
+        <p>{{aboutUsLeadEnergyIntro}}</p>
+        {{/if}}
+      </div>
+    </div>
+    {{#if aboutUsLeadEnergyStats}}
+    <ul class="about_company_list index_flex" role="list">
+      {{#each aboutUsLeadEnergyStats}}
+      <li class="about_company_slide" role="listitem">
+        {{#if iconUrl}}
+        <div class="item_icon">
+          <img src="{{iconUrl}}" alt="" loading="lazy" decoding="async" />
+        </div>
+        {{/if}}
+        <div class="item_title">
+          {{#if useCounter}}
+          <span class="item_num timer" data-to="{{animTarget}}" data-speed="1200">0</span>
+          {{else}}
+          <span class="item_num">{{valueMain}}</span>
+          {{/if}}
+          {{#if valueSup}}<sup>{{valueSup}}</sup>{{/if}}
+          {{#if valueSuffix}}<em>{{valueSuffix}}</em>{{/if}}
+        </div>
+        <p>{{label}}</p>
+      </li>
+      {{/each}}
+    </ul>
+    {{/if}}
+  </div>
+  <noscript>
+    <style>
+      .g-about-us-lead.about_company_warp.about_company_warp--pending {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    </style>
+  </noscript>
+</section>
+{{/if}}

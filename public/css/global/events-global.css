@@ -1,0 +1,410 @@
+/* 国外站 — 活动日历（列表 / 详情）— 卡片与色板对齐 Figma node 384:6566 */
+
+:root {
+  --g-events-accent: #f89d1b;
+  --g-events-accent-hover: #e08e12;
+  --g-events-title: #0d0d0d;
+  --g-events-body-text: #2b2b2b;
+  --g-events-card-radius: 8px;
+}
+
+.g-events-page .g-main,
+.g-events-detail-page .g-main,
+.g-activity-calendar-detail-page .g-main {
+  background: #f3f4f6;
+}
+
+/* Banner：顶栏 fixed 叠在首图上（与新闻一致，依赖 body.g-products-page + products-global.css） */
+.g-events-banner {
+  position: relative;
+  height: 388px;
+  overflow: hidden;
+}
+
+.g-events-banner__inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: inherit;
+  box-sizing: border-box;
+  padding-top: clamp(72px, 12vw, 120px);
+  padding-bottom: clamp(32px, 6vw, 56px);
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.g-events-banner__bg {
+  position: absolute;
+  inset: 0;
+  background-color: #1a1d24;
+  background-image: url('/images/global/business-banner.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+.g-events-banner__bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0.45));
+}
+
+.g-events-banner__title {
+  font-family: 'Exo', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.5rem, 6vw, 48px);
+  letter-spacing: 0.12em;
+  color: #fff;
+  margin: 0;
+  margin-top: 50px;
+  text-align: center;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* 列表布局：侧栏 312px（Figma Filter），主区三列 ~416 + 32 间距 */
+.g-events-layout {
+  padding: 1.5rem 0 3rem;
+}
+
+.g-events-layout__inner {
+  max-width: 1656px;
+}
+
+.g-events-layout__aside {
+  max-width: 312px;
+}
+
+@media (max-width: 991.98px) {
+  .g-events-layout__aside {
+    max-width: none;
+  }
+}
+
+.g-events-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+}
+
+@media (max-width: 1124.98px) {
+  .g-events-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 575.98px) {
+  .g-events-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.g-events-card {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: var(--g-events-card-radius);
+  overflow: hidden;
+  border: none;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.g-events-card:hover {
+  box-shadow: 0 2px 4px rgba(66, 69, 88, 0.1);
+  transform: translateY(-2px);
+}
+
+.g-events-card__media {
+  aspect-ratio: 416 / 256;
+  overflow: hidden;
+  background: #e8eaed;
+  border-radius: var(--g-events-card-radius) var(--g-events-card-radius) 0 0;
+}
+
+.g-events-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.g-events-card__img--placeholder {
+  min-height: 100%;
+  background: linear-gradient(135deg, #d1d5db, #9ca3af);
+}
+
+.g-events-card__body {
+  padding: 32px 22px 28px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 10px;
+  border-radius: 0 0 var(--g-events-card-radius) var(--g-events-card-radius);
+}
+
+.g-events-card__title {
+  font-family: 'Exo', system-ui, sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.33;
+  color: var(--g-events-title);
+  margin: 0;
+}
+
+.g-events-card__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  font-size: clamp(12px, 1.2vw, 16px);
+  font-weight: 500;
+  line-height: 1.33;
+  color: var(--g-events-body-text);
+}
+
+.g-events-card__icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  opacity: 1;
+}
+
+.g-events-card__icon--calendar {
+  background-image: url('/images/global/calendar.png');
+}
+
+.g-events-card__icon--pin {
+  background-image: url('/images/global/location.png');
+}
+
+.g-events-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+.g-events-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 10px 12px;
+  font-family: 'Exo', system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.33;
+  border-radius: 999px;
+  text-decoration: none;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  cursor: pointer;
+}
+
+.g-events-btn--primary {
+  background: var(--g-events-accent);
+  color: #fff;
+  border-color: var(--g-events-accent);
+}
+
+.g-events-btn--primary:hover {
+  background: var(--g-events-accent-hover);
+  border-color: var(--g-events-accent-hover);
+  color: #fff;
+}
+
+.g-events-btn--outline {
+  background: #fff;
+  color: var(--g-events-body-text);
+  border-color: #424558;
+}
+
+.g-events-btn--outline:hover {
+  background: #fafafa;
+  color: var(--g-events-body-text);
+}
+
+.g-events-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #6b7280;
+  padding: 2rem;
+  font-family: 'Exo', system-ui, sans-serif;
+}
+
+.g-events-page .g-list-pagination a.g-list-pagination__btn:hover {
+  border-color: var(--g-events-accent);
+  color: var(--g-events-accent);
+}
+
+
+
+/* 详情页 */
+.g-events-detail {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 2.5rem 1rem 3rem;
+}
+
+.g-events-detail__meta {
+  font-family: 'Exo', system-ui, sans-serif;
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+}
+
+.g-events-detail__title {
+  font-family: 'Exo', system-ui, sans-serif;
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-weight: 800;
+  color: #111827;
+  margin: 0 0 1rem;
+  line-height: 1.2;
+}
+
+.g-events-detail__location {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9375rem;
+  color: #4b5563;
+  margin-bottom: 1.25rem;
+}
+
+.g-events-detail__thumb {
+  width: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.g-events-detail__cta-top {
+  margin: 0 0 1.25rem;
+}
+
+.g-events-detail__content {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: #374151;
+}
+
+.g-events-detail__content img {
+  max-width: 100%;
+  height: auto;
+}
+
+.g-events-detail__back {
+  display: inline-block;
+  margin-top: 2rem;
+  font-family: 'Exo', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--g-events-accent);
+  text-decoration: none;
+}
+
+.g-events-detail__back:hover {
+  text-decoration: underline;
+}
+
+/* 列表页活动详情弹窗 */
+.g-events-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10040;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.g-events-modal[aria-hidden='false'] {
+  opacity: 1;
+  visibility: visible;
+}
+
+.g-events-modal__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(13, 13, 13, 0.55);
+}
+
+.g-events-modal__dialog {
+  position: relative;
+  z-index: 1;
+  width: min(760px, calc(100vw - 32px));
+  max-height: min(88vh, 840px);
+  overflow: auto;
+  margin: 16px;
+  padding: 1.25rem 1.5rem 1.5rem;
+  background: #fff;
+  border-radius: 10px;
+}
+
+.g-events-modal__close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  background: transparent;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.g-events-modal__close:hover {
+  color: #111827;
+}
+
+.g-events-modal__title {
+  margin: 0;
+  text-align: center;
+  font-family: 'Exo', system-ui, sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.g-events-modal__event-title {
+  margin: 0.5rem 0 0.6rem;
+  font-family: 'Exo', system-ui, sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.g-events-modal__meta {
+  margin: 0.2rem 0;
+  color: #4b5563;
+  font-size: 0.95rem;
+}
+
+.g-events-modal__content {
+  margin-top: 0.85rem;
+  color: #374151;
+  line-height: 1.7;
+}
+
+.g-events-modal__content img {
+  max-width: 100%;
+  height: auto;
+}
+
+body.g-events-modal-open {
+  overflow: hidden;
+}
+

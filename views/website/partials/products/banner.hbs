@@ -1,0 +1,18 @@
+{{!-- 背景图：使用 categoryId 对应分类（id 或 category_id）自身的 bannerUrl；无参数或无图时为占位 --}}
+<section class="g-products-banner">
+  <div class="g-products-banner__bg">
+    {{#if bannerImageUrl}}
+      <img src="{{bannerImageUrl}}" alt="" class="g-products-banner__image" loading="lazy" />
+      <div class="g-products-banner__overlay"></div>
+    {{else}}
+      <div class="g-products-banner__placeholder"></div>
+    {{/if}}
+  </div>
+  <div class="container">
+    {{#unless hideProductsBannerTitle}}
+    <h1 class="g-products-banner__title">
+      {{#if productsBannerTitle}}{{productsBannerTitle}}{{else}}{{#if (eq locale "zh-CN")}}产品{{else}}Products{{/if}}{{/if}}
+    </h1>
+    {{/unless}}
+  </div>
+</section>

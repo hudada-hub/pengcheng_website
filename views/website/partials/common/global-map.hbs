@@ -1,0 +1,52 @@
+{{!-- 公共：ECharts 世界地图；区块样�?about_map_warp；背�?map-bg.png；图例补�?map02.png --}}
+{{#if hasGlobalMap}}
+<section
+  id="{{globalMapSectionId}}"
+  class="g-global-map about_map_warp about_map_warp--pending g-about-us-anchor-target"
+  style="background-color: white;"
+  aria-label="{{globalMapAriaLabel}}"
+>
+  <div class="layout">
+    <div class="about_map_title" style="text-align: center; margin-bottom: 30px;">
+      {{#if globalMapTitle}}
+      <h2 style="font-size: 36px; color: #333333; margin-bottom: 20px;">{{globalMapTitle}}</h2>
+      {{/if}}
+      {{#if globalMapSubtitle}}
+      <p style="font-size: 16px; color: #666666; line-height: 1.5;">{{globalMapSubtitle}}</p>
+      {{/if}}
+    </div>
+    <div class="about_map_main">
+      <div class="g-global-map__chart-wrap">
+        <script type="application/json" id="g-global-map-points">{{{globalMapPointsJson}}}</script>
+        <div
+          id="g-global-map-chart"
+          class="g-global-map__chart"
+          data-locale="{{locale}}"
+          data-err-no-echarts="{{globalMapErrNoEcharts}}"
+          data-err-load="{{globalMapErrLoad}}"
+        ></div>
+        <p class="g-global-map__loading" id="g-global-map-loading" role="status">{{globalMapLoadingText}}</p>
+      </div>
+      <div class="about_map_box" aria-label="{{globalMapLegendAria}}" style="color: black;">
+        <div class="item_head">
+          <span aria-hidden="true"></span>{{globalMapLegendHq}}
+        </div>
+        <div class="item_office">
+          <span aria-hidden="true"></span>{{globalMapLegendOffice}}
+          {{#if globalMapSupplement}}
+          <p>{{globalMapSupplement}}</p>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  </div>
+  <noscript>
+    <style>
+      .g-global-map.about_map_warp.about_map_warp--pending {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    </style>
+  </noscript>
+</section>
+{{/if}}

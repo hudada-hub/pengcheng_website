@@ -1,0 +1,50 @@
+{{!-- 配置 about-us-whoarwe：title / description / bg_pic_url；content.title 和 content.content 为品牌副标（如 ENEROC，首字母 N 高亮）--}}
+{{#if hasAboutUsWhoAreWe}}
+<section
+  id="{{aboutUsWhoAreWeSectionId}}"
+  class="g-about-us-who about_company_warp about_company_warp--pending about_scrool g-about-us-anchor-target"
+  aria-labelledby="g-about-us-who-title"
+>
+  <div class="layout">
+    <div class="about_company_box index_flex">
+      <div class="item_title">
+        <span class="item_yuan" aria-hidden="true"></span>
+        {{#if aboutUsWhoAreWeTitle}}
+        <h2 id="g-about-us-who-title">{{aboutUsWhoAreWeTitle}}</h2>
+        {{/if}}
+        {{#if aboutUsWhoAreWeSubtitle}}
+        <p class="g-about-us-who__brand-line">
+          {{#each aboutUsWhoAreWeBrandLetters}}
+          {{#if accent}}<em>{{char}}</em>{{else}}{{char}}{{/if}}
+          {{/each}}
+        </p>
+        {{/if}}
+        <span class="item_xian" aria-hidden="true"></span>
+      </div>
+      {{#if aboutUsWhoAreWeBody}}
+      <div class="item_text">
+        <p>{{aboutUsWhoAreWeBody}}</p>
+      </div>
+      {{/if}}
+    </div>
+    {{#if aboutUsWhoAreWeImageUrl}}
+    <div class="about_company_pic">
+      <img
+        src="{{aboutUsWhoAreWeImageUrl}}"
+        alt="{{aboutUsWhoAreWeTitle}}"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+    {{/if}}
+  </div>
+  <noscript>
+    <style>
+      .g-about-us-who.about_company_warp.about_company_warp--pending {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    </style>
+  </noscript>
+</section>
+{{/if}}

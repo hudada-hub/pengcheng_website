@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head><body><div id="admin-form-fragment">
+  <div class="admin-card">
+    <form class="admin-form admin-form-modal pc-category-form" method="post" action="/admin/product-category/save">
+      <div class="admin-modal-form-scroll">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        {{#if category}}<input type="hidden" name="id" value="{{category.id}}">{{/if}}
+        <section class="admin-form-section">
+          <div class="admin-form-section-title">基础信息</div>
+          <div class="admin-form-grid admin-form-grid-2">
+            <div class="form-group admin-col-span-2">
+              <label>分类名 <span class="admin-required">*</span></label>
+              <input type="text" name="name" id="pcName" required value="{{#if category}}{{category.name}}{{/if}}" placeholder="分类名称">
+            </div>
+
+            <div class="form-group">
+              <label>语言 <span class="admin-required">*</span></label>
+              <select name="langId" required>
+                {{#each langs}}
+                  <option value="{{this.id}}" {{#if (eq this.id ../defaultLangId)}}selected{{/if}}>{{this.name}} ({{this.code}})</option>
+                {{/each}}
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>父级分类</label>
+              <select name="parentId" id="pcParentId">
+                <option value="0">无（顶级）</option>
+                {{#each categoryTree}}
+                  <option value="{{this.id}}" data-lang-id="{{this.langId}}" {{#if ../category}}{{#if (eq this.id ../category.parentId)}}selected{{/if}}{{/if}}>{{#if this.depth}}{{#each this.treeIndent}}　　{{/each}}{{/if}}{{this.name}}</option>
+                {{/each}}
+              </select>
+              <div class="admin-form-help">仅可选择同语言的父级分类。</div>
+            </div>
+
+            <div class="form-group">
+              <label>排序</label>
+              <input type="number" name="sort" value="{{#if category}}{{category.sort}}{{else}}0{{/if}}" min="0" placeholder="数字越小越靠前">
+              <div class="admin-form-help">数字越小越靠前。</div>
+            </div>
+
+            <div class="form-group">
+              <label>状态</label>
+              <select name="status">
+                <option value="1" {{#if category}}{{#if (eq category.status 1)}}selected{{/if}}{{else}}selected{{/if}}>正常</option>
+                <option value="0" {{#if category}}{{#if (eq category.status 0)}}selected{{/if}}{{/if}}>隐藏</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <section class="admin-form-section">
+          <div class="admin-form-section-title">Banner</div>
+          <div class="form-group admin-col-span-2">
+            <label>Banner 图 URL</label>
+            <div class="admin-input-row">
+              <input type="text" name="bannerUrl" id="pcBannerUrl" value="{{#if category}}{{category.bannerUrl}}{{/if}}" placeholder="可选，或点击选择">
+              <button type="button" class="btn" id="pcBtnPickBanner"><iconify-icon icon="mdi:image-search-outline"></iconify-icon> 选择</button>
+              <span class="admin-input-preview" id="pcBannerUrlPreview">{{#if category}}{{#if category.bannerUrl}}<img src="{{category.bannerUrl}}" alt="">{{/if}}{{/if}}</span>
+            </div>
+            <div class="admin-form-help">建议使用素材库选择，确保图片已压缩并可访问。</div>
+          </div>
+          <div class="form-group admin-col-span-2" style="margin-top:0.75rem;">
+            <label>菜单图 URL（menu_pic_url）</label>
+            <div class="admin-input-row">
+              <input type="text" name="menuPicUrl" id="pcMenuPicUrl" value="{{#if category}}{{category.menuPicUrl}}{{/if}}" placeholder="可选，或点击选择">
+              <button type="button" class="btn" id="pcBtnPickMenuPic"><iconify-icon icon="mdi:image-search-outline"></iconify-icon> 选择</button>
+              <span class="admin-input-preview" id="pcMenuPicUrlPreview">{{#if category}}{{#if category.menuPicUrl}}<img src="{{category.menuPicUrl}}" alt="">{{/if}}{{/if}}</span>
+            </div>
+            <div class="admin-form-help">用于菜单/导航展示的小图标或小图。</div>
+          </div>
+        </section>
+
+        <section class="admin-form-section admin-form-section-last">
+          <div class="admin-form-section-title">SEO（可选）</div>
+          <div class="admin-form-grid admin-form-grid-2">
+            <div class="form-group admin-col-span-2">
+              <label>SEO 标题</label>
+              <input type="text" name="metaTitle" id="pcMetaTitle" value="{{#if category}}{{#if category.metaTitle}}{{category.metaTitle}}{{else}}{{category.name}}{{/if}}{{/if}}" placeholder="留空则使用分类名">
+            </div>
+            <div class="form-group admin-col-span-2">
+              <label>SEO 关键词</label>
+              <textarea name="metaKeywords" rows="2" placeholder="多个关键词用逗号分隔">{{#if category}}{{category.metaKeywords}}{{/if}}</textarea>
+            </div>
+            <div class="form-group admin-col-span-2">
+              <label>SEO 描述</label>
+              <textarea name="metaDescription" rows="2" placeholder="建议 60-160 字左右">{{#if category}}{{category.metaDescription}}{{/if}}</textarea>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">保存</button>
+        <button type="button" class="btn admin-modal-form-cancel">取消</button>
+      </div>
+    </form>
+  </div>
+</div></body></html>

@@ -1,0 +1,52 @@
+{{!-- 配置 about-us-history：title / description；数组项 content=年、title=标题、description=正文 --}}
+{{#if hasAboutUsHistory}}
+<section
+  id="{{aboutUsHistorySectionId}}"
+  class="g-about-us-history about_history_warp about_scrool g-about-us-anchor-target"
+  aria-labelledby="g-about-us-history-title"
+>
+  <div class="about_history_title index_hd layout">
+    <h2 id="g-about-us-history-title">{{aboutUsHistoryTitle}}<span>{{aboutUsHistorySubtitle}}</span></h2>
+  </div>
+
+  {{#if aboutUsHistoryItems}}
+  <div class="about_history_main">
+    <div class="about_history_swiper swiper" role="region" aria-roledescription="carousel">
+      <ul class="swiper-wrapper">
+        {{#each aboutUsHistoryItems}}
+        <li class="swiper-slide about_history_slide">
+          <div class="item_box index_flex">
+            <div class="wrap_raio">
+              <h2>{{year}}</h2>
+            </div>
+            <div class="wrap">
+              <h3>{{cardTitle}}</h3>
+              {{#if cardBody}}
+              <p>{{cardBody}}</p>
+              {{/if}}
+            </div>
+          </div>
+        </li>
+        {{/each}}
+      </ul>
+    </div>
+    <div
+      class="swiper_prev"
+      role="button"
+      tabindex="0"
+      aria-label="{{#if (eq locale 'zh-CN')}}上一条{{else}}Previous milestone{{/if}}"
+    >
+      <img src="/images/global/images/his04.png" alt="" width="24" height="24" decoding="async" />
+    </div>
+    <div
+      class="swiper_next"
+      role="button"
+      tabindex="0"
+      aria-label="{{#if (eq locale 'zh-CN')}}下一条{{else}}Next milestone{{/if}}"
+    >
+      <img src="/images/global/images/his03.png" alt="" width="24" height="24" decoding="async" />
+    </div>
+  </div>
+  {{/if}}
+</section>
+{{/if}}

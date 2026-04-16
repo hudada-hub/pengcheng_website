@@ -1,0 +1,409 @@
+/* 国外站 — 服务说明（服务宗旨 + 服务内容） */
+
+.g-service-banner .g-service-banner__desc {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 1rem;
+  line-height: 1.55;
+  max-width: 42rem;
+  margin: -0.5rem auto 0;
+  padding: 0 1rem 2.5rem;
+}
+
+@media (max-width: 767px) {
+  .g-service-banner .g-products-banner__title {
+    font-size: clamp(1.75rem, 6vw, 2.25rem);
+    padding-top: 160px;
+  }
+
+  .g-service-banner .g-service-banner__desc {
+    font-size: 0.9rem;
+    margin-top: 0;
+    padding-bottom: 1.5rem;
+  }
+}
+
+.g-service-page .g-main {
+  background: #fff;
+}
+
+:root {
+  --g-service-accent: #f6a828;
+  --g-service-dark-panel: #3c3f4d;
+  --g-service-light-panel: #f5f5f5;
+  --g-service-philosophy-bg: #f9f9f9;
+  --g-service-text: #1a1a1a;
+  --g-service-muted: #555;
+}
+
+/* ---------- 服务宗旨 ---------- */
+.g-service-philosophy {
+  background: var(--g-service-philosophy-bg);
+  padding: clamp(2.5rem, 6vw, 4.5rem) 0;
+}
+
+.g-service-philosophy .container {
+  max-width: 1400px;
+}
+
+.g-service-philosophy__title {
+  font-family: 'Exo', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  color: var(--g-service-text);
+  margin: 0 0 1.25rem;
+  line-height: 1.2;
+}
+
+.g-service-philosophy__lead {
+  max-width: 66%;
+  margin: 0 0 2.5rem;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--g-service-muted);
+}
+
+/* 布局：Bootstrap .row + row-cols-2 / row-cols-md-5（service.hbs） */
+.g-service-philosophy__stats {
+  padding-bottom: 0.25rem;
+}
+
+.g-service-philosophy__stat {
+  min-width: 0;
+  padding: 0;
+  text-align: center;
+  border-right: 1px solid #ddd;
+}
+
+.g-service-philosophy__stat:last-child {
+  border-right: none;
+}
+
+.g-service-philosophy__value {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  font-family: 'Exo', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+  color: var(--g-service-accent);
+  line-height: 1.15;
+  margin-bottom: 0.1rem;
+}
+
+@media (min-width: 768px) {
+  .g-service-philosophy__stat:first-child {
+    text-align: left;
+  }
+
+  .g-service-philosophy__stat:last-child {
+    text-align: right;
+  }
+
+  .g-service-philosophy__stat:first-child .g-service-philosophy__value {
+    align-items: flex-start;
+  }
+
+  .g-service-philosophy__stat:last-child .g-service-philosophy__value {
+    align-items: flex-end;
+  }
+}
+
+.g-service-philosophy__value-line {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: inherit;
+  gap: 0.05em;
+}
+
+/* 图1：主数字 | 右侧列（上 +、下 Millions，与数字等高、底对齐） */
+.g-service-philosophy__value-line--suffix-stack {
+  align-items: stretch;
+  flex-wrap: nowrap;
+  gap: 0.06em;
+}
+
+.g-service-philosophy__value-num-wrap {
+  display: flex;
+  align-items: flex-end;
+  line-height: 1;
+}
+
+.g-service-philosophy__suffix-stack {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  line-height: 1;
+  min-height: 0;
+}
+
+.g-service-philosophy__suffix--stack-top {
+  font-size: 0.52em;
+  font-weight: 800;
+  line-height: 1;
+  color: inherit;
+}
+
+.g-service-philosophy__sub-suffix--stack {
+  display: block;
+  font-size: 0.38em;
+  font-weight: 800;
+  line-height: 1.05;
+  color: inherit;
+  margin: 0;
+}
+
+.g-service-philosophy__suffix {
+  font-weight: 800;
+  color: inherit;
+}
+
+.g-service-philosophy__suffix--sup {
+  font-size: 0.55em;
+  font-weight: 800;
+  line-height: 0;
+  vertical-align: super;
+}
+
+.g-service-philosophy__sub-suffix {
+  display: block;
+  font-size: 0.42em;
+  font-weight: 800;
+  line-height: 1.1;
+  color: inherit;
+  margin-top: 0.05em;
+}
+
+.g-service-philosophy__label {
+  font-size: 0.875rem;
+  color: #2b2b2b;
+  line-height: 1.35;
+}
+
+@media (max-width: 767px) {
+  .g-service-philosophy__lead {
+    max-width: 100%;
+  }
+
+  .g-service-philosophy__stats {
+    margin-left: 0;
+    margin-right: 0;
+    --bs-gutter-x: 0.75rem;
+    --bs-gutter-y: 0.75rem;
+  }
+
+  .g-service-philosophy__stat {
+    border-right: none;
+    padding: 0.35rem 0.25rem;
+    text-align: center;
+  }
+
+  /* 统计为 5 条时末行仅一项，占满一行并居中 */
+  .g-service-philosophy__stats.row-cols-2 > .g-service-philosophy__stat:nth-child(5):last-child {
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .g-service-philosophy__stat .g-service-philosophy__value,
+  .g-service-philosophy__stat:first-child .g-service-philosophy__value,
+  .g-service-philosophy__stat:last-child .g-service-philosophy__value {
+    align-items: center;
+  }
+
+  .g-service-philosophy__value {
+    font-size: clamp(1.3rem, 5.5vw, 1.9rem);
+  }
+
+  .g-service-philosophy__label {
+    font-size: 0.8125rem;
+    word-break: break-word;
+  }
+}
+
+/* ---------- 服务内容总标题 ---------- */
+.g-service-content {
+  padding: clamp(2rem, 5vw, 3.5rem) 0 3rem;
+}
+
+.g-service-content .container {
+  max-width: 1400px;
+}
+
+.g-service-content__title {
+  font-family: 'Exo', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+  color: var(--g-service-text);
+  margin: 0 0 1.75rem;
+  line-height: 1.2;
+}
+
+/* ---------- 双栏卡片 ---------- */
+.g-service-card {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: clamp(1.5rem, 4vw, 2.25rem);
+}
+
+.g-service-card:last-of-type {
+  margin-bottom: 0;
+}
+
+.g-service-card__media {
+  flex: 1 1 50%;
+  min-height: 280px;
+  position: relative;
+  background: #e8eaef;
+}
+
+.g-service-card__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.g-service-card__img--placeholder {
+  background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%);
+}
+
+.g-service-card__panel {
+  flex: 1 1 50%;
+  position: relative;
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 280px;
+}
+
+/* 奇数项：图左文右（DOM：media → panel）；偶数项：文左图右 */
+.g-service-card--img-left {
+  flex-direction: row;
+}
+
+.g-service-card--img-right {
+  flex-direction: row-reverse;
+}
+
+.g-service-card--dark .g-service-card__panel {
+  background: var(--g-service-dark-panel);
+  color: #fff;
+}
+
+.g-service-card--light .g-service-card__panel {
+  background: var(--g-service-light-panel);
+  color: var(--g-service-text);
+}
+
+.g-service-card__big-title {
+  font-family: 'Exo', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.25rem, 2.8vw, 1.65rem);
+  color: var(--g-service-accent);
+  margin: 0 0 1.25rem;
+  line-height: 1.25;
+}
+
+.g-service-card--light .g-service-card__big-title {
+  color: var(--g-service-accent);
+}
+
+.g-service-card__blocks {
+  flex: 1;
+}
+
+.g-service-card__sub-title {
+  font-family: 'Exo', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin: 0 0 0.5rem;
+  line-height: 1.35;
+}
+
+.g-service-card--dark .g-service-card__sub-title {
+  color: #fff;
+}
+
+.g-service-card--light .g-service-card__sub-title {
+  color: var(--g-service-text);
+}
+
+.g-service-card__sub-title--second {
+  margin-top: 1.25rem;
+}
+
+.g-service-card__text--second-block {
+  margin-top: 1.25rem;
+}
+
+.g-service-card__text {
+  margin: 0 0 0.75rem;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+}
+
+.g-service-card--dark .g-service-card__text {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.g-service-card--light .g-service-card__text {
+  color: #333;
+}
+
+.g-service-card__text--standalone {
+  margin-bottom: 0;
+}
+
+.g-service-card__accent {
+  position: absolute;
+  bottom: 1.25rem;
+  width: 48px;
+  height: 4px;
+  background: var(--g-service-accent);
+  border-radius: 2px;
+}
+
+.g-service-card--dark .g-service-card__accent {
+  right: clamp(1.25rem, 4vw, 2.75rem);
+  left: auto;
+}
+
+.g-service-card--light .g-service-card__accent {
+  left: clamp(1.25rem, 4vw, 2.75rem);
+  right: auto;
+}
+
+@media (max-width: 767px) {
+  .g-service-card,
+  .g-service-card--img-left,
+  .g-service-card--img-right {
+    flex-direction: column;
+  }
+
+  .g-service-card__media {
+    flex: 0 0 auto;
+    min-height: 220px;
+    order: -1;
+  }
+
+  .g-service-card__panel {
+    min-height: 0;
+    padding-bottom: 2.5rem;
+  }
+
+  .g-service-card__accent {
+    bottom: 1rem;
+  }
+}

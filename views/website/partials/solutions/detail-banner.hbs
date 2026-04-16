@@ -1,0 +1,14 @@
+<section class="g-products-banner">
+  <div class="g-products-banner__bg">
+    {{#if bannerImageUrl}}
+      <img src="{{bannerImageUrl}}" alt="" class="g-products-banner__image" loading="lazy" />
+    {{else}}
+      <div class="g-products-banner__placeholder"></div>
+    {{/if}}
+  </div>
+  <div class="container">
+    {{#unless hideSolutionsBannerTitle}}
+    <h1 class="g-products-banner__title">{{solution.title}}</h1>
+    {{/unless}}
+  </div>
+</section>

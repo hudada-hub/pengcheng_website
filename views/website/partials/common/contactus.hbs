@@ -1,0 +1,225 @@
+{{! -- 联系订阅区块：文案来自配置contact-us（type 10：行 title/description；content.title / content.description 为左侧） -- }}
+{{#if contactUs}}
+{{#if modal}}
+<div class="g-contactus__wrap g-contactus__wrap--modal">
+{{else}}
+<section class="g-section g-contactus " aria-label="{{#if contactUs.title}}{{contactUs.title}}{{else}}{{#if contactUs.description}}{{contactUs.description}}{{else}}Contact{{/if}}{{/if}}" data-wow-offset="60">
+  <div class="container">
+    {{#if contactUs.title}}
+    <h2 class="g-section-title">{{contactUs.title}}</h2>
+    {{else}}
+    <h2 class="g-section-title">{{contactUs.description}}</h2>
+    {{/if}}
+    <div class="g-contactus__wrap">
+{{/if}}
+      <div class="g-contactus__left">
+        <div class="g-contactus__left-inner">
+          {{#if contactUs.content.title}}
+          <h3>{{contactUs.content.title}}</h3>
+          {{/if}}
+          <div class="g-contactus__divider"></div>
+          {{#if contactUs.content.description}}
+          <p>{{contactUs.content.description}}</p>
+          {{/if}}
+        </div>
+      </div>
+      <div class="g-contactus__middle-divider"></div>
+      <div class="g-contactus__right">
+        <h3 class="g-contactus__right-title">{{#if contactUs.description}}{{contactUs.description}}{{else}}Contact information{{/if}}</h3>
+        <form
+          id="{{#if modal}}gContactusModalForm{{else}}gContactusInlineForm{{/if}}"
+          action="{{basePath}}/contact"
+          method="post"
+          class="g-contactus__form"
+          data-toast-success="{{contactUsSuccessText}}"
+          data-toast-invalid="{{contactToastInvalid}}"
+          data-toast-network="{{contactToastNetwork}}"
+          data-toast-forbidden="{{contactToastForbidden}}"
+          data-toast-err-title="{{contactToastErrTitle}}"
+        >
+          <input type="hidden" name="_csrf" value="{{contactFormCsrfToken}}">
+          <input type="hidden" name="sourceUrl" id="{{#if modal}}g-modal-sub-{{else}}g-{{/if}}sourceUrl">
+          <div class="g-contactus__form-row">
+            <div class="g-contactus__form-group">
+              <label for="{{#if modal}}g-modal-sub-{{else}}g-{{/if}}fullname">{{#if contactUsFormLabels}}{{contactUsFormLabels.fullName}}{{else}}Full Name{{/if}}</label>
+              <input type="text" id="{{#if modal}}g-modal-sub-{{else}}g-{{/if}}fullname" name="fullName" required>
+            </div>
+            <div class="g-contactus__form-group">
+              <label for="{{#if modal}}g-modal-sub-{{else}}g-{{/if}}email">{{#if contactUsFormLabels}}{{contactUsFormLabels.email}}{{else}}E-mail{{/if}}</label>
+              <input type="email" id="{{#if modal}}g-modal-sub-{{else}}g-{{/if}}email" name="email" required>
+            </div>
+          </div>
+          <div class="g-contactus__form-row">
+            <div class="g-contactus__form-group">
+              <label for="{{#if modal}}g-modal-sub-{{else}}g-{{/if}}nation">{{#if contactUsFormLabels}}{{contactUsFormLabels.nation}}{{else}}Nation{{/if}}</label>
+              <input type="text" id="{{#if modal}}g-modal-sub-{{else}}g-{{/if}}nation" name="nation">
+            </div>
+            <div class="g-contactus__form-group">
+              <label for="{{#if modal}}g-modal-sub-{{else}}g-{{/if}}location">{{#if contactUsFormLabels}}{{contactUsFormLabels.location}}{{else}}Location{{/if}}</label>
+              <input type="text" id="{{#if modal}}g-modal-sub-{{else}}g-{{/if}}location" name="location">
+            </div>
+          </div>
+          <div class="g-contactus__form-row">
+            <div class="g-contactus__form-group">
+              <label for="{{#if modal}}g-modal-sub-{{else}}g-{{/if}}phone">{{#if contactUsFormLabels}}{{contactUsFormLabels.phone}}{{else}}Phone{{/if}}</label>
+              <input type="tel" id="{{#if modal}}g-modal-sub-{{else}}g-{{/if}}phone" name="phone">
+            </div>
+            <div class="g-contactus__form-group">
+              <label for="{{#if modal}}g-modal-sub-{{else}}g-{{/if}}question">{{#if contactUsFormLabels}}{{contactUsFormLabels.question}}{{else}}Message{{/if}}</label>
+              <input type="text" id="{{#if modal}}g-modal-sub-{{else}}g-{{/if}}question" name="question">
+            </div>
+          </div>
+          <div class="g-contactus__form-submit">
+            <button type="submit" class="g-contactus__submit-btn">{{#if contactUsSubmitLabel}}{{contactUsSubmitLabel}}{{else}}Submit{{/if}}</button>
+          </div>
+        </form>
+      </div>
+{{#if modal}}
+</div>
+{{else}}
+    </div>
+  </div>
+</section>
+<script>
+(function () {
+  var form = document.getElementById('gContactusInlineForm');
+  if (!form) return;
+  var btn = form.querySelector('.g-contactus__submit-btn');
+  var csrfInput = form.querySelector('input[name="_csrf"]');
+  var sourceUrlInput = form.querySelector('input[name="sourceUrl"]');
+
+  if (!csrfInput.value) {
+    fetch('/contact-form-meta', { credentials: 'same-origin' })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data.csrfToken && csrfInput) csrfInput.value = data.csrfToken;
+      })
+      .catch(function() {});
+  }
+
+  if (sourceUrlInput) {
+    sourceUrlInput.value = window.location.pathname;
+  }
+
+  function ensureHost() {
+    var host = document.getElementById('g-contact-toast-host');
+    if (!host) {
+      host = document.createElement('div');
+      host.id = 'g-contact-toast-host';
+      host.className = 'g-contact-toast-host';
+      host.setAttribute('aria-live', 'polite');
+      document.body.appendChild(host);
+    }
+    return host;
+  }
+  function showToast(text, kind) {
+    var host = ensureHost();
+    var wrap = document.createElement('div');
+    wrap.className = 'g-contact-toast g-contact-toast--' + (kind === 'error' ? 'error' : 'success');
+    wrap.setAttribute('role', 'alert');
+    var icon = document.createElement('div');
+    icon.className = 'g-contact-toast__icon';
+    icon.innerHTML =
+      kind === 'error'
+        ? '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>'
+        : '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+    var body = document.createElement('div');
+    body.className = 'g-contact-toast__body';
+    var msg = document.createElement('div');
+    msg.className = 'g-contact-toast__msg';
+    msg.textContent = text;
+    if (kind === 'success') {
+      msg.classList.add('g-contact-toast__msg--solo');
+      body.appendChild(msg);
+    } else {
+      var title = document.createElement('div');
+      title.className = 'g-contact-toast__title';
+      title.textContent = form.getAttribute('data-toast-err-title') || 'Notice';
+      body.appendChild(title);
+      body.appendChild(msg);
+    }
+    var close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'g-contact-toast__close';
+    close.setAttribute('aria-label', 'Close');
+    close.innerHTML = '&times;';
+    wrap.appendChild(icon);
+    wrap.appendChild(body);
+    wrap.appendChild(close);
+    host.appendChild(wrap);
+    requestAnimationFrame(function () {
+      wrap.classList.add('g-contact-toast--show');
+    });
+    var removeTimer = setTimeout(function () {
+      dismiss();
+    }, 5200);
+    function dismiss() {
+      clearTimeout(removeTimer);
+      wrap.classList.remove('g-contact-toast--show');
+      setTimeout(function () {
+        wrap.remove();
+      }, 320);
+    }
+    close.addEventListener('click', dismiss);
+  }
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (btn) {
+      btn.classList.add('is-loading');
+      btn.disabled = true;
+    }
+    var fd = new FormData(form);
+    var encoded = new URLSearchParams(fd);
+    var url = form.getAttribute('action') || '';
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+      },
+      body: encoded.toString(),
+      credentials: 'same-origin',
+    })
+      .then(function (res) {
+        var ct = (res.headers.get('content-type') || '').toLowerCase();
+        if (ct.indexOf('application/json') !== -1) {
+          return res.json().then(function (data) {
+            return { res: res, data: data };
+          });
+        }
+        return { res: res, data: null };
+      })
+      .then(function (o) {
+        var res = o.res;
+        var data = o.data;
+        if (res.ok && data && data.ok) {
+          var token = data.csrfToken;
+          form.reset();
+          if (token && csrfInput) csrfInput.value = token;
+          showToast(data.message || form.getAttribute('data-toast-success') || '', 'success');
+          return;
+        }
+        if (res.status === 400 && data && data.message) {
+          showToast(data.message, 'error');
+          return;
+        }
+        if (res.status === 403) {
+          showToast(form.getAttribute('data-toast-forbidden') || '', 'error');
+          return;
+        }
+        showToast(form.getAttribute('data-toast-network') || '', 'error');
+      })
+      .catch(function () {
+        showToast(form.getAttribute('data-toast-network') || '', 'error');
+      })
+      .finally(function () {
+        if (btn) {
+          btn.classList.remove('is-loading');
+          btn.disabled = false;
+        }
+      });
+  });
+})();
+</script>
+{{/if}}
+{{/if}}

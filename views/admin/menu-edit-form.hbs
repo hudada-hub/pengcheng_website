@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head><body><div id="admin-form-fragment">
+  <div class="admin-card">
+    <form class="admin-form" method="post" action="/admin/menu/save">
+      <div class="admin-modal-form-scroll">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        {{#if menu}}<input type="hidden" name="id" value="{{menu.id}}">{{/if}}
+        <div class="form-group">
+          <label>名称 <span style="color:var(--admin-danger);">*</span></label>
+        <input type="text" name="name" required value="{{#if menu}}{{menu.name}}{{/if}}" placeholder="菜单名称">
+      </div>
+      <div class="form-group">
+        <label>语言</label>
+        <select name="langId" required>
+          {{#each langs}}
+          <option value="{{this.id}}" {{#if ../menu}}{{#if (eq this.id ../menu.langId)}}selected{{/if}}{{/if}}>{{this.name}} ({{this.code}})</option>
+          {{/each}}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>父级菜单</label>
+        <select name="parentId" id="menuFormParentId">
+          <option value="0">无（顶级）</option>
+          {{#each menuTree}}
+          {{#unless (eq this.id ../menu.id)}}
+          <option value="{{this.id}}" data-lang-id="{{this.langId}}" {{#if ../menu}}{{#if (eq this.id ../menu.parentId)}}selected{{/if}}{{/if}}>{{#if this.depth}}{{#each this.treeIndent}}　　{{/each}}{{/if}}{{this.name}}</option>
+          {{/unless}}
+          {{/each}}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>链接 URL</label>
+        <input type="text" name="linkUrl" value="{{#if menu}}{{menu.linkUrl}}{{/if}}" placeholder="/about">
+      </div>
+      <div class="form-group">
+        <label>菜单图标/图片 URL</label>
+        <div class="admin-input-row">
+          <input type="text" id="menuPicUrl" name="menuPicUrl" value="{{#if menu}}{{menu.menuPicUrl}}{{/if}}" placeholder="点击右侧按钮选择/上传">
+          <button type="button" class="btn" id="btnPickMenuPic"><iconify-icon icon="mdi:image-search-outline"></iconify-icon> 选择文件</button>
+          <span class="admin-input-preview" id="menuPicPreview">{{#if menu}}{{#if menu.menuPicUrl}}<img src="{{menu.menuPicUrl}}" alt="">{{/if}}{{/if}}</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Banner 图 URL</label>
+        <div class="admin-input-row">
+          <input type="text" id="bannerUrl" name="bannerUrl" value="{{#if menu}}{{menu.bannerUrl}}{{/if}}" placeholder="点击右侧按钮选择/上传">
+          <button type="button" class="btn" id="btnPickBannerUrl"><iconify-icon icon="mdi:image-search-outline"></iconify-icon> 选择文件</button>
+          <span class="admin-input-preview" id="bannerUrlPreview">{{#if menu}}{{#if menu.bannerUrl}}<img src="{{menu.bannerUrl}}" alt="">{{/if}}{{/if}}</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Banner 标题</label>
+        <input type="text" name="bannerTitle" value="{{#if menu}}{{menu.bannerTitle}}{{/if}}">
+      </div>
+      <div class="form-group">
+        <label>Banner 描述</label>
+        <textarea name="bannerDesc" rows="2">{{#if menu}}{{menu.bannerDesc}}{{/if}}</textarea>
+      </div>
+      <div class="form-group">
+        <label>SEO 标题</label>
+        <input type="text" name="metaTitle" value="{{#if menu}}{{menu.metaTitle}}{{/if}}">
+      </div>
+      <div class="form-group">
+        <label>SEO 关键词</label>
+        <input type="text" name="metaKeywords" value="{{#if menu}}{{menu.metaKeywords}}{{/if}}">
+      </div>
+      <div class="form-group">
+        <label>SEO 描述</label>
+        <textarea name="metaDescription" rows="2">{{#if menu}}{{menu.metaDescription}}{{/if}}</textarea>
+      </div>
+      <div class="form-group">
+        <label>状态</label>
+        <select name="status">
+          <option value="1" {{#if menu}}{{#if (eq menu.status 1)}}selected{{/if}}{{else}}selected{{/if}}>正常</option>
+          <option value="0" {{#if menu}}{{#if (eq menu.status 0)}}selected{{/if}}{{/if}}>隐藏</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>排序号（越大越靠前）</label>
+        <input type="number" name="sortOrder" value="{{#if menu}}{{menu.sortOrder}}{{else}}0{{/if}}" placeholder="数值越大越靠前">
+      </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">保存</button>
+        <button type="button" class="btn admin-modal-form-cancel">取消</button>
+      </div>
+    </form>
+  </div>
+</div></body></html>

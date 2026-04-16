@@ -1,0 +1,68 @@
+{{!-- 单条内容项：根据 type 显示各字段，由 admin-config-content.js 按 type 显隐 --}}
+<div class="config-content-item" data-item-index="{{index}}">
+  {{#if index}}<div class="config-content-item-header"><span>第 {{displayNum}} 项</span> <button type="button" class="btn btn-sm config-content-item-remove">删除</button></div>{{/if}}
+  <div class="form-group content-field" data-content-key="bigTitle">
+    <label>大标题</label>
+    <input type="text" class="content-input" data-key="bigTitle" value="{{bigTitle}}" placeholder="大标题">
+  </div>
+  <div class="form-group content-field" data-content-key="title">
+    <label>标题</label>
+    <input type="text" class="content-input" data-key="title" value="{{title}}" placeholder="标题">
+  </div>
+  <div class="form-group content-field" data-content-key="description">
+    <label>描述</label>
+    <textarea class="content-input" data-key="description" rows="2" placeholder="描述">{{description}}</textarea>
+  </div>
+  <div class="form-group content-field" data-content-key="subtitle">
+    <label>小标题</label>
+    <input type="text" class="content-input" data-key="subtitle" value="{{subtitle}}" placeholder="小标题">
+  </div>
+  <div class="form-group content-field" data-content-key="subDescription">
+    <label>小描述</label>
+    <textarea class="content-input" data-key="subDescription" rows="2" placeholder="小描述">{{subDescription}}</textarea>
+  </div>
+  <div class="form-group content-field" data-content-key="url">
+    <label>链接</label>
+    <input type="text" class="content-input" data-key="url" value="{{url}}" placeholder="链接地址">
+  </div>
+  <div class="form-group content-field" data-content-key="pic1Url">
+    <label>图片1</label>
+    <div class="admin-input-row">
+      <input type="text" class="content-input content-pic" data-key="pic1Url" value="{{pic1Url}}" placeholder="选择图片">
+      <button type="button" class="btn btn-pick-pic" data-key="pic1Url"><iconify-icon icon="mdi:image-search-outline"></iconify-icon> 选择</button>
+      <span class="admin-input-preview content-pic-preview" data-key="pic1Url">{{#if pic1Url}}<img src="{{pic1Url}}" alt="">{{/if}}</span>
+    </div>
+  </div>
+  <div class="form-group content-field" data-content-key="pic2Url">
+    <label>图片2（企业文化：图标悬停层；历程等可留空）</label>
+    <div class="admin-input-row">
+      <input type="text" class="content-input content-pic" data-key="pic2Url" value="{{pic2Url}}" placeholder="选择图片">
+      <button type="button" class="btn btn-pick-pic" data-key="pic2Url"><iconify-icon icon="mdi:image-search-outline"></iconify-icon> 选择</button>
+      <span class="admin-input-preview content-pic-preview" data-key="pic2Url">{{#if pic2Url}}<img src="{{pic2Url}}" alt="">{{/if}}</span>
+    </div>
+  </div>
+  <div class="form-group content-field" data-content-key="pic3Url">
+    <label>背景图1（企业文化：底图默认层；可选，Mission 默认用站点图）</label>
+    <div class="admin-input-row">
+      <input type="text" class="content-input content-pic" data-key="pic3Url" value="{{pic3Url}}" placeholder="选择图片">
+      <button type="button" class="btn btn-pick-pic" data-key="pic3Url"><iconify-icon icon="mdi:image-search-outline"></iconify-icon> 选择</button>
+      <span class="admin-input-preview content-pic-preview" data-key="pic3Url">{{#if pic3Url}}<img src="{{pic3Url}}" alt="">{{/if}}</span>
+    </div>
+  </div>
+  <div class="form-group content-field" data-content-key="pic4Url">
+    <label>背景图2 / 悬停层（非 Mission；Mission 勿填）</label>
+    <div class="admin-input-row">
+      <input type="text" class="content-input content-pic" data-key="pic4Url" value="{{pic4Url}}" placeholder="选择图片">
+      <button type="button" class="btn btn-pick-pic" data-key="pic4Url"><iconify-icon icon="mdi:image-search-outline"></iconify-icon> 选择</button>
+      <span class="admin-input-preview content-pic-preview" data-key="pic4Url">{{#if pic4Url}}<img src="{{pic4Url}}" alt="">{{/if}}</span>
+    </div>
+  </div>
+  <div class="form-group content-field" data-content-key="content">
+    <label>内容</label>
+    <div class="config-content-rich-wrap" style="display:none;">
+      <div class="config-rich-toolbar"></div>
+      <div class="config-rich-editor" style="min-height:280px;"></div>
+    </div>
+    <textarea class="content-input" data-key="content" rows="3" placeholder="内容">{{{content}}}</textarea>
+  </div>
+</div>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="{{locale}}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  {{#if description}}<meta name="description" content="{{description}}">{{/if}}
+  {{#if keywords}}<meta name="keywords" content="{{keywords}}">{{/if}}
+  {{#if sharePageUrl}}<link rel="canonical" href="{{sharePageUrl}}">{{/if}}
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/bootstrap-grid.css">
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/grid.css">
+  <link rel="stylesheet" href="/css/global/common-global.css">
+  <link rel="stylesheet" href="/css/global/products-global.css">
+  <link rel="stylesheet" href="/css/global/solutions-global.css">
+  <link rel="stylesheet" href="/css/global/cases-global.css">
+  <link rel="stylesheet" href="/css/other/animate.min.css">
+  <link rel="stylesheet" href="/css/exo.css">
+  <script src="/js/iconify-icon.min.js" defer></script>
+</head>
+<body class="g-products-page g-case-detail-page">
+  {{> website/common/nav-drawer}}
+  {{> website/common/header}}
+
+  <main class="g-main" style="background-color: #f5f5f5;">
+    <section class="g-products-banner g-case-detail-banner" aria-label="{{#if (eq locale "zh-CN")}}应用案例{{else}}Application cases{{/if}}">
+      <div class="g-products-banner__bg">
+        {{#if bannerImageUrl}}
+          <img src="{{bannerImageUrl}}" alt="" class="g-products-banner__image" loading="eager" />
+        {{else}}
+          <div class="g-products-banner__placeholder"></div>
+        {{/if}}
+      </div>
+      <div class="g-products-banner__overlay"></div>
+      <div class="g-case-detail-banner__inner">
+        <h2 class="g-case-detail-banner__title">{{industryCase.bannerTitle}}</h2>
+        <form class="g-case-detail-banner__search" action="{{caseBannerSearchUrl}}" method="get" role="search">
+          <input type="hidden" name="tab" value="usecases" />
+          <input
+            type="search"
+            name="q"
+            class="g-case-detail-banner__search-input"
+            placeholder="{{caseBannerSearchPlaceholder}}"
+            autocomplete="off"
+            maxlength="200"
+            aria-label="{{caseBannerSearchPlaceholder}}"
+          />
+          <button type="submit" class="g-case-detail-banner__search-submit" aria-label="{{#if (eq locale "zh-CN")}}搜索{{else}}Search{{/if}}">
+            <iconify-icon icon="mdi:magnify"></iconify-icon>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <div class="g-case-detail-main">
+      <div class="container g-case-detail-container">
+        <div
+          id="g-case-detail-share"
+          data-share-root
+          class="g-case-detail-wrap g-case-detail-layout"
+          data-share-url="{{sharePageUrl}}"
+          data-msg-copied='{{#if (eq locale "zh-CN")}}链接已复制{{else}}Link copied{{/if}}'
+          data-msg-copy-fail='{{#if (eq locale "zh-CN")}}复制失败{{else}}Copy failed{{/if}}'
+        >
+          <div class="g-case-detail-layout__inner">
+            <article class="g-case-detail-article">
+              <header class="g-case-detail-header">
+                <h1 class="g-case-detail-h1">{{industryCase.title}}</h1>
+                <div class="g-case-detail-meta">
+                  <span class="g-case-detail-meta__date">{{caseReleaseLabel}}: {{caseReleaseDate}}</span>
+                  {{#if hasCaseTags}}
+                  <ul class="g-case-detail-tags" aria-label="{{#if (eq locale "zh-CN")}}标签{{else}}Tags{{/if}}">
+                    {{#each caseTags}}
+                    <li class="g-case-detail-tag">{{this}}</li>
+                    {{/each}}
+                  </ul>
+                  {{/if}}
+                </div>
+              </header>
+              {{#if industryCase.thumbnail}}
+              <figure class="g-case-detail-thumb">
+                <img
+                  src="{{industryCase.thumbnail}}"
+                  alt="{{industryCase.title}}"
+                  class="g-case-detail-thumb__img"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </figure>
+              {{/if}}
+              <div class="g-case-detail-content">{{{industryCase.content}}}</div>
+            </article>
+
+            {{!-- 工具栏（桌面侧边 + 移动底栏�? 分享弹窗 --}}
+            {{> website/common/detail-nav-toolbar
+                prevItem=casePrev
+                nextItem=caseNext
+                listUrl=casesListUrl
+            }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container" style="background-color: #f5f5f7;max-width:1200px;">
+      {{> website/common/related-products relatedProducts=relatedProducts hasRelatedProducts=hasRelatedProducts locale=locale relatedProductsConfig=relatedProductsConfig}}
+    </div>
+
+    {{#if hasRelatedSolutions}}
+    <div class="container" style="background-color: #f5f5f7;max-width:1200px;">
+      <section class="g-solution-related-products" aria-labelledby="g-related-solutions-heading">
+        <div class="g-solution-related-products__head">
+          <h2 id="g-related-solutions-heading" class="g-solution-related-products__title">
+            {{relatedSolutionsConfig.title}}
+          </h2>
+          {{#if relatedSolutionsConfig.description}}
+          <p class="g-solution-related-products__subtitle">
+            {{relatedSolutionsConfig.description}}
+          </p>
+          {{/if}}
+        </div>
+        <div class="row g-4 g-solution-related-products__grid">
+          {{#each relatedSolutions}}
+          <div class="col-12 col-md-6 col-lg-4">
+            <article class="g-solution-case-card">
+              <a href="{{this.url}}" class="g-solution-case-card__media-link">
+                <div class="g-solution-case-card__media">
+                  <img src="{{this.picUrl}}" alt="{{this.title}}" class="g-solution-case-card__img" loading="lazy" />
+                </div>
+              </a>
+              <div class="g-solution-case-card__body">
+                <h3 class="g-solution-case-card__title">
+                  <a href="{{this.url}}">{{this.title}}</a>
+                </h3>
+                {{#if this.description}}
+                <p style="color: #666; font-size: 0.9rem; margin-bottom: 14px;">{{this.description}}</p>
+                {{/if}}
+                <div class="g-solution-case-card__footer">
+                  <a href="{{this.url}}" class="g-solution-case-card__cta">
+                    {{#if (eq ../locale "zh-CN")}}查看详情{{else}}View Details{{/if}}
+                    <iconify-icon icon="mdi:arrow-right"></iconify-icon>
+                  </a>
+                </div>
+              </div>
+            </article>
+          </div>
+          {{/each}}
+        </div>
+      </section>
+    </div>
+    {{/if}}
+
+    {{> website/common/global-map}}
+    {{> website/common/footer}}
+  </main>
+
+  <script src="/js/univerjs/echarts.min.js" defer></script>
+  <script src="/js/univerjs/word/world.js" defer></script>
+  <script src="/js/global-map.js" defer></script>
+  <script src="/js/qrcode.min.js" defer></script>
+  <script src="/js/case-detail-share.js" defer></script>
+</body>
+</html>

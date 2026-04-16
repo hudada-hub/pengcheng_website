@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} - 鹏成后台</title>
+  <meta name="csrf-token" content="{{csrfToken}}">
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/admin/admin-theme.css">
+  <script src="/js/iconify-icon.min.js"></script>
+  <style>
+    .admin-seo-sitemap-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    
+    .admin-seo-sitemap-header {
+      margin-bottom: 32px;
+    }
+    
+    .admin-seo-sitemap-header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--admin-text-primary);
+      margin-bottom: 8px;
+    }
+    
+    .admin-seo-sitemap-header p {
+      color: var(--admin-text-secondary);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .admin-seo-section {
+      background: var(--admin-bg-secondary);
+      border: 1px solid var(--admin-border);
+      border-radius: var(--admin-radius-md);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .admin-seo-section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--admin-text-primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .admin-seo-config-form {
+      display: grid;
+      gap: 16px;
+    }
+
+    .admin-seo-config-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .admin-seo-config-item label {
+      min-width: 120px;
+      font-size: 14px;
+      color: var(--admin-text-secondary);
+    }
+
+    .admin-seo-config-item input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--admin-radius-sm);
+      font-size: 14px;
+    }
+
+    .admin-seo-config-item input:focus {
+      outline: none;
+      border-color: var(--admin-primary);
+    }
+
+    .admin-seo-save-btn {
+      padding: 10px 24px;
+      background: var(--admin-primary);
+      color: white;
+      border: none;
+      border-radius: var(--admin-radius-sm);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .admin-seo-save-btn:hover {
+      background: var(--admin-primary-hover);
+    }
+
+    .admin-seo-last-push {
+      font-size: 13px;
+      color: var(--admin-text-tertiary);
+      margin-top: 12px;
+    }
+    
+    .admin-seo-sitemap-url-box {
+      background: var(--admin-bg-secondary);
+      border: 1px solid var(--admin-border);
+      border-radius: var(--admin-radius-md);
+      padding: 16px;
+      margin-bottom: 32px;
+    }
+    
+    .admin-seo-sitemap-url-label {
+      font-size: 12px;
+      color: var(--admin-text-tertiary);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .admin-seo-sitemap-url-value {
+      font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+      font-size: 14px;
+      color: var(--admin-text-primary);
+      word-break: break-all;
+      padding: 12px;
+      background: var(--admin-bg-primary);
+      border: 1px solid var(--admin-border);
+      border-radius: var(--admin-radius-sm);
+    }
+    
+    .admin-seo-sitemap-engines {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    
+    .admin-seo-sitemap-engine-card {
+      background: var(--admin-bg-secondary);
+      border: 1px solid var(--admin-border);
+      border-radius: var(--admin-radius-md);
+      padding: 24px;
+      transition: all 0.2s ease;
+    }
+    
+    .admin-seo-sitemap-engine-card:hover {
+      border-color: var(--admin-primary);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .admin-seo-sitemap-engine-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .admin-seo-sitemap-engine-icon {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--admin-bg-primary);
+      border-radius: var(--admin-radius-md);
+      color: var(--admin-primary);
+      font-size: 24px;
+    }
+
+    .admin-seo-sitemap-engine-icon.baidu { color: #2932e1; }
+    .admin-seo-sitemap-engine-icon.bing { color: #00809d; }
+    .admin-seo-sitemap-engine-icon.google { color: #4285f4; }
+    
+    .admin-seo-sitemap-engine-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--admin-text-primary);
+      margin-bottom: 4px;
+    }
+    
+    .admin-seo-sitemap-engine-description {
+      font-size: 13px;
+      color: var(--admin-text-secondary);
+    }
+
+    .admin-seo-sitemap-engine-status {
+      margin-top: 12px;
+      padding: 8px 12px;
+      border-radius: var(--admin-radius-sm);
+      font-size: 13px;
+      display: none;
+    }
+
+    .admin-seo-sitemap-engine-status.success {
+      display: block;
+      background: var(--admin-success-light);
+      color: var(--admin-success);
+      border: 1px solid var(--admin-success);
+    }
+
+    .admin-seo-sitemap-engine-status.error {
+      display: block;
+      background: var(--admin-danger-light);
+      color: var(--admin-danger);
+      border: 1px solid var(--admin-danger);
+    }
+    
+    .admin-seo-sitemap-engine-actions {
+      margin-top: 16px;
+      display: flex;
+      gap: 12px;
+    }
+    
+    .admin-seo-sitemap-engine-btn {
+      flex: 1;
+      padding: 10px 16px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--admin-radius-sm);
+      background: var(--admin-bg-primary);
+      color: var(--admin-text-primary);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .admin-seo-sitemap-engine-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .admin-seo-sitemap-engine-btn:hover:not(:disabled) {
+      background: var(--admin-primary);
+      border-color: var(--admin-primary);
+      color: white;
+    }
+
+    .admin-seo-sitemap-engine-btn.push {
+      background: var(--admin-primary);
+      border-color: var(--admin-primary);
+      color: white;
+    }
+
+    .admin-seo-sitemap-engine-btn.push:hover:not(:disabled) {
+      background: var(--admin-primary-hover);
+    }
+
+    .admin-seo-sitemap-engine-btn.spinning {
+      position: relative;
+    }
+
+    .admin-seo-sitemap-engine-btn.spinning::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border: 2px solid transparent;
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .admin-seo-all-push-btn {
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: var(--admin-radius-md);
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 24px auto;
+    }
+
+    .admin-seo-all-push-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .admin-seo-all-push-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .admin-seo-loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .admin-seo-loading-overlay.active {
+      display: flex;
+    }
+
+    .admin-seo-loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid var(--admin-border);
+      border-top-color: var(--admin-primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    .admin-seo-sitemap-instructions {
+      background: var(--admin-info-light);
+      border: 1px solid var(--admin-info);
+      border-radius: var(--admin-radius-md);
+      padding: 20px;
+      margin-top: 32px;
+    }
+    
+    .admin-seo-sitemap-instructions h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--admin-info);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .admin-seo-sitemap-instructions ol {
+      margin-left: 20px;
+      color: var(--admin-text-secondary);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    .admin-seo-sitemap-instructions li {
+      margin-bottom: 8px;
+    }
+    
+    .admin-seo-sitemap-instructions code {
+      font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+      background: var(--admin-bg-primary);
+      padding: 2px 6px;
+      border-radius: var(--admin-radius-sm);
+      font-size: 12px;
+      color: var(--admin-text-primary);
+    }
+  </style>
+</head>
+<body>
+  {{> admin/header}}
+  <div class="admin-body">
+    {{> admin/sidebar}}
+    <main class="admin-main">
+    <div class="admin-seo-sitemap-container">
+      <div class="admin-seo-sitemap-header">
+        <h1>{{title}}</h1>
+        <p>将您的站点地图推送到主流搜索引擎，帮助搜索引擎更快地发现和索引您的网站内容。</p>
+      </div>
+
+      <div class="admin-seo-sitemap-url-box">
+        <div class="admin-seo-sitemap-url-label">您的站点地图URL</div>
+        <div class="admin-seo-sitemap-url-value" id="sitemapUrl">{{sitemapUrl}}</div>
+        <div style="margin-top: 12px; display: flex; gap: 12px;">
+          <button class="admin-seo-sitemap-engine-btn copy" onclick="copySitemapUrl()">
+            <iconify-icon icon="mdi:content-copy"></iconify-icon>
+            复制URL
+          </button>
+          <a href="{{sitemapUrl}}" target="_blank" class="admin-seo-sitemap-engine-btn">
+            <iconify-icon icon="mdi:open-in-new"></iconify-icon>
+            查看站点地图
+          </a>
+        </div>
+      </div>
+
+      <div class="admin-seo-sitemap-engines">
+        <div class="admin-seo-sitemap-engine-card">
+          <div class="admin-seo-sitemap-engine-header">
+            <div class="admin-seo-sitemap-engine-icon baidu">
+              <iconify-icon icon="mdi:search-web"></iconify-icon>
+            </div>
+            <div>
+              <div class="admin-seo-sitemap-engine-title">百度</div>
+              <div class="admin-seo-sitemap-engine-description">百度搜索资源平台 - 普通收录</div>
+            </div>
+          </div>
+          <div class="admin-seo-sitemap-engine-status" id="baiduStatus"></div>
+          <div class="admin-seo-sitemap-engine-actions">
+            <button class="admin-seo-sitemap-engine-btn push" id="baiduPushBtn" onclick="pushToBaidu()">
+              <iconify-icon icon="mdi:rocket-launch"></iconify-icon>
+              立即推送
+            </button>
+          </div>
+        </div>
+
+        <div class="admin-seo-sitemap-engine-card">
+          <div class="admin-seo-sitemap-engine-header">
+            <div class="admin-seo-sitemap-engine-icon bing">
+              <iconify-icon icon="mdi:search-web"></iconify-icon>
+            </div>
+            <div>
+              <div class="admin-seo-sitemap-engine-title">Bing</div>
+              <div class="admin-seo-sitemap-engine-description">Bing Webmaster Tools</div>
+            </div>
+          </div>
+          <div class="admin-seo-sitemap-engine-status" id="bingStatus"></div>
+          <div class="admin-seo-sitemap-engine-actions">
+            <button class="admin-seo-sitemap-engine-btn push" id="bingPushBtn" onclick="pushToBing()">
+              <iconify-icon icon="mdi:rocket-launch"></iconify-icon>
+              立即推送
+            </button>
+          </div>
+        </div>
+
+        <div class="admin-seo-sitemap-engine-card">
+          <div class="admin-seo-sitemap-engine-header">
+            <div class="admin-seo-sitemap-engine-icon google">
+              <iconify-icon icon="mdi:search-web"></iconify-icon>
+            </div>
+            <div>
+              <div class="admin-seo-sitemap-engine-title">Google</div>
+              <div class="admin-seo-sitemap-engine-description">Google Search Console</div>
+            </div>
+          </div>
+          <div class="admin-seo-sitemap-engine-status" id="googleStatus"></div>
+          <div class="admin-seo-sitemap-engine-actions">
+            <button class="admin-seo-sitemap-engine-btn push" id="googlePushBtn" onclick="pushToGoogle()">
+              <iconify-icon icon="mdi:rocket-launch"></iconify-icon>
+              立即推送
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button class="admin-seo-all-push-btn" id="allPushBtn" onclick="pushToAll()">
+        <iconify-icon icon="mdi:earth"></iconify-icon>
+        一键推送到所有搜索引擎
+      </button>
+
+      <div class="admin-seo-sitemap-instructions">
+        <h3><iconify-icon icon="mdi:information-outline"></iconify-icon> 使用说明</h3>
+        <ol>
+          <li><strong>百度搜索资源平台</strong>：登录 <a href="https://ziyuan.baidu.com" target="_blank">百度搜索资源平台</a>，在"普通收录"→"API提交"中获取Token。</li>
+          <li><strong>Bing Webmaster Tools</strong>：登录 <a href="https://www.bing.com/webmaster" target="_blank">Bing Webmaster</a>，在设置中获取API密钥。</li>
+          <li><strong>Google Search Console</strong>：登录 <a href="https://search.google.com/search-console" target="_blank">Google Search Console</a>，在"站点地图"中提交。</li>
+          <li>建议定期更新站点地图并重新提交，特别是在网站有重大内容更新时。</li>
+          <li>确保您的 <code>robots.txt</code> 文件包含 <code>Sitemap: {{sitemapUrl}}</code> 指令。</li>
+        </ol>
+      </div>
+    </div>
+  </main>
+  </div>
+
+  <div class="admin-seo-loading-overlay" id="loadingOverlay">
+    <div class="admin-seo-loading-spinner"></div>
+  </div>
+
+  <script>
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    const sitemapUrl = document.getElementById('sitemapUrl').textContent.trim();
+
+    function showLoading() {
+      document.getElementById('loadingOverlay').classList.add('active');
+    }
+
+    function hideLoading() {
+      document.getElementById('loadingOverlay').classList.remove('active');
+    }
+
+    function showToast(message, isError = false) {
+      const toast = document.createElement('div');
+      toast.textContent = message;
+      toast.style.cssText = `
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: ${isError ? 'var(--admin-danger)' : 'var(--admin-success)'};
+        color: white;
+        padding: 12px 20px;
+        border-radius: var(--admin-radius-md);
+        font-size: 14px;
+        z-index: 10000;
+        animation: fadeInOut 3s ease;
+      `;
+      
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 2700);
+    }
+
+    function setButtonLoading(btnId, loading) {
+      const btn = document.getElementById(btnId);
+      if (loading) {
+        btn.classList.add('spinning');
+        btn.disabled = true;
+        btn.dataset.originalText = btn.innerHTML;
+        btn.innerHTML = '';
+      } else {
+        btn.classList.remove('spinning');
+        btn.disabled = false;
+        btn.innerHTML = btn.dataset.originalText || btn.innerHTML;
+      }
+    }
+
+    function showStatus(engineId, message, isSuccess) {
+      const status = document.getElementById(engineId + 'Status');
+      status.textContent = message;
+      status.className = 'admin-seo-sitemap-engine-status ' + (isSuccess ? 'success' : 'error');
+    }
+
+    document.getElementById('configForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      showLoading();
+
+      const formData = {
+        baiduToken: document.getElementById('baiduToken').value,
+        bingApiKey: document.getElementById('bingApiKey').value,
+        googleApiKey: document.getElementById('googleApiKey').value,
+      };
+
+      try {
+        const response = await fetch('/admin/seo-push/save-config', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': csrfToken,
+          },
+          body: JSON.stringify(formData),
+        });
+
+        const result = await response.json();
+        
+        if (result.ok) {
+          showToast('配置保存成功！');
+        } else {
+          showToast('配置保存失败：' + result.message, true);
+        }
+      } catch (error) {
+        showToast('保存失败：' + error.message, true);
+      } finally {
+        hideLoading();
+      }
+    });
+
+    async function pushToBaidu() {
+      setButtonLoading('baiduPushBtn', true);
+      showStatus('baidu', '推送中...', true);
+      
+      try {
+        const response = await fetch('/admin/seo-push/baidu', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': csrfToken,
+          },
+          body: JSON.stringify({ sitemapUrl }),
+        });
+
+        const result = await response.json();
+        
+        if (result.ok) {
+          showStatus('baidu', result.message, true);
+          showToast('百度推送成功！');
+        } else {
+          showStatus('baidu', result.message, false);
+          showToast(result.message, true);
+        }
+      } catch (error) {
+        showStatus('baidu', '推送失败：' + error.message, false);
+        showToast('百度推送失败：' + error.message, true);
+      } finally {
+        setButtonLoading('baiduPushBtn', false);
+      }
+    }
+
+    async function pushToBing() {
+      setButtonLoading('bingPushBtn', true);
+      showStatus('bing', '推送中...', true);
+      
+      try {
+        const response = await fetch('/admin/seo-push/bing', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': csrfToken,
+          },
+          body: JSON.stringify({ sitemapUrl }),
+        });
+
+        const result = await response.json();
+        
+        if (result.ok) {
+          showStatus('bing', result.message, true);
+          showToast('Bing推送成功！');
+        } else {
+          showStatus('bing', result.message, false);
+          showToast(result.message, true);
+        }
+      } catch (error) {
+        showStatus('bing', '推送失败：' + error.message, false);
+        showToast('Bing推送失败：' + error.message, true);
+      } finally {
+        setButtonLoading('bingPushBtn', false);
+      }
+    }
+
+    async function pushToGoogle() {
+      setButtonLoading('googlePushBtn', true);
+      showStatus('google', '推送中...', true);
+      
+      try {
+        const response = await fetch('/admin/seo-push/google', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': csrfToken,
+          },
+          body: JSON.stringify({ sitemapUrl }),
+        });
+
+        const result = await response.json();
+        
+        if (result.ok) {
+          showStatus('google', result.message, true);
+          showToast('Google推送成功！');
+        } else {
+          showStatus('google', result.message, false);
+          showToast(result.message, true);
+        }
+      } catch (error) {
+        showStatus('google', '推送失败：' + error.message, false);
+        showToast('Google推送失败：' + error.message, true);
+      } finally {
+        setButtonLoading('googlePushBtn', false);
+      }
+    }
+
+    async function pushToAll() {
+      const btn = document.getElementById('allPushBtn');
+      btn.classList.add('spinning');
+      btn.disabled = true;
+      
+      try {
+        const response = await fetch('/admin/seo-push/all', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': csrfToken,
+          },
+          body: JSON.stringify({ sitemapUrl }),
+        });
+
+        const result = await response.json();
+        
+        if (result.ok) {
+          showToast('已推送到 ' + result.data.filter(r => r.success).length + '/' + result.data.length + ' 个搜索引擎');
+        } else {
+          showToast(result.message, true);
+        }
+      } catch (error) {
+        showToast('推送失败：' + error.message, true);
+      } finally {
+        btn.classList.remove('spinning');
+        btn.disabled = false;
+      }
+    }
+
+    function copySitemapUrl() {
+      navigator.clipboard.writeText(sitemapUrl).then(() => {
+        showToast('站点地图URL已复制到剪贴板');
+      }).catch(err => {
+        showToast('复制失败，请手动复制', true);
+      });
+    }
+
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes fadeInOut {
+        0% { opacity: 0; transform: translateY(10px); }
+        10% { opacity: 1; transform: translateY(0); }
+        90% { opacity: 1; transform: translateY(0); }
+        100% { opacity: 0; transform: translateY(-10px); }
+      }
+      @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>

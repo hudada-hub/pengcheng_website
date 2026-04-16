@@ -1,0 +1,391 @@
+/* 解决方案列表 — 方案分类侧栏（设计稿：圆角容器、#4b4d5e 标题条、白底列表、浅灰分隔线、选中 #e0e1e6 加粗） */
+
+.g-solutions-page .g-solutions-sidebar .g-products-sidebar__inner {
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.g-solutions-page .g-solutions-sidebar .g-products-sidebar__header {
+  background: #4b4d5e;
+}
+
+.g-solutions-page .g-solutions-sidebar .g-products-sidebar__toggle {
+  padding: 18px 20px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.g-solutions-page .g-solutions-sidebar .g-products-sidebar__toggle:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+@media (min-width: 768px) {
+  .g-solutions-page .g-solutions-sidebar .g-products-sidebar__icon {
+    display: none;
+  }
+}
+
+.g-solutions-page .g-solutions-sidebar .g-products-sidebar__content {
+  padding: 0;
+}
+
+.g-solutions-page .g-solutions-sidebar__row {
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.g-solutions-page .g-solutions-sidebar__row:last-child {
+  border-bottom: none;
+}
+
+.g-solutions-page .g-solutions-sidebar__link {
+  display: block;
+  margin: 0;
+  padding: 16px 20px;
+  font-family: 'Exo', sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 1.45;
+  color: #1a1a1a;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.g-solutions-page .g-solutions-sidebar__link:hover {
+  background: #f7f7f8;
+  color: #1a1a1a;
+}
+
+.g-solutions-page .g-solutions-sidebar__link.is-active {
+  background: #e0e1e6;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+/* 方案页 ≤992：侧栏与列表上下排布，主区接近全宽（避免固定 342px 侧栏把列表挤成百余像素） */
+@media (max-width: 991.98px) {
+  .g-solutions-page .g-products-layout__inner {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 16px;
+  }
+
+  .g-solutions-page .g-products-sidebar {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* 解决方案列表：卡片（边框 #eee、圆角 8px、间距 16px） */
+
+.g-solutions-list {
+  flex: 1 1 0;
+  min-width: 0;
+  width: 100%;
+  padding: 0;
+  background: transparent;
+}
+
+.g-solutions-list__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.g-solutions-list__pagination {
+  width: 100%;
+  flex-basis: 100%;
+}
+
+/*
+ * 方案卡片列数（仅视口；gap 16px → n 列减去 (n-1)*16）
+ * 小 <768：1 | 中 768–1199：2 | 大 1200–1399：3 | 超大 ≥1400：4
+ */
+.g-solution-card {
+  display: block;
+  box-sizing: border-box;
+  min-width: 0;
+  flex: 0 1 100%;
+  max-width: 100%;
+  background: transparent;
+  border-radius: 12px;
+  transition: box-shadow 0.3s ease;
+}
+
+.g-solution-card:hover,
+.g-solution-card:focus-within {
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.14);
+}
+
+.g-solution-card__media {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f0f0f0;
+}
+
+.g-solution-card__image-wrap {
+  position: relative;
+  /* 宽高比 6:8（宽:高 = 3:4）；padding-top% 相对宽度 → 高 = 宽 × 8/6 */
+  padding-top: max(calc(100% * 8 / 6), 200px);
+  background: #f0f0f0;
+}
+
+.g-solution-card__image-link {
+  position: absolute;
+  inset: 0;
+  display: block;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.g-solution-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* 标题 + 按钮：贴底叠在图上，增高时向上遮住图片下半部分 */
+.g-solution-card__body {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 14px 20px 16px;
+  background: #ffffff;
+  transition: padding 0.3s ease;
+}
+
+.g-solution-card:hover .g-solution-card__body,
+.g-solution-card:focus-within .g-solution-card__body {
+  padding: 16px 20px 20px;
+}
+
+.g-solution-card__title {
+  margin: 0;
+  font-family: 'Exo', sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  line-height: 1.35;
+  color: #1a1a1a;
+  transition: color 0.25s ease;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  overflow: hidden;
+  overflow-wrap: break-word;
+}
+
+.g-solution-card__title a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.g-solution-card:hover .g-solution-card__title,
+.g-solution-card:hover .g-solution-card__title a,
+.g-solution-card:focus-within .g-solution-card__title,
+.g-solution-card:focus-within .g-solution-card__title a {
+  color: #f89d1b;
+}
+
+.g-solution-card__btn {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 0;
+  padding: 0 22px;
+  max-height: 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  overflow: hidden;
+  font-family: 'Exo', sans-serif;
+  
+  font-size: 14px;
+  line-height: 1.2;
+  color: #fff;
+  background: #f89d1b;
+  text-decoration: none;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition:
+    max-height 0.32s ease,
+    opacity 0.28s ease,
+    margin-top 0.28s ease,
+    padding 0.28s ease,
+    visibility 0.28s ease,
+    background 0.2s ease;
+}
+
+.g-solution-card:hover .g-solution-card__btn,
+.g-solution-card:focus-within .g-solution-card__btn {
+  margin-top: 12px;
+  padding: 10px 22px;
+  max-height: 3.2rem;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.g-solution-card__btn:hover {
+  background: #e88d0b;
+  color: #fff;
+}
+
+.g-solution-card__btn:focus-visible {
+  outline: 2px solid #f89d1b;
+  outline-offset: 2px;
+}
+
+/* 触屏：底部区域与按钮常显 */
+@media (hover: none) and (pointer: coarse) {
+  .g-solution-card__body {
+    padding: 16px 20px 20px;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.88) 20%,
+      #ffffff 40%
+    );
+  }
+
+  .g-solution-card__btn {
+    margin-top: 12px;
+    padding: 10px 22px;
+    max-height: 3.2rem;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .g-solution-card .g-solution-card__title,
+  .g-solution-card .g-solution-card__title a {
+    color: #f89d1b;
+  }
+}
+
+/* 中屏双列：略增高图区、收紧叠层（与侧栏并排时轨道相对较窄） */
+@media (min-width: 768px) and (max-width: 1199.98px) {
+  .g-solutions-list__items {
+    gap: 16px;
+  }
+
+  .g-solution-card {
+    flex: 0 1 calc((100% - 16px) / 2);
+    max-width: calc((100% - 16px) / 2);
+  }
+
+  .g-solution-card__image-wrap {
+    padding-top: max(calc(100% * 8 / 6), 220px);
+  }
+
+  .g-solution-card__body {
+    padding: 12px 16px 14px;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.55) 38%,
+      #ffffff 68%
+    );
+  }
+
+  .g-solution-card:hover .g-solution-card__body,
+  .g-solution-card:focus-within .g-solution-card__body {
+    padding: 14px 16px 18px;
+  }
+
+  .g-solution-card__title {
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 1200px) and (max-width: 1399.98px) {
+  .g-solution-card {
+    flex: 0 1 calc((100% - 32px) / 3);
+    max-width: calc((100% - 32px) / 3);
+  }
+}
+
+@media (min-width: 1400px) {
+  .g-solution-card {
+    flex: 0 1 calc((100% - 48px) / 4);
+    max-width: calc((100% - 48px) / 4);
+  }
+}
+
+@media (max-width: 767px) {
+  .g-solutions-list__items {
+    gap: 12px;
+  }
+
+  .g-solution-card,
+  .g-solution-card__media {
+    border-radius: 10px;
+  }
+
+  .g-solution-card__body {
+    padding: 12px 16px 14px;
+  }
+
+  .g-solution-card:hover .g-solution-card__body,
+  .g-solution-card:focus-within .g-solution-card__body {
+    padding: 14px 16px 18px;
+  }
+}
+
+/* 触屏手机：在窄屏 padding 之后再强调可读渐变与按钮（覆盖 767 的收紧 padding） */
+@media (max-width: 767px) and (hover: none) and (pointer: coarse) {
+  .g-solution-card__body {
+    padding: 16px 18px 18px;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.88) 20%,
+      #ffffff 40%
+    );
+  }
+}
+
+/* 详情页 */
+.g-solution-detail-page .g-solution-detail {
+  padding: 40px 0 80px;
+}
+
+
+
+.g-solution-detail-page .g-solution-detail__title {
+  font-family: 'Exo', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  color: #2b2b2b;
+  margin: 0 0 24px;
+}
+
+.g-solution-detail-page .g-solution-detail__content {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #333;
+}
+
+.g-solution-detail-page .g-solution-detail__content img {
+  max-width: 100%;
+  height: auto;
+}

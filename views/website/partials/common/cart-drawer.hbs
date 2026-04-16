@@ -1,0 +1,90 @@
+{{!-- 购物车抽屉：cart-drawer.js 控制 empty / list / inquiry；与 header #pcNavCartTrigger 配对 --}}
+<script type="application/json" id="pcCartDrawerCartTexts">{{{json cartTexts}}}</script>
+<script type="application/json" id="pcCartDrawerInquiryTexts">{{{json inquiryPriceFormTexts}}}</script>
+<style>
+  #pcCartDrawer .pc-cart-line__qty {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.35rem;
+  }
+  #pcCartDrawer .pc-cart-line__qty-btn {
+    box-sizing: border-box;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    background: #fafafa;
+    font-size: 16px;
+    line-height: 1;
+    color: var(--g-color-text, #0d0d0d);
+    cursor: pointer;
+  }
+  #pcCartDrawer .pc-cart-line__qty-btn:hover:not(:disabled) {
+    background: #f0f0f0;
+    border-color: #ddd;
+  }
+  #pcCartDrawer .pc-cart-line__qty-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  #pcCartDrawer .pc-cart-line__qty-val {
+    min-width: 1.5rem;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+  }
+  #pcCartDrawer .pc-cart-line__row-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 0.25rem;
+    flex-shrink: 0;
+    align-self: center;
+  }
+  #pcCartDrawer .pc-cart-inquiry__head {
+    margin: 0 0 0.5rem;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--g-color-text, #0d0d0d);
+  }
+</style>
+<div
+  class="pc-cart-drawer"
+  id="pcCartDrawer"
+  data-pc-cart-drawer
+  data-base-path="{{#if basePath}}{{basePath}}{{else}}{{/if}}"
+  {{#if cartTexts}}{{#if cartTexts.myCart}}data-cart-title="{{cartTexts.myCart}}"{{/if}}{{/if}}
+  aria-hidden="true"
+>
+  <div class="pc-cart-drawer__backdrop" id="pcCartDrawerBackdrop" aria-hidden="true"></div>
+  <div
+    class="pc-cart-drawer__panel"
+    id="pcCartDrawerPanel"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="pcCartDrawerTitle"
+    tabindex="-1"
+  >
+    <div class="pc-cart-drawer__header">
+      <h2 class="pc-cart-drawer__title" id="pcCartDrawerTitle">{{#if cartTexts.myCart}}{{cartTexts.myCart}}{{else}}{{#if (eq locale 'zh-CN')}}购物车{{else}}Cart{{/if}}{{/if}}</h2>
+      <button type="button" class="pc-cart-drawer__close" id="pcCartDrawerClose" aria-label="{{#if (eq locale 'zh-CN')}}关闭{{else}}Close{{/if}}">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="pc-cart-drawer__body">
+      <div class="pc-cart-drawer__stage" id="pcCartDrawerStageEmpty" data-pc-cart-stage="empty">
+        <div class="pc-cart-drawer__stage-inner" data-pc-cart-empty></div>
+      </div>
+      <div class="pc-cart-drawer__stage" id="pcCartDrawerStageList" data-pc-cart-stage="list" hidden>
+        <div class="pc-cart-drawer__stage-inner" data-pc-cart-list></div>
+      </div>
+      <div class="pc-cart-drawer__stage" id="pcCartDrawerStageInquiry" data-pc-cart-stage="inquiry" hidden>
+        <div class="pc-cart-drawer__stage-inner" data-pc-cart-inquiry></div>
+      </div>
+    </div>
+  </div>
+</div>

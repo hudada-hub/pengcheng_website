@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="{{locale}}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  {{#if description}}<meta name="description" content="{{description}}">{{/if}}
+  {{#if keywords}}<meta name="keywords" content="{{keywords}}">{{/if}}
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/bootstrap-grid.css">
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/grid.css">
+  <link rel="stylesheet" href="/css/global/common-global.css">
+  <link rel="stylesheet" href="/css/global/products-global.css">
+  <link rel="stylesheet" href="/css/global/service-global.css">
+  
+  <link rel="stylesheet" href="/css/exo.css">
+</head>
+<body class="g-service-page g-products-page">
+  {{> website/common/nav-drawer}}
+  {{> website/common/header}}
+
+  <main class="g-main">
+    {{> website/service/banner}}
+    {{#if philosophy}}
+    <section class="g-service-philosophy" aria-labelledby="g-service-philosophy-title">
+      <div class="container">
+        {{#if philosophy.title}}
+        <h1 id="g-service-philosophy-title" class="g-service-philosophy__title">{{philosophy.title}}</h1>
+        {{/if}}
+        {{#if philosophy.lead}}
+        <p class="g-service-philosophy__lead">{{philosophy.lead}}</p>
+        {{/if}}
+        {{#if philosophy.stats}}
+        <div
+          class="row row-cols-2 row-cols-md-5 g-3 g-md-0 align-items-start g-service-philosophy__stats"
+          role="list"
+        >
+          {{#each philosophy.stats}}
+          <div class="col g-service-philosophy__stat" role="listitem">
+            <div class="g-service-philosophy__value">
+              {{#if stackSuffixColumn}}
+              <span class="g-service-philosophy__value-line g-service-philosophy__value-line--suffix-stack">
+                <span class="g-service-philosophy__value-num-wrap">
+                  <span class="g-service-philosophy__value-num" data-stats-target="{{value}}">{{value}}</span>
+                </span>
+                <span class="g-service-philosophy__suffix-stack">
+                  <span class="g-service-philosophy__suffix g-service-philosophy__suffix--stack-top">{{suffix}}</span>
+                  <span class="g-service-philosophy__sub-suffix g-service-philosophy__sub-suffix--stack">{{subSuffix}}</span>
+                </span>
+              </span>
+              {{else}}
+              <span class="g-service-philosophy__value-line">
+                <span class="g-service-philosophy__value-num" data-stats-target="{{value}}">{{value}}</span>
+                {{#if suffix}}
+                {{#if suffixIsSup}}
+                <sup class="g-service-philosophy__suffix g-service-philosophy__suffix--sup">{{suffix}}</sup>
+                {{else}}
+                <span class="g-service-philosophy__suffix">{{suffix}}</span>
+                {{/if}}
+                {{/if}}
+              </span>
+              {{#if subSuffix}}
+              <span class="g-service-philosophy__sub-suffix">{{subSuffix}}</span>
+              {{/if}}
+              {{/if}}
+            </div>
+            <div class="g-service-philosophy__label">{{label}}</div>
+          </div>
+          {{/each}}
+        </div>
+        {{/if}}
+      </div>
+    </section>
+    {{/if}}
+
+    {{#if hasServiceCards}}
+    <section class="g-service-content" aria-labelledby="g-service-content-title">
+      <div class="container">
+       
+        {{#each serviceCards}}
+        <article
+          class="g-service-card{{#if imageLeft}} g-service-card--img-left{{else}} g-service-card--img-right{{/if}}{{#if themeDark}} g-service-card--dark{{else}} g-service-card--light{{/if}}"
+        >
+          <div class="g-service-card__media">
+            {{#if pic1Url}}
+            <img class="g-service-card__img" src="{{pic1Url}}" alt="" loading="lazy" />
+            {{else}}
+            <div class="g-service-card__img g-service-card__img--placeholder" aria-hidden="true"></div>
+            {{/if}}
+          </div>
+          <div class="g-service-card__panel">
+            <h3 class="g-service-card__big-title">{{bigTitle}}</h3>
+            {{#if (eq mode "dual")}}
+            <div class="g-service-card__blocks">
+              {{#if title}}
+              <h4 class="g-service-card__sub-title">{{title}}</h4>
+              {{/if}}
+              {{#if description}}
+              <p class="g-service-card__text">{{description}}</p>
+              {{/if}}
+              {{#if subtitle}}
+              <h4 class="g-service-card__sub-title g-service-card__sub-title--second">{{subtitle}}</h4>
+              {{/if}}
+              {{#if subDescription}}
+              <p class="g-service-card__text{{#unless subtitle}} g-service-card__text--second-block{{/unless}}">{{subDescription}}</p>
+              {{/if}}
+            </div>
+            {{/if}}
+            {{#if (eq mode "single")}}
+            <p class="g-service-card__text g-service-card__text--standalone">{{body}}</p>
+            {{/if}}
+            {{#if (eq mode "first")}}
+            <div class="g-service-card__blocks">
+              {{#if title}}
+              <h4 class="g-service-card__sub-title">{{title}}</h4>
+              {{/if}}
+              {{#if description}}
+              <p class="g-service-card__text">{{description}}</p>
+              {{/if}}
+            </div>
+            {{/if}}
+            <span class="g-service-card__accent" aria-hidden="true"></span>
+          </div>
+        </article>
+        {{/each}}
+      </div>
+    </section>
+    {{/if}}
+    {{> website/common/global-map}}
+    {{> website/common/footer}}
+  </main>
+
+  <script>
+    (function () {
+      var nav = document.querySelector('.g-service-page .pc-nav');
+      if (!nav) return;
+      function onScroll() {
+        nav.classList.toggle('nav-scrolled', window.scrollY > 10);
+      }
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    })();
+  </script>
+  <script src="/js/gsap/gsap.min.js" defer></script>
+  <script src="/js/gsap/ScrollTrigger.min.js" defer></script>
+  <script src="/js/univerjs/echarts.min.js" defer></script>
+  <script src="/js/univerjs/word/world.js" defer></script>
+  <script src="/js/service-philosophy-stats.js" defer></script>
+  <script src="/js/global-map.js" defer></script>
+</body>
+</html>

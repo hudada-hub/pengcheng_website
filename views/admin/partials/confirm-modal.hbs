@@ -1,0 +1,208 @@
+<div id="confirmModal" class="admin-modal" style="display: none;">
+  <div class="admin-confirm-modal-overlay" data-dismiss="confirmModal"></div>
+  <div class="admin-modal-content">
+    <div class="admin-modal-header">
+      <h3 class="admin-modal-title">确认操作</h3>
+      <button class="admin-modal-close" data-dismiss="confirmModal">&times;</button>
+    </div>
+    <div class="admin-modal-body">
+      <p id="confirmMessage">确定要执行此操作吗？</p>
+      <div class="admin-modal-actions">
+        <button id="confirmCancelBtn" class="btn btn-secondary" data-dismiss="confirmModal">取消</button>
+        <button id="confirmOkBtn" class="btn btn-danger">确定</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.admin-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10000;
+}
+
+.admin-confirm-modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: block;
+}
+
+.admin-modal-content {
+  position: relative;
+  margin: 10% auto;
+  width: 400px;
+  max-width: 90%;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+.admin-modal-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f9fa;
+}
+
+.admin-modal-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.admin-modal-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #999;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-modal-close:hover {
+  color: #333;
+}
+
+.admin-modal-body {
+  padding: 24px;
+}
+
+.admin-modal-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.btn {
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.btn-secondary {
+  background-color: #f0f0f0;
+  color: #333;
+  border-color: #ddd;
+}
+
+.btn-secondary:hover {
+  background-color: #e0e0e0;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+}
+</style>
+
+<script>
+// 全局确认弹窗函数
+window.showConfirmModal = function(message, onConfirm, onCancel) {
+  const modal = document.getElementById("confirmModal");
+  const messageEl = document.getElementById("confirmMessage");
+  const okBtn = document.getElementById("confirmOkBtn");
+  const cancelBtn = document.getElementById("confirmCancelBtn");
+  
+  messageEl.textContent = message;
+  
+  // 清除之前的事件监听器
+  const newOkBtn = okBtn.cloneNode(true);
+  okBtn.parentNode.replaceChild(newOkBtn, okBtn);
+  const newCancelBtn = cancelBtn.cloneNode(true);
+  cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+  
+  const updatedOkBtn = document.getElementById("confirmOkBtn");
+  const updatedCancelBtn = document.getElementById("confirmCancelBtn");
+  
+  // 绑定新的事件监听器
+  updatedOkBtn.onclick = function() {
+    hideConfirmModal();
+    if (typeof onConfirm === "function") {
+      onConfirm();
+    }
+  };
+  
+  updatedCancelBtn.onclick = function() {
+    hideConfirmModal();
+    if (typeof onCancel === "function") {
+      onCancel();
+    }
+  };
+  
+  // 点击遮罩层关闭
+  const overlay = modal.querySelector(".admin-confirm-modal-overlay");
+  overlay.onclick = function() {
+    hideConfirmModal();
+    if (typeof onCancel === "function") {
+      onCancel();
+    }
+  };
+  
+  // 显示弹窗
+  modal.style.display = "block";
+  document.body.style.overflow = "hidden";
+};
+
+function hideConfirmModal() {
+  const modal = document.getElementById("confirmModal");
+  modal.style.display = "none";
+  document.body.style.overflow = "";
+}
+
+// 绑定关闭按钮事件
+document.addEventListener("DOMContentLoaded", function() {
+  const closeButtons = document.querySelectorAll("[data-dismiss=\"confirmModal\"]");
+  closeButtons.forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      hideConfirmModal();
+    });
+  });
+});
+
+// 处理带有 data-popconfirm 的简单场景：链接跳转 / 表单提交
+document.addEventListener("click", function(e) {
+  const el = e.target.closest("[data-popconfirm]");
+  if (!el) return;
+  e.preventDefault();
+  const message = el.getAttribute("data-popconfirm") || "确定要执行此操作吗？";
+
+  showConfirmModal(message, function () {
+    // 链接：直接跳转
+    if (el.tagName === "A" && el.href) {
+      window.location.href = el.href;
+      return;
+    }
+    // 表单按钮：提交最近的 form
+    const form = el.closest("form");
+    if (form) {
+      form.submit();
+    }
+  });
+}, true);
+</script>

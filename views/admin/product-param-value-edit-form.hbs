@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head><body><div id="admin-form-fragment">
+  <div class="admin-card">
+    <form class="admin-form" method="post" action="/admin/product-param-values/save">
+      <div class="admin-modal-form-scroll">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        {{#if valueRow}}<input type="hidden" name="id" value="{{valueRow.id}}">{{/if}}
+        <div class="form-group">
+          <label>参数值 <span style="color:var(--admin-danger);">*</span></label>
+          <textarea name="value" rows="3" required placeholder="如：48V、100Ah、≥3000 次等">{{#if valueRow}}{{valueRow.value}}{{/if}}</textarea>
+        </div>
+        <div class="form-group">
+          <label>分类 <span style="color:var(--admin-danger);">*</span></label>
+          <select name="categoryId" required>
+            <option value="">请选择</option>
+            {{#each categories}}
+              <option value="{{this.id}}" {{#if ../valueRow}}{{#if (eq this.id ../valueRow.categoryId)}}selected{{/if}}{{/if}}>{{this.title}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>语言 <span style="color:var(--admin-danger);">*</span></label>
+          <select name="langId" required>
+            {{#each langs}}
+              <option value="{{this.id}}" {{#if (eq this.id ../defaultLangId)}}selected{{/if}}>{{this.name}} ({{this.code}})</option>
+            {{/each}}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>排序（数字越小越靠前）</label>
+          <input type="number" name="sort" value="{{#if valueRow}}{{valueRow.sort}}{{else}}0{{/if}}" min="0">
+        </div>
+        <div class="form-group">
+          <label>状态</label>
+          <select name="status">
+            <option value="1" {{#if valueRow}}{{#if (eq valueRow.status 1)}}selected{{/if}}{{else}}selected{{/if}}>正常</option>
+            <option value="0" {{#if valueRow}}{{#if (eq valueRow.status 0)}}selected{{/if}}{{/if}}>隐藏</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">保存</button>
+        <button type="button" class="btn admin-modal-form-cancel">取消</button>
+      </div>
+    </form>
+  </div>
+</div></body></html>
+

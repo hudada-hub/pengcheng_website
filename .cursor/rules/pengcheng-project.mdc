@@ -1,0 +1,67 @@
+---
+description: 鹏成官网项目约定（基于 README）：技术栈、路径、后台交互、数据表与多语言
+alwaysApply: true
+---
+
+# 鹏成官网项目约定
+
+## 项目与架构
+
+- NestJS 单项目：**后台管理** + **前台官网**（国外多语言模板 + 国内风格模板）同仓。
+- 多语言通过路径切换：`/cn`、`/en`、`/jp` 等；多语言数据存数据库。
+- 前台 SSR、SEO 友好；前后端不分离。
+
+## 技术栈
+
+- **后端**: NestJS + Fastify、TypeORM、MySQL、Redis（配置/菜单缓存，默认 7 天）、nestjs-i18n、CSRF、Admin 使用 cookie+session（不用 JWT）。
+- **模板**: Handlebars；富文本：wangeditor。
+- **前端**: 仅用 vanilla JS；图标 Iconify；简单动效 animate.css，复杂动效 GSAP。
+- **样式**: normalize.css → 变量（主题色、字号等）→ common.css、网格（自适应）、国外/国内/后台三套 theme.css；后台另有 admin-common.css（按钮、表单、表格等）、admin-theme.css。
+
+## 路径与权限
+
+| 路径 | 说明 | 权限 |
+|------|------|------|
+| `/`、`/cn`、`/en`、`/jp`... | 官网首页/多语言 | 公开 |
+| `/products`、`/solutions`... | 官网各页 | 公开 |
+| `/sitemap.xml` | 站点地图 | 公开 |
+| `/admin/login` | 后台登录 | 公开 |
+| `/admin`、`/admin/content`... | 后台页面 | 需登录 |
+| `/admin/api/*` | 后台 API | 需登录 |
+| `/admin/not-found` | 后台 404 | 需登录 |
+
+## 后台交互约定
+
+- **新增/编辑**: 弹窗操作，使用 `views/admin/partials/modal-form.hbs`，弹窗宽 80%、高 90%；JS 将表单注入 `.admin-modal-form-body`。
+- **删除**: 必须确认，用 Popconfirm（`data-popconfirm="确定删除吗？"`）。
+- **表格**: 行悬浮、空状态、AJAX 分页无刷新；支持批量删除。
+- **提交**: 按钮加 disabled + spinner 防重复提交。
+- **分页**: 使用 `views/admin/partials/pagination.hbs`。
+- **404**: 后台未匹配路径展示 `views/admin/404.hbs`。
+- **风格**: 无阴影，靠近 Ant Design。
+
+## 数据表通用约定
+
+- 所有表：`status`（0 隐藏 / 1 正常；业务删除为**物理删除**，无回收站；`-1` 仅兼容历史软删数据，新代码不再写入）、`created_at`、`updated_at`。
+- 需要 SEO 的实体：补充 seo 标题、描述、关键词字段。
+- **多语言**: 使用 `langId` 关联语言表；同一逻辑实体用同一业务 id（如 `menuId`、`configId`）+ 不同 `langId` 区分语言；先填中文再“复制+选择语言+AI 翻译”生成其他语言。
+
+## 配置表与多语言
+
+- 配置有 `configId`：同一 key 多条记录共用一个 `configId`，用 `configId` + `langId` 确定某语言的配置；根据中文翻译其他语言，DeepSeek API Key 从系统配置表取。
+- `content` 为 JSON，可含 `title`、`description`、`url`、`pic1Url`、`pic2Url`、`content` 等；一键翻译时翻译这些字段及表里的 `title`、`description`。
+- 配置项 `type`：1 单条文字文本框，2 单个图片，3 图片+标题，4 图片+链接，5 标题+内容+图片，6 图片+标题+链接，7 双图+标题+链接，8 标题+内容+描述+图片，9 双图+标题，10 标题+描述，11 标题+描述+图片+链接，12 大标题+标题+描述+小标题+小描述+图片（content JSON：`bigTitle`、`title`、`description`、`subtitle`、`subDescription`、`pic1Url`）。`deletable` 为 true 时表格右侧显示删除按钮。
+
+## 文件与媒体
+
+- 本地上传；图片上传自动压缩（WebP）；视频流式（如 206/m3u8），不整文件加载。
+- 前台图片懒加载；支持下载次数等统计。
+
+## 其他约定（来自 README）
+
+- 后台布局头部：右侧提供退出登录、清除 Redis 缓存（缓存默认 7 天）。
+- 前台访问统计：按用户 IP，短时间多次刷新计为 1 次访问。
+- CRM/外部对接：表单 API 通过 apikey 鉴权，有生成 apikey 的接口。
+- 响应式：PC/平板/手机自适应；支持 sitemap 与多语言（中英韩日意）独立配置与维护。
+
+编写或修改代码时请遵循以上约定（路由、权限、表结构、后台交互与多语言设计）。更细的表结构见项目 README.md。

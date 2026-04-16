@@ -1,0 +1,53 @@
+{{!-- 分页 partial：传入 currentPage, totalPages, baseUrl（可选，用于服务端分页链接）或仅用 data 属性配合 AJAX 分页 --}}
+<nav class="admin-pagination" aria-label="分页" data-current="{{currentPage}}" data-total="{{totalPages}}" data-page-size="{{pageSize}}"{{#if baseUrl}} data-base-url="{{baseUrl}}"{{/if}}>
+  <div class="admin-pagination-inner">
+    <button type="button" class="btn admin-pagination-prev" {{#if (eq currentPage 1)}}disabled{{/if}} aria-label="上一页">
+      <iconify-icon icon="mdi:chevron-left"></iconify-icon> 上一页
+    </button>
+    
+    {{!-- 数字分页 --}}
+    <div class="admin-pagination-numbers">
+      {{#if (gt totalPages 1)}}
+        {{#if (gt currentPage 3)}}
+          <button type="button" class="btn admin-pagination-number" data-page="1">1</button>
+          {{#if (gt currentPage 4)}}<span class="admin-pagination-ellipsis">...</span>{{/if}}
+        {{/if}}
+        
+        {{#each (range (max 1 (subtract currentPage 2)) (min totalPages (add currentPage 2)))}}
+          <button type="button" class="btn admin-pagination-number{{#if (eq this ../currentPage)}} is-active{{/if}}" data-page="{{this}}">{{this}}</button>
+        {{/each}}
+        
+        {{#if (lt currentPage (subtract totalPages 2))}}
+          {{#if (lt currentPage (subtract totalPages 3))}}<span class="admin-pagination-ellipsis">...</span>{{/if}}
+          <button type="button" class="btn admin-pagination-number" data-page="{{totalPages}}">{{totalPages}}</button>
+        {{/if}}
+      {{/if}}
+    </div>
+    
+    <span class="admin-pagination-text">
+      第 {{currentPage}} / {{totalPages}} 页
+    </span>
+    
+    {{!-- 每页大小调整 --}}
+    <div class="admin-pagination-pagesize">
+      <label>每页</label>
+      <select class="admin-pagination-pagesize-select" data-page-size="{{pageSize}}">
+        <option value="10" {{#if (eq pageSize 10)}}selected{{/if}}>10 条</option>
+        <option value="20" {{#if (eq pageSize 20)}}selected{{/if}}>20 条</option>
+        <option value="50" {{#if (eq pageSize 50)}}selected{{/if}}>50 条</option>
+        <option value="100" {{#if (eq pageSize 100)}}selected{{/if}}>100 条</option>
+      </select>
+    </div>
+    
+    {{!-- 跳转页码 --}}
+    <div class="admin-pagination-jump">
+      <label>跳至</label>
+      <input type="number" class="admin-pagination-jump-input" min="1" max="{{totalPages}}" value="{{currentPage}}">
+      <button type="button" class="btn admin-pagination-jump-btn">确定</button>
+    </div>
+    
+    <button type="button" class="btn admin-pagination-next" {{#if (eq currentPage totalPages)}}disabled{{/if}} aria-label="下一页">
+      下一页 <iconify-icon icon="mdi:chevron-right"></iconify-icon>
+    </button>
+  </div>
+</nav>

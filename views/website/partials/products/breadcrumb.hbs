@@ -1,0 +1,22 @@
+{{!-- Breadcrumb Navigation --}}
+<nav class="g-products-breadcrumb" aria-label="Breadcrumb">
+  <div class="container">
+    <ol class="g-products-breadcrumb__list">
+      <li class="g-products-breadcrumb__item">
+        <a href="{{#if basePath}}{{basePath}}{{else}}/{{/if}}" class="g-products-breadcrumb__link">
+          {{#if breadcrumbTexts.home}}{{breadcrumbTexts.home}}{{else}}{{#if (eq locale "zh-CN")}}首页{{else}}Home{{/if}}{{/if}}
+        </a>
+      </li>
+      <li class="g-products-breadcrumb__separator">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </li>
+      <li class="g-products-breadcrumb__item g-products-breadcrumb__item--active">
+        <span class="g-products-breadcrumb__link--current">
+          {{#if breadcrumbTexts.products}}{{breadcrumbTexts.products}}{{else}}{{#if (eq locale "zh-CN")}}产品{{else}}Products{{/if}}{{/if}}
+        </span>
+      </li>
+    </ol>
+  </div>
+</nav>

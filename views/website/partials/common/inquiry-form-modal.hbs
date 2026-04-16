@@ -1,0 +1,54 @@
+<div class="g-inquiry-modal" id="gInquiryModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="gInquiryModalTitle">
+  <div class="g-inquiry-modal__overlay" id="gInquiryModalOverlay"></div>
+  <div class="g-inquiry-modal__dialog">
+    <button type="button" class="g-inquiry-modal__close" id="gInquiryModalClose" aria-label="Close">&times;</button>
+    <h2 id="gInquiryModalTitle" class="g-inquiry-modal__title">{{#if inquiryPriceFormTexts.contactInformation}}{{inquiryPriceFormTexts.contactInformation}}{{else}}Contact Information{{/if}}</h2>
+    <p class="g-inquiry-modal__desc">{{#if inquiryPriceFormTexts.descriptionParagraph}}{{inquiryPriceFormTexts.descriptionParagraph}}{{else}}Fill in the information below for the best quote (confidential). Our consultant will contact you within 24 hours, please keep your phone available.{{/if}}</p>
+    <form
+      class="g-inquiry-modal__form"
+      id="gInquiryForm"
+      method="post"
+      data-toast-success="{{#if submitInfoTexts}}{{submitInfoTexts}}{{else}}{{#if inquiryPriceFormTexts.successMessage}}{{inquiryPriceFormTexts.successMessage}}{{/if}}{{/if}}"
+      data-toast-invalid="{{#if inquiryPriceFormTexts.invalidMessage}}{{inquiryPriceFormTexts.invalidMessage}}{{else}}Please enter a valid name and email address.{{/if}}"
+      data-toast-network="{{#if contactToastNetwork}}{{contactToastNetwork}}{{else}}Network error. Please try again.{{/if}}"
+      data-toast-forbidden="{{#if contactToastForbidden}}{{contactToastForbidden}}{{else}}Request blocked. Please refresh and try again.{{/if}}"
+      data-toast-err-title="{{#if contactToastErrTitle}}{{contactToastErrTitle}}{{else}}Notice{{/if}}"
+    >
+      <input type="hidden" name="_csrf" id="gInquiryCsrf" value="">
+      <input type="hidden" name="sourceUrl" id="gInquirySourceUrl" value="">
+      
+      <!-- 产品列表区域（用�?Quick Quote 显示单个产品�?-->
+      <div id="gInquiryProductList" class="g-inquiry-modal__product-list" style="margin-bottom: 16px;"></div>
+      
+      <div class="g-inquiry-modal__row g-inquiry-modal__row--2">
+        <div>
+          <label class="g-inquiry-modal__label" for="g-inquiry-firstname">{{#if inquiryPriceFormTexts.firstName}}{{inquiryPriceFormTexts.firstName}}{{else}}First Name{{/if}}</label>
+          <input class="g-inquiry-modal__input" type="text" id="g-inquiry-firstname" name="firstName" maxlength="128" autocomplete="given-name" />
+        </div>
+        <div>
+          <label class="g-inquiry-modal__label" for="g-inquiry-lastname">{{#if inquiryPriceFormTexts.lastName}}{{inquiryPriceFormTexts.lastName}}{{else}}Last Name{{/if}}</label>
+          <input class="g-inquiry-modal__input" type="text" id="g-inquiry-lastname" name="lastName" maxlength="128" autocomplete="family-name" />
+        </div>
+      </div>
+      <div class="g-inquiry-modal__row">
+        <label class="g-inquiry-modal__label" for="g-inquiry-email">{{#if inquiryPriceFormTexts.email}}{{inquiryPriceFormTexts.email}}{{else}}E-mail{{/if}}</label>
+        <input class="g-inquiry-modal__input" type="email" id="g-inquiry-email" name="email" required maxlength="128" autocomplete="email" />
+      </div>
+      <div class="g-inquiry-modal__row">
+        <label class="g-inquiry-modal__label" for="g-inquiry-phone">{{#if inquiryPriceFormTexts.phoneNumber}}{{inquiryPriceFormTexts.phoneNumber}}{{else}}Phone Number{{/if}}</label>
+        <input class="g-inquiry-modal__input" type="tel" id="g-inquiry-phone" name="phone" maxlength="64" autocomplete="tel" />
+      </div>
+      <div class="g-inquiry-modal__row">
+        <label class="g-inquiry-modal__label" for="g-inquiry-address">{{#if inquiryPriceFormTexts.address}}{{inquiryPriceFormTexts.address}}{{else}}Address{{/if}}</label>
+        <input class="g-inquiry-modal__input" type="text" id="g-inquiry-address" name="address" maxlength="255" autocomplete="street-address" />
+      </div>
+      <div class="g-inquiry-modal__row">
+        <label class="g-inquiry-modal__label" for="g-inquiry-question">{{#if inquiryPriceFormTexts.leaveMessage}}{{inquiryPriceFormTexts.leaveMessage}}{{else}}Leave Message{{/if}}</label>
+        <textarea class="g-inquiry-modal__input" id="g-inquiry-question" name="question" rows="3" maxlength="65535"></textarea>
+      </div>
+      <div class="g-inquiry-modal__actions">
+        <button type="submit" class="g-inquiry-modal__submit" id="gInquirySubmit">{{#if inquiryPriceFormTexts.submit}}{{inquiryPriceFormTexts.submit}}{{else}}Submit{{/if}}</button>
+      </div>
+    </form>
+  </div>
+</div>

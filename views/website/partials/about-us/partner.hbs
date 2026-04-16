@@ -1,0 +1,86 @@
+{{!--
+  配置 key：about-us-partner（type 12 等）
+  表头：title=左栏小标题（�?Our Strong）、description=左栏大标题（�?Partner）、bg_pic_url=右侧主图
+  content JSON：title=合作方名（CATL）、content=右侧下沿标语（如 Global�?NO.1）、description=蓝框内多段正文（\n\n 分段）、pic1Url=蓝框�?logo�?  type 12 另有：subtitle=右侧灰条大字（如 Inversor）；subDescription 可作叠字（或�?slideWatermark 指定）；亦兼�?slideTitle/itemTitle
+--}}
+{{#if hasAboutUsPartner}}
+<section
+  id="{{aboutUsPartnerSectionId}}"
+  class="g-about-us-partner about_partner_warp about_partner_warp--pending about_scrool g-about-us-anchor-target"
+  aria-labelledby="g-about-us-partner-heading"
+>
+  <div class="about_partner_main">
+    <div class="about_partner_box">
+      <div class="about_partner_item">
+        {{#if aboutUsPartnerHeadlineSmall}}
+        <h3>{{aboutUsPartnerHeadlineSmall}}</h3>
+        {{/if}}
+        {{#if aboutUsPartnerHeadlineLarge}}
+        <h2 id="g-about-us-partner-heading">{{aboutUsPartnerHeadlineLarge}}</h2>
+        {{/if}}
+      </div>
+      <div class="about_partner_text">
+        <h2 style="display: flex;align-items:center;">
+          {{#if aboutUsPartnerBoxLogoUrl}}
+          <img src="{{aboutUsPartnerBoxLogoUrl}}" alt="{{aboutUsPartnerName}}" loading="lazy" decoding="async" />
+          {{/if}}
+          <span aria-hidden="true"></span>
+         <div style="width:500px;"> {{#if aboutUsPartnerName}}{{aboutUsPartnerName}}{{/if}}</div>
+        </h2>
+        {{#if aboutUsPartnerBodyParagraphs}}
+        <div class="item_text">
+          {{#each aboutUsPartnerBodyParagraphs}}
+          <p>{{this}}</p>
+          {{/each}}
+        </div>
+        {{/if}}
+      </div>
+    </div>
+    <div class="about_partner_slide">
+      {{#if aboutUsPartnerSlideTitle}}
+      <div class="item_title">
+        <h2>{{aboutUsPartnerSlideTitle}}</h2>
+      </div>
+      {{/if}}
+      {{#if aboutUsPartnerHeroImageUrl}}
+      <div class="item_img">
+        <img
+          src="{{aboutUsPartnerHeroImageUrl}}"
+          alt="{{#if aboutUsPartnerName}}{{aboutUsPartnerName}}{{else}}Partner{{/if}}"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+      {{/if}}
+      {{#if aboutUsPartnerTagline}}
+      <div class="item_text">
+        {{#if aboutUsPartnerSlideWatermark}}
+        <h3>{{aboutUsPartnerSlideWatermark}}</h3>
+        {{else if aboutUsPartnerName}}
+        <h3>{{aboutUsPartnerName}}</h3>
+        {{/if}}
+        <p>{{aboutUsPartnerTagline}}</p>
+      </div>
+      {{else}}
+      {{#if aboutUsPartnerSlideWatermark}}
+      <div class="item_text item_text--watermark-only">
+        <h3>{{aboutUsPartnerSlideWatermark}}</h3>
+      </div>
+      {{else if aboutUsPartnerName}}
+      <div class="item_text item_text--watermark-only">
+        <h3>{{aboutUsPartnerName}}</h3>
+      </div>
+      {{/if}}
+      {{/if}}
+    </div>
+  </div>
+  <noscript>
+    <style>
+      .g-about-us-partner.about_partner_warp.about_partner_warp--pending {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    </style>
+  </noscript>
+</section>
+{{/if}}

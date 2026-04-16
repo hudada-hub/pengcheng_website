@@ -1,0 +1,16 @@
+{{!-- 列表：图来自菜单 bannerUrl；标题优先菜�?bannerTitle，否则文�?--}}
+<section class="g-products-banner">
+  <div class="g-products-banner__bg">
+    {{#if bannerImageUrl}}
+      <img src="{{bannerImageUrl}}" alt="" class="g-products-banner__image" loading="lazy" />
+    {{else}}
+      <div class="g-products-banner__placeholder"></div>
+    {{/if}}
+  </div>
+  <div class="g-products-banner__overlay"></div>
+  <div class="container">
+    <h1 class="g-products-banner__title">
+      {{#if solutionsBannerHeading}}{{solutionsBannerHeading}}{{else}}{{#if (eq locale "zh-CN")}}解决方案{{else}}Solutions{{/if}}{{/if}}
+    </h1>
+  </div>
+</section>

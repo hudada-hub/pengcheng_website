@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="{{locale}}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  {{#if description}}<meta name="description" content="{{description}}">{{/if}}
+  {{#if keywords}}<meta name="keywords" content="{{keywords}}">{{/if}}
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/bootstrap-grid.css">
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/grid.css">
+  <link rel="stylesheet" href="/css/global/common-global.css">
+  <link rel="stylesheet" href="/css/global/products-global.css">
+  <link rel="stylesheet" href="/css/global/events-global.css">
+  <link rel="stylesheet" href="/css/other/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/exo.css">
+</head>
+<body class="g-events-page g-products-page">
+  {{> website/common/nav-drawer}}
+  {{> website/common/header}}
+
+  <main class="g-main">
+    <section class="g-events-banner" aria-label="{{labels.pageHeading}}">
+      <div class="g-events-banner__bg" aria-hidden="true"></div>
+      <div class="g-events-banner__inner">
+        <h1 class="g-events-banner__title">{{labels.pageHeading}}</h1>
+      </div>
+    </section>
+
+    <div class="g-events-layout">
+      <div class="container g-events-layout__inner">
+        <div class="row g-events-layout__row">
+          <aside class="col-lg-3 mb-4 mb-lg-0 g-events-layout__aside">
+            {{> website/common/list-filter-year-month allListUrl=allEventsUrl idPrefix="gEvents"}}
+          </aside>
+          <div class="col-lg-9 g-events-layout__main">
+        <div class="g-events-grid">
+          {{#each cardItems}}
+          <article class="g-events-card">
+            <div class="g-events-card__media">
+              {{#if thumbUrl}}
+              <img src="{{thumbUrl}}" alt="" class="g-events-card__img" loading="lazy" />
+              {{else}}
+              <div class="g-events-card__img g-events-card__img--placeholder" aria-hidden="true"></div>
+              {{/if}}
+            </div>
+            <div class="g-events-card__body">
+              <h2 class="g-events-card__title">{{title}}</h2>
+              {{#if dateRangeFormatted}}
+              <div class="g-events-card__row">
+                <span class="g-events-card__icon g-events-card__icon--calendar" aria-hidden="true"></span>
+                <span class="g-events-card__text">{{dateRangeFormatted}}</span>
+              </div>
+              {{/if}}
+              {{#if location}}
+              <div class="g-events-card__row">
+                <span class="g-events-card__icon g-events-card__icon--pin" aria-hidden="true"></span>
+                <span class="g-events-card__text">{{location}}</span>
+              </div>
+              {{/if}}
+              <div class="g-events-card__actions">
+                {{#if hasExternal}}
+                <a href="{{externalUrl}}" class="g-events-btn g-events-btn--primary" target="_blank" rel="noopener noreferrer">{{../labels.visitEvent}}</a>
+                {{/if}}
+                <a
+                  href="{{detailUrl}}"
+                  class="g-events-btn g-events-btn--outline"
+                  data-event-modal-trigger="true"
+                  data-event-title="{{title}}"
+                  data-event-date="{{dateRangeFormatted}}"
+                  data-event-location="{{location}}"
+                >{{../labels.eventDetails}}</a>
+              </div>
+              <template class="g-events-card__detail-content">{{{contentHtml}}}</template>
+            </div>
+          </article>
+          {{else}}
+          <p class="g-events-empty">{{labels.empty}}</p>
+          {{/each}}
+        </div>
+
+        {{#if pagination}}{{> website/common/list-pagination pagination locale=locale ariaLabel="Pagination"}}{{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="g-events-modal" id="gEventsDetailModal" aria-hidden="true">
+      <div class="g-events-modal__overlay" data-event-modal-close="overlay"></div>
+      <div class="g-events-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="gEventsDetailModalTitle">
+        <button type="button" class="g-events-modal__close" data-event-modal-close="button" aria-label="{{labels.modalClose}}">&times;</button>
+        <h3 class="g-events-modal__title" id="gEventsDetailModalTitle">{{labels.modalTitle}}</h3>
+        <h4 class="g-events-modal__event-title" data-event-modal-field="title"></h4>
+        <p class="g-events-modal__meta g-events-modal__meta--date" data-event-modal-block="date" hidden>
+          <strong>{{labels.modalDate}}:</strong>
+          <span data-event-modal-field="date"></span>
+        </p>
+        <p class="g-events-modal__meta g-events-modal__meta--location" data-event-modal-block="location" hidden>
+          <strong>{{labels.modalLocation}}:</strong>
+          <span data-event-modal-field="location"></span>
+        </p>
+        <div class="g-events-modal__content" data-event-modal-field="content"></div>
+      </div>
+    </div>
+
+    {{> website/common/footer}}
+  </main>
+
+  <script>
+    (function () {
+      function initListYearMonthFilter(prefix) {
+        var yearT = document.getElementById(prefix + 'YearTrigger');
+        var yearM = document.getElementById(prefix + 'YearMenu');
+        var monthT = document.getElementById(prefix + 'MonthTrigger');
+        var monthM = document.getElementById(prefix + 'MonthMenu');
+        function closeAll() {
+          if (yearM) yearM.hidden = true;
+          if (monthM) monthM.hidden = true;
+          if (yearT) {
+            yearT.setAttribute('aria-expanded', 'false');
+            yearT.classList.remove('is-open');
+          }
+          if (monthT) {
+            monthT.setAttribute('aria-expanded', 'false');
+            monthT.classList.remove('is-open');
+          }
+        }
+        function wire(btn, menu) {
+          if (!btn || !menu) return;
+          btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var willOpen = menu.hidden;
+            closeAll();
+            if (willOpen) {
+              menu.hidden = false;
+              btn.setAttribute('aria-expanded', 'true');
+              btn.classList.add('is-open');
+            }
+          });
+        }
+        wire(yearT, yearM);
+        wire(monthT, monthM);
+        document.addEventListener('click', closeAll);
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape') closeAll();
+        });
+      }
+      initListYearMonthFilter('gEvents');
+    })();
+  </script>
+  <script>
+    (function () {
+      var modal = document.getElementById('gEventsDetailModal');
+      if (!modal) return;
+      var modalTitle = modal.querySelector('[data-event-modal-field="title"]');
+      var modalDate = modal.querySelector('[data-event-modal-field="date"]');
+      var modalLocation = modal.querySelector('[data-event-modal-field="location"]');
+      var modalContent = modal.querySelector('[data-event-modal-field="content"]');
+      var dateBlock = modal.querySelector('[data-event-modal-block="date"]');
+      var locationBlock = modal.querySelector('[data-event-modal-block="location"]');
+      var activeTrigger = null;
+
+      function setText(el, value) {
+        if (!el) return;
+        el.textContent = (value || '').trim();
+      }
+
+      function toggleBlock(el, hasValue) {
+        if (!el) return;
+        el.hidden = !hasValue;
+      }
+
+      function openModal(trigger) {
+        if (!trigger) return;
+        activeTrigger = trigger;
+        var card = trigger.closest('.g-events-card');
+        var tpl = card ? card.querySelector('.g-events-card__detail-content') : null;
+        var title = (trigger.getAttribute('data-event-title') || '').trim();
+        var date = (trigger.getAttribute('data-event-date') || '').trim();
+        var location = (trigger.getAttribute('data-event-location') || '').trim();
+
+        setText(modalTitle, title);
+        setText(modalDate, date);
+        setText(modalLocation, location);
+        toggleBlock(dateBlock, !!date);
+        toggleBlock(locationBlock, !!location);
+        if (modalContent) modalContent.innerHTML = tpl ? tpl.innerHTML : '';
+
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('g-events-modal-open');
+      }
+
+      function closeModal() {
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('g-events-modal-open');
+        if (activeTrigger && typeof activeTrigger.focus === 'function') activeTrigger.focus();
+      }
+
+      document.addEventListener('click', function (e) {
+        var trigger = e.target.closest('[data-event-modal-trigger="true"]');
+        if (trigger) {
+          e.preventDefault();
+          openModal(trigger);
+          return;
+        }
+        if (e.target.closest('[data-event-modal-close]')) {
+          e.preventDefault();
+          closeModal();
+        }
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') closeModal();
+      });
+    })();
+  </script>
+  <script>
+    (function () {
+      var nav = document.querySelector('.g-events-page .pc-nav');
+      if (!nav) return;
+      function onScroll() {
+        nav.classList.toggle('nav-scrolled', window.scrollY > 10);
+      }
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,272 @@
+{{!-- 海外站右侧悬浮：询价按钮、社交媒体、回顶。样式对照 Figma Group 1318 --}}
+<div
+  class="g-float-actions"
+  id="gFloatActions"
+  role="toolbar"
+  aria-label="Quick actions"
+  data-contact-meta-url="{{#if basePath}}{{basePath}}/contact-form-meta{{else}}/contact-form-meta{{/if}}"
+  data-contact-action="{{#if basePath}}{{basePath}}/contact{{else}}/contact{{/if}}"
+>
+  {{!-- 固定 4 项，仅使用配置 fixed-four-icon 的图片（无 SVG / followUs 兜底）--}}
+  {{#with (lookup fixedFourIcons.items 0)}}
+  {{#if url}}
+  <a href="{{url}}" class="g-float-actions__btn g-float-actions__btn--link" rel="noopener noreferrer" target="_blank" title="{{#if title}}{{title}}{{else}}Inquiry{{/if}}" aria-label="{{#if title}}{{title}}{{else}}Inquiry{{/if}}">
+    <span class="g-float-actions__btn-inner" aria-hidden="true">
+      <img src="{{picUrl}}" alt="" class="g-float-actions__social-img" width="22" height="22" loading="lazy" />
+    </span>
+  </a>
+  {{else}}
+  <button type="button" class="g-float-actions__btn" id="gFloatInquiryBtn" aria-haspopup="dialog" aria-controls="gInquiryModal" aria-expanded="false" title="{{#if title}}{{title}}{{else}}Inquiry{{/if}}">
+    <span class="g-float-actions__btn-inner" aria-hidden="true">
+      <img src="{{picUrl}}" alt="" class="g-float-actions__social-img" width="22" height="22" loading="lazy" />
+    </span>
+    <span class="visually-hidden">{{#if title}}{{title}}{{else}}Inquiry{{/if}}</span>
+  </button>
+  {{/if}}
+  {{/with}}
+  {{#with (lookup fixedFourIcons.items 1)}}
+  {{#if url}}
+  <a href="{{url}}" class="g-float-actions__btn g-float-actions__btn--link" rel="noopener noreferrer" target="_blank" title="{{#if title}}{{title}}{{else}}Social{{/if}}" aria-label="{{#if title}}{{title}}{{else}}Social{{/if}}">
+    <span class="g-float-actions__btn-inner" aria-hidden="true">
+      <img src="{{picUrl}}" alt="" class="g-float-actions__social-img" width="22" height="22" loading="lazy" />
+    </span>
+  </a>
+  {{else}}
+  <span class="g-float-actions__btn" role="img" aria-label="{{#if title}}{{title}}{{else}}Social{{/if}}">
+    <span class="g-float-actions__btn-inner" aria-hidden="true">
+      <img src="{{picUrl}}" alt="" class="g-float-actions__social-img" width="22" height="22" loading="lazy" />
+    </span>
+  </span>
+  {{/if}}
+  {{/with}}
+  {{#with (lookup fixedFourIcons.items 2)}}
+  {{#if url}}
+  <a href="{{url}}" class="g-float-actions__btn g-float-actions__btn--link" rel="noopener noreferrer" target="_blank" title="{{#if title}}{{title}}{{else}}Social{{/if}}" aria-label="{{#if title}}{{title}}{{else}}Social{{/if}}">
+    <span class="g-float-actions__btn-inner" aria-hidden="true">
+      <img src="{{picUrl}}" alt="" class="g-float-actions__social-img" width="22" height="22" loading="lazy" />
+    </span>
+  </a>
+  {{else}}
+  <span class="g-float-actions__btn" role="img" aria-label="{{#if title}}{{title}}{{else}}Social{{/if}}">
+    <span class="g-float-actions__btn-inner" aria-hidden="true">
+      <img src="{{picUrl}}" alt="" class="g-float-actions__social-img" width="22" height="22" loading="lazy" />
+    </span>
+  </span>
+  {{/if}}
+  {{/with}}
+  {{#with (lookup fixedFourIcons.items 3)}}
+  {{#if url}}
+  <a href="{{url}}" class="g-float-actions__btn g-float-actions__btn--link" rel="noopener noreferrer" target="_blank" title="{{#if title}}{{title}}{{else}}Social{{/if}}" aria-label="{{#if title}}{{title}}{{else}}Social{{/if}}">
+    <span class="g-float-actions__btn-inner" aria-hidden="true">
+      <img src="{{picUrl}}" alt="" class="g-float-actions__social-img" width="22" height="22" loading="lazy" />
+    </span>
+  </a>
+  {{else}}
+  <button type="button" class="g-float-actions__btn" id="gFloatTopBtn" title="{{#if title}}{{title}}{{else}}Back to top{{/if}}" aria-label="{{#if title}}{{title}}{{else}}Back to top{{/if}}">
+    <span class="g-float-actions__btn-inner" aria-hidden="true">
+      <img src="{{picUrl}}" alt="" class="g-float-actions__social-img" width="22" height="22" loading="lazy" />
+    </span>
+  </button>
+  {{/if}}
+  {{/with}}
+</div>
+
+<script>
+(function () {
+  var bar = document.getElementById('gFloatActions');
+  if (!bar) return;
+  var metaUrl = bar.getAttribute('data-contact-meta-url') || '';
+  var contactAction = bar.getAttribute('data-contact-action') || '/contact';
+  var inquiryBtn = document.getElementById('gFloatInquiryBtn');
+  var modal = document.getElementById('gInquiryModal');
+  var overlay = document.getElementById('gInquiryModalOverlay');
+  var closeBtn = document.getElementById('gInquiryModalClose');
+  var form = document.getElementById('gInquiryForm');
+  var csrfInput = document.getElementById('gInquiryCsrf');
+  var topBtn = document.getElementById('gFloatTopBtn');
+  var submitBtn = document.getElementById('gInquirySubmit');
+
+  function ensureToastHost() {
+    var host = document.getElementById('g-contact-toast-host');
+    if (!host) {
+      host = document.createElement('div');
+      host.id = 'g-contact-toast-host';
+      host.className = 'g-contact-toast-host';
+      host.setAttribute('aria-live', 'polite');
+      document.body.appendChild(host);
+    }
+    return host;
+  }
+  function showToast(text, kind) {
+    var formEl = document.getElementById('gInquiryForm');
+    var host = ensureToastHost();
+    var wrap = document.createElement('div');
+    wrap.className = 'g-contact-toast g-contact-toast--' + (kind === 'error' ? 'error' : 'success');
+    wrap.setAttribute('role', 'alert');
+    var icon = document.createElement('div');
+    icon.className = 'g-contact-toast__icon';
+    icon.innerHTML =
+      kind === 'error'
+        ? '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>'
+        : '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+    var body = document.createElement('div');
+    body.className = 'g-contact-toast__body';
+    var msg = document.createElement('div');
+    msg.className = 'g-contact-toast__msg';
+    msg.textContent = text;
+    if (kind === 'success') msg.classList.add('g-contact-toast__msg--solo');
+    body.appendChild(msg);
+    if (kind !== 'success') {
+      var title = document.createElement('div');
+      title.className = 'g-contact-toast__title';
+      title.textContent = (formEl && formEl.getAttribute('data-toast-err-title')) || 'Notice';
+      body.insertBefore(title, msg);
+    }
+    var close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'g-contact-toast__close';
+    close.setAttribute('aria-label', 'Close');
+    close.innerHTML = '&times;';
+    wrap.appendChild(icon);
+    wrap.appendChild(body);
+    wrap.appendChild(close);
+    host.appendChild(wrap);
+    requestAnimationFrame(function () {
+      wrap.classList.add('g-contact-toast--show');
+    });
+    var removeTimer = setTimeout(dismiss, 5200);
+    function dismiss() {
+      clearTimeout(removeTimer);
+      wrap.classList.remove('g-contact-toast--show');
+      setTimeout(function () {
+        wrap.remove();
+      }, 320);
+    }
+    close.addEventListener('click', dismiss);
+  }
+
+  function openModal() {
+    if (!modal) return;
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    if (inquiryBtn) inquiryBtn.setAttribute('aria-expanded', 'true');
+    if (metaUrl && csrfInput) {
+      fetch(metaUrl, { credentials: 'same-origin', headers: { Accept: 'application/json' } })
+        .then(function (r) {
+          return r.json();
+        })
+        .then(function (data) {
+          if (data && typeof data.csrfToken === 'string') csrfInput.value = data.csrfToken;
+        })
+        .catch(function () {});
+    }
+  }
+  function closeModal() {
+    if (!modal) return;
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (inquiryBtn) inquiryBtn.setAttribute('aria-expanded', 'false');
+  }
+
+  if (form) form.setAttribute('action', contactAction);
+  if (inquiryBtn) inquiryBtn.addEventListener('click', openModal);
+  if (overlay) overlay.addEventListener('click', closeModal);
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && modal && modal.getAttribute('aria-hidden') === 'false') closeModal();
+  });
+
+  if (form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (submitBtn) {
+        submitBtn.classList.add('is-loading');
+        submitBtn.disabled = true;
+      }
+      var fd = new FormData(form);
+      
+      // 获取 orderUuid（可能为空，表示没有订单的询价）
+      var orderUuid = form.getAttribute('data-pc-inquiry-order-uuid') || '';
+      
+      // 所有询价都提交到 /api/member/cart/inquiry-submit
+      // 支持两种情况：有订单（包含购物车商品）和无订单（直接提交）
+      fetch('/api/member/bootstrap', { credentials: 'same-origin' })
+        .then(function (r) { return r.json(); })
+        .then(function (bootstrapData) {
+          var csrfToken = (bootstrapData && bootstrapData.csrfToken) || '';
+          var sourceUrl = window.location.pathname;
+          var payload = { _csrf: csrfToken, sourceUrl: sourceUrl };
+          // 如果�?orderUuid，添加到 payload
+          if (orderUuid) {
+            payload.orderUuid = orderUuid;
+          }
+          fd.forEach(function (value, key) {
+            if (key !== '_csrf' && key !== 'sourceUrl') payload[key] = value;
+          });
+          return fetch('/api/member/cart/inquiry-submit', {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+              'x-csrf-token': csrfToken,
+            },
+            body: JSON.stringify(payload),
+            credentials: 'same-origin',
+          });
+        })
+        .then(function (res) {
+          var ct = (res.headers.get('content-type') || '').toLowerCase();
+          if (ct.indexOf('application/json') !== -1) {
+            return res.json().then(function (data) {
+              return { res: res, data: data };
+            });
+          }
+          return { res: res, data: null };
+        })
+        .then(function (o) {
+          var res = o.res;
+          var data = o.data;
+          if (res.ok && data && data.ok) {
+            var token = data.csrfToken;
+            form.reset();
+            if (token && csrfInput) csrfInput.value = token;
+            form.removeAttribute('data-pc-inquiry-order-uuid');
+            var successMsg = data.message || form.getAttribute('data-toast-success') ;
+            showToast(successMsg, 'success');
+            closeModal();
+            // 触发购物车清空事件（只有有订单时才触发）
+            if (orderUuid) {
+              document.dispatchEvent(new CustomEvent('pc:cart-inquiry-submitted'));
+            }
+            return;
+          }
+          if (res.status === 400 && data && data.message) {
+            showToast(data.message, 'error');
+            return;
+          }
+          if (res.status === 403) {
+            showToast(form.getAttribute('data-toast-forbidden') || 'Invalid csrf token', 'error');
+            return;
+          }
+          showToast(form.getAttribute('data-toast-network') || '', 'error');
+        })
+        .catch(function () {
+          showToast(form.getAttribute('data-toast-network') || '', 'error');
+        })
+        .finally(function () {
+          if (submitBtn) {
+            submitBtn.classList.remove('is-loading');
+            submitBtn.disabled = false;
+          }
+        });
+    });
+  }
+
+  if (topBtn) {
+    topBtn.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+})();
+</script>
+

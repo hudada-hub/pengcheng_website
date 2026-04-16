@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - 鹏成后台</title>
+  <meta name="csrf-token" content="{{csrfToken}}">
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/admin/admin-theme.css">
+  <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+</head>
+<body class="admin-layout">
+  {{> admin/header}}
+  <div class="admin-body">
+    {{> admin/sidebar}}
+    <main class="admin-main">
+      <div class="admin-card" style="text-align:center; padding:3rem;">
+        <iconify-icon icon="mdi:page-not-found" style="font-size:4rem;color:var(--admin-text-muted);"></iconify-icon>
+        <h1 style="margin:1rem 0 0.5rem;font-size:1.5rem;">页面不存在</h1>
+        <p style="color:var(--admin-text-muted);margin-bottom:1.5rem;">您访问的后台路径不存在或已变更。</p>
+        <a href="/admin" class="btn btn-primary">返回仪表盘</a>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,11 @@
+/* 主题变量 */
+:root {
+  --color-primary: #2563eb;
+  --color-text: #1f2937;
+  --color-text-muted: #6b7280;
+  --font-size-base: 16px;
+  --font-size-lg: 1.125rem;
+  --font-size-sm: 0.875rem;
+  --spacing-unit: 8px;
+  --container-max: 1200px;
+}

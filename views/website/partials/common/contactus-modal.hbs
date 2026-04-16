@@ -1,0 +1,187 @@
+{{! -- 全站可引入：内含与首页 contactus 相同的表单区块；打开方式：window.openGContactusModal() 或自定义按钮触发 -- }}
+<div
+  class="g-contactus-modal"
+  id="gContactusModal"
+  aria-hidden="true"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="gContactusModalTitle"
+>
+  <div class="g-contactus-modal__overlay" id="gContactusModalOverlay" tabindex="-1"></div>
+  <div class="g-contactus-modal__dialog">
+    <button type="button" class="g-contactus-modal__close" id="gContactusModalClose" aria-label="Close">&times;</button>
+    {{#if contactUs.title}}
+    <h2 id="gContactusModalTitle" class="g-contactus-modal__title">{{contactUs.title}}</h2>
+    {{else}}
+    <h2 id="gContactusModalTitle" class="g-contactus-modal__title">{{contactUs.description}}</h2>
+    {{/if}}
+    <div class="g-contactus-modal__body">
+      {{> website/common/contactus modal=true}}
+    </div>
+  </div>
+</div>
+<script>
+(function () {
+  var modal = document.getElementById('gContactusModal');
+  var overlay = document.getElementById('gContactusModalOverlay');
+  var closeBtn = document.getElementById('gContactusModalClose');
+  var form = document.getElementById('gContactusModalForm');
+  if (!modal) return;
+
+  function openModal() {
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  window.openGContactusModal = openModal;
+  window.closeGContactusModal = closeModal;
+
+  if (overlay) overlay.addEventListener('click', closeModal);
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') closeModal();
+  });
+
+  var csrfToken = '';
+  fetch('/contact-form-meta', { credentials: 'same-origin' })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (data.csrfToken) {
+        csrfToken = data.csrfToken;
+        var csrfInput = form.querySelector('input[name="_csrf"]');
+        if (csrfInput) csrfInput.value = csrfToken;
+      }
+    })
+    .catch(function() {});
+
+  var sourceUrlInput = form.querySelector('input[name="sourceUrl"]');
+  if (sourceUrlInput) {
+    sourceUrlInput.value = window.location.pathname;
+  }
+
+  if (!form) return;
+  var btn = form.querySelector('.g-contactus__submit-btn');
+  var csrfInput = form.querySelector('input[name="_csrf"]');
+  function ensureHost() {
+    var host = document.getElementById('g-contact-toast-host');
+    if (!host) {
+      host = document.createElement('div');
+      host.id = 'g-contact-toast-host';
+      host.className = 'g-contact-toast-host';
+      host.setAttribute('aria-live', 'polite');
+      document.body.appendChild(host);
+    }
+    return host;
+  }
+  function showToast(text, kind) {
+    var host = ensureHost();
+    var wrap = document.createElement('div');
+    wrap.className = 'g-contact-toast g-contact-toast--' + (kind === 'error' ? 'error' : 'success');
+    wrap.setAttribute('role', 'alert');
+    var icon = document.createElement('div');
+    icon.className = 'g-contact-toast__icon';
+    icon.innerHTML =
+      kind === 'error'
+        ? '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>'
+        : '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+    var body = document.createElement('div');
+    body.className = 'g-contact-toast__body';
+    var msg = document.createElement('div');
+    msg.className = 'g-contact-toast__msg';
+    msg.textContent = text;
+    if (kind === 'success') {
+      msg.classList.add('g-contact-toast__msg--solo');
+      body.appendChild(msg);
+    } else {
+      var title = document.createElement('div');
+      title.className = 'g-contact-toast__title';
+      title.textContent = form.getAttribute('data-toast-err-title') || 'Notice';
+      body.appendChild(title);
+      body.appendChild(msg);
+    }
+    var close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'g-contact-toast__close';
+    close.setAttribute('aria-label', 'Close');
+    close.innerHTML = '&times;';
+    wrap.appendChild(icon);
+    wrap.appendChild(body);
+    wrap.appendChild(close);
+    host.appendChild(wrap);
+    requestAnimationFrame(function () {
+      wrap.classList.add('g-contact-toast--show');
+    });
+    var removeTimer = setTimeout(dismiss, 5200);
+    function dismiss() {
+      clearTimeout(removeTimer);
+      wrap.classList.remove('g-contact-toast--show');
+      setTimeout(function () {
+        wrap.remove();
+      }, 320);
+    }
+    close.addEventListener('click', dismiss);
+  }
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (btn) {
+      btn.classList.add('is-loading');
+      btn.disabled = true;
+    }
+    var fd = new FormData(form);
+    var encoded = new URLSearchParams(fd);
+    var url = form.getAttribute('action') || '';
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+      },
+      body: encoded.toString(),
+      credentials: 'same-origin',
+    })
+      .then(function (res) {
+        var ct = (res.headers.get('content-type') || '').toLowerCase();
+        if (ct.indexOf('application/json') !== -1) {
+          return res.json().then(function (data) {
+            return { res: res, data: data };
+          });
+        }
+        return { res: res, data: null };
+      })
+      .then(function (o) {
+        var res = o.res;
+        var data = o.data;
+        if (res.ok && data && data.ok) {
+          var token = data.csrfToken;
+          form.reset();
+          if (token && csrfInput) csrfInput.value = token;
+          showToast(data.message || form.getAttribute('data-toast-success') || '', 'success');
+          closeModal();
+          return;
+        }
+        if (res.status === 400 && data && data.message) {
+          showToast(data.message, 'error');
+          return;
+        }
+        if (res.status === 403) {
+          showToast(form.getAttribute('data-toast-forbidden') || '', 'error');
+          return;
+        }
+        showToast(form.getAttribute('data-toast-network') || '', 'error');
+      })
+      .catch(function () {
+        showToast(form.getAttribute('data-toast-network') || '', 'error');
+      })
+      .finally(function () {
+        if (btn) {
+          btn.classList.remove('is-loading');
+          btn.disabled = false;
+        }
+      });
+  });
+})();
+</script>

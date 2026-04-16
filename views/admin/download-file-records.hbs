@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>资料下载记录 - 鹏成后台</title>
+  <meta name="csrf-token" content="{{csrfToken}}">
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/admin/admin-theme.css">
+  <script src="/js/iconify-icon.min.js"></script>
+  <script src="/js/univerjs/echarts.min.js"></script>
+  <style>
+    .dl-rec-chart-card { margin-top: 1.5rem; padding: 1rem; background: var(--admin-card); border: 1px solid var(--admin-border); border-radius: var(--admin-radius); }
+    .dl-rec-chart-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 0.75rem; }
+    .dl-rec-chart-head h2 { margin: 0; font-size: 1rem; font-weight: 600; color: var(--admin-text); }
+    .dl-rec-chart-lang { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; max-width: min(560px, 100%); }
+    .dl-rec-chart-lang__row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; justify-content: flex-end; }
+    .dl-rec-chart-lang__label { font-size: var(--font-size-sm); color: var(--admin-text-muted); white-space: nowrap; }
+    .dl-rec-chart-lang__actions { display: inline-flex; gap: 10px; font-size: var(--font-size-sm); }
+    .dl-rec-chart-lang__actions button { padding: 0; background: none; border: none; color: var(--admin-primary, #1677ff); cursor: pointer; text-decoration: underline; }
+    .dl-rec-chart-lang__checks { display: flex; flex-wrap: wrap; gap: 8px 14px; justify-content: flex-end; }
+    .dl-rec-chart-lang__checks label { display: inline-flex; align-items: center; gap: 6px; font-size: var(--font-size-sm); color: var(--admin-text); cursor: pointer; user-select: none; }
+    .dl-rec-chart-lang__checks input { margin: 0; }
+    #dlRecChartBar { width: 100%; height: 420px; min-height: 280px; }
+    .dl-rec-table-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 0.65rem; }
+    .dl-rec-table-toolbar label { font-size: var(--font-size-sm); color: var(--admin-text-muted); margin: 0; white-space: nowrap; }
+    .dl-rec-table-toolbar select { min-width: 200px; max-width: min(360px, 100%); padding: 0.35rem 0.5rem; font-size: var(--font-size-sm); border: 1px solid var(--admin-border); border-radius: var(--admin-radius, 4px); background: var(--admin-bg, #fff); color: var(--admin-text); }
+    .dl-rec-ui-lang { font-size: var(--font-size-sm); color: var(--admin-text-muted); }
+    .dl-rec-ui-lang a { margin-left: 8px; }
+  </style>
+</head>
+<body class="admin-layout">
+  {{> admin/header}}
+  <div class="admin-body">
+    {{> admin/sidebar}}
+    <main class="admin-main">
+      <div class="admin-page-toolbar">
+        <h1 style="margin:0;">资料下载记录</h1>
+        <p style="margin:0;font-size:var(--font-size-sm);color:var(--admin-text-muted);">按资料所属语言筛选列表；条形图按文档语言汇总下载次数。</p>
+      </div>
+
+      <div class="dl-rec-table-toolbar">
+        <label for="dlRecTableLangFilter">表格 · 资料语言</label>
+        <select id="dlRecTableLangFilter" name="langId" aria-label="lang filter">
+          <option value="" {{#unless selectedTableLangId}}selected{{/unless}}>全部语言</option>
+          {{#each tableLangOptions}}
+          <option value="{{this.id}}" {{#if (eq ../selectedTableLangId this.id)}}selected{{/if}}>{{this.label}}</option>
+          {{/each}}
+        </select>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>下载时间</th>
+              <th>资料语言</th>
+              <th>文件名</th>
+              <th>来源页 URL</th>
+              <th>用户邮箱</th>
+              <th>User-Agent</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each list}}
+            <tr>
+              <td>{{this.id}}</td>
+              <td style="font-size:var(--font-size-sm);white-space:nowrap;">{{this.createdAtFormatted}}</td>
+              <td>{{this.langLabel}}</td>
+              <td style="max-width:200px;word-break:break-all;font-size:var(--font-size-sm);">{{this.fileName}}</td>
+              <td style="max-width:220px;word-break:break-all;font-size:var(--font-size-sm);" title="{{this.fromPageUrl}}">{{this.fromPageShort}}</td>
+              <td style="word-break:break-all;">{{this.userEmail}}</td>
+              <td style="max-width:240px;word-break:break-all;font-size:var(--font-size-sm);" title="{{this.userAgent}}">{{this.userAgentShort}}</td>
+            </tr>
+            {{else}}
+            <tr><td colspan="7" style="text-align:center;color:var(--admin-text-muted);">暂无记录</td></tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+
+      {{#if pagination}}
+      <div class="admin-pagination-wrap" style="margin-top:1rem;">
+        {{> admin/pagination currentPage=pagination.currentPage totalPages=pagination.totalPages baseUrl=pagination.baseUrl pageSize=pagination.pageSize}}
+      </div>
+      <script>
+        (function () {
+          var sel = document.getElementById('dlRecTableLangFilter');
+          if (!sel) return;
+          sel.addEventListener('change', function () {
+            var v = (sel.value || '').trim();
+            var parts = [];
+            parts.push('pageSize=' + encodeURIComponent('{{pagination.pageSize}}'));
+            if (v) parts.push('langId=' + encodeURIComponent(v));
+            window.location.href = '/admin/download-file-records?' + parts.join('&');
+          });
+        })();
+      </script>
+      {{/if}}
+
+      <div class="dl-rec-chart-card">
+        <div class="dl-rec-chart-head">
+          <h2>下载次数分布（按资料语言）</h2>
+          <div class="dl-rec-chart-lang">
+            <div class="dl-rec-chart-lang__row">
+              <span class="dl-rec-chart-lang__label">显示语言（可多选）</span>
+              <div class="dl-rec-chart-lang__actions">
+                <button type="button" id="dlRecChartLangAll">全选</button>
+                <button type="button" id="dlRecChartLangNone">全不选</button>
+              </div>
+            </div>
+            <div class="dl-rec-chart-lang__checks" id="dlRecChartLangChecks"></div>
+          </div>
+        </div>
+        <div id="dlRecChartBar"></div>
+        <p style="font-size:var(--font-size-sm);color:var(--admin-text-muted);margin:0.5rem 0 0;">勾选语言筛选；按次数降序，最多 40 条。</p>
+      </div>
+      <script>
+        (function () {
+          var chartLangs = JSON.parse('{{{chartLangsJson}}}');
+          var chartRows = JSON.parse('{{{chartRowsJson}}}');
+          var checkedLangIds = chartLangs.map(function (l) { return l.id; });
+          var langChecksContainer = document.getElementById('dlRecChartLangChecks');
+          var langAllBtn = document.getElementById('dlRecChartLangAll');
+          var langNoneBtn = document.getElementById('dlRecChartLangNone');
+          var chartDom = document.getElementById('dlRecChartBar');
+          var chartInstance = null;
+          function getChartOption() {
+            var filteredRows = chartRows.filter(function (r) { return checkedLangIds.indexOf(r.langId) !== -1; });
+            if (filteredRows.length === 0) {
+              return { graphic: { type: 'text', left: 'center', top: 'middle', style: { text: '请至少选择一种语言', fontSize: 14, fill: '#999' } } };
+            }
+            return {
+              tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+              grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+              xAxis: { type: 'value', name: '下载次数' },
+              yAxis: { type: 'category', data: filteredRows.map(function (r) { return r.name; }), inverse: true },
+              series: [{ type: 'bar', data: filteredRows.map(function (r) { return r.value; }), itemStyle: { color: '#1677ff' }, barMaxWidth: 36 }]
+            };
+          }
+          function renderChart() {
+            if (!chartDom) return;
+            if (!chartInstance) { chartInstance = echarts.init(chartDom); }
+            chartInstance.setOption(getChartOption(), true);
+          }
+          function renderChecks() {
+            if (!langChecksContainer) return;
+            langChecksContainer.innerHTML = chartLangs.map(function (l) {
+              var checked = checkedLangIds.indexOf(l.id) !== -1 ? 'checked' : '';
+              return '<label><input type="checkbox" value="' + l.id + '" ' + checked + '> ' + l.label + '</label>';
+            }).join('');
+            var checks = langChecksContainer.querySelectorAll('input[type="checkbox"]');
+            Array.prototype.forEach.call(checks, function (ch) {
+              ch.addEventListener('change', function () {
+                var allChecks = langChecksContainer.querySelectorAll('input[type="checkbox"]:checked');
+                checkedLangIds = Array.prototype.map.call(allChecks, function (c) { return parseInt(c.value, 10); });
+                renderChart();
+              });
+            });
+          }
+          if (langAllBtn) {
+            langAllBtn.addEventListener('click', function () {
+              checkedLangIds = chartLangs.map(function (l) { return l.id; });
+              renderChecks();
+              renderChart();
+            });
+          }
+          if (langNoneBtn) {
+            langNoneBtn.addEventListener('click', function () {
+              checkedLangIds = [];
+              renderChecks();
+              renderChart();
+            });
+          }
+          renderChecks();
+          renderChart();
+          window.addEventListener('resize', function () { if (chartInstance) chartInstance.resize(); });
+        })();
+      </script>
+    </main>
+  </div>
+</body>
+</html>

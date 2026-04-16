@@ -1,0 +1,11 @@
+# Tasks
+- [x] Task 1: 修改 subscription-modal.hbs 通过 AJAX 获取 CSRF token
+  - [x] SubTask 1.1: 在 subscription-modal.hbs 中添加页面加载时获取 CSRF token 的逻辑
+  - [x] SubTask 1.2: 将获取的 token 填充到 modal 中的 _csrf input
+- [x] Task 2: 检查各页面是否正确传递 contactFormCsrfToken
+  - [x] SubTask 2.1: 检查 join-us.hbs (使用 AJAX 方式获取)
+  - [x] SubTask 2.2: 检查 footer.hbs (使用 AJAX 方式获取)
+- [x] Task 3: 验证修复效果
+  - [x] SubTask 3.1: 运行 TypeScript 编译
+  - [x] SubTask 3.2: 修复 contact-form-meta API 返回空 token 的问题
+- [x] Task 4: 修复 subscription.hbs CSRF token 为空问题

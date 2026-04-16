@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head><body><div id="admin-form-fragment">
+  <div class="admin-card">
+    <form class="admin-form admin-form-modal product-form" method="post" action="/admin/products/save" id="productEditForm">
+      <div class="admin-modal-form-scroll">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        {{#if product}}<input type="hidden" name="id" value="{{product.id}}">{{/if}}
+        <section class="admin-form-section">
+          <div class="admin-form-section-title">基础信息</div>
+          <div class="admin-form-grid admin-form-grid-2">
+            <div class="form-group admin-col-span-2">
+              <label>产品名称 <span class="admin-required">*</span></label>
+              <input type="text" name="name" id="productName" required value="{{#if product}}{{product.name}}{{/if}}" placeholder="产品名称">
+            </div>
+            <div class="form-group admin-col-span-2">
+              <label>产品详情标题</label>
+              <input type="text" name="detailTitle" id="productDetailTitle" value="{{#if product}}{{product.detailTitle}}{{/if}}" placeholder="留空则详情页使用「产品名称」">
+              <div class="admin-form-help">仅影响官网产品详情页主标题；列表、卡片等仍用「产品名称」。</div>
+            </div>
+            <div class="form-group">
+              <label>产品型号</label>
+              <input type="text" name="model" id="productModel" value="{{#if product}}{{product.model}}{{/if}}" placeholder="型号">
+            </div>
+            <div class="form-group">
+              <label>语言 <span class="admin-required">*</span></label>
+              <select name="langId" required>
+                {{#each langs}}
+                  <option value="{{this.id}}" {{#if (eq this.id ../defaultLangId)}}selected{{/if}}>{{this.name}} ({{this.code}})</option>
+                {{/each}}
+              </select>
+            </div>
+            <div class="form-group">
+              <label>排序</label>
+              <input type="number" name="sort" id="productSort" value="{{#if product}}{{product.sort}}{{else}}0{{/if}}" placeholder="数值越大越靠前">
+              <div class="admin-form-help">排序值越大，在列表中显示越靠前。</div>
+            </div>
+            <div class="form-group admin-col-span-2">
+              <label>产品分类</label>
+              <div class="admin-tree-select" id="productCategoryTreeSelect">
+                <input type="hidden" name="categoryId" id="productCategoryId" value="{{#if product}}{{product.categoryId}}{{/if}}">
+                <div class="admin-tree-select__trigger" id="productCategoryTrigger">
+                  <span class="admin-tree-select__placeholder">请选择</span>
+                  <iconify-icon icon="mdi:chevron-down" class="admin-tree-select__arrow"></iconify-icon>
+                </div>
+                <div class="admin-tree-select__dropdown" id="productCategoryDropdown">
+                  <div class="admin-tree-select__search">
+                    <input type="text" placeholder="搜索分类..." class="admin-tree-select__search-input" id="productCategorySearch">
+                  </div>
+                  <div class="admin-tree-select__content" id="productCategoryContent">
+                    {{#each categories}}
+                      <div class="admin-tree-select__item" data-id="{{this.id}}" data-level="{{this.level}}" data-parent-id="{{this.parentId}}">
+                        {{#if (gt this.level 0)}}
+                          <span class="admin-tree-select__indent" style="width: {{multiply this.level 20}}px;"></span>
+                          <iconify-icon icon="mdi:arrow-bottom-right" class="admin-tree-select__icon"></iconify-icon>
+                        {{/if}}
+                        <span class="admin-tree-select__label">{{this.name}}{{#if this.lang}} ({{this.lang.code}}){{/if}}</span>
+                      </div>
+                    {{/each}}
+                  </div>
+                </div>
+              </div>
+              <div class="admin-form-help">根据当前语言显示对应分类，支持树形选择。</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="admin-form-section">
+          <div class="admin-form-section-title">媒体与 Banner</div>
+          <div class="admin-form-grid admin-form-grid-2">
+            <div class="form-group">
+              <label>缩略图</label>
+              <div class="admin-input-row">
+                <input type="text" name="thumbUrl" id="productThumbUrl" value="{{#if product}}{{product.thumbUrl}}{{/if}}" placeholder="点击选择">
+                <button type="button" class="btn" id="productBtnPickThumb"><iconify-icon icon="mdi:image-search-outline"></iconify-icon> 选择</button>
+                <span class="admin-input-preview" id="productThumbPreview">{{#if product}}{{#if product.thumbUrl}}<img src="{{product.thumbUrl}}" alt="">{{/if}}{{/if}}</span>
+              </div>
+              <div class="admin-form-help">用于列表页或卡片展示的缩略图。</div>
+            </div>
+            <div class="form-group">
+              <label>Banner 图</label>
+              <div class="admin-input-row">
+                <input type="text" name="bannerUrl" id="productBannerUrl" value="{{#if product}}{{product.bannerUrl}}{{/if}}" placeholder="点击选择">
+                <button type="button" class="btn" id="productBtnPickBanner"><iconify-icon icon="mdi:image-search-outline"></iconify-icon> 选择</button>
+                <span class="admin-input-preview" id="productBannerPreview">{{#if product}}{{#if product.bannerUrl}}<img src="{{product.bannerUrl}}" alt="">{{/if}}{{/if}}</span>
+              </div>
+              <div class="admin-form-help">用于产品详情页顶部 Banner，建议宽屏横图。</div>
+            </div>
+            <div class="form-group admin-col-span-2">
+              <label>主图（多张）</label>
+              <input type="hidden" name="mainPics" id="productMainPicsInput" value="{{#if product}}{{#if product.mainPics}}{{json product.mainPics}}{{/if}}{{/if}}">
+              <div class="product-main-pics-wrap">
+                <div class="product-main-pics-list" id="productMainPicsList"></div>
+                <button type="button" class="btn btn-secondary btn-sm" id="productBtnAddMainPic"><iconify-icon icon="mdi:image-plus-outline"></iconify-icon> 添加图片</button>
+              </div>
+              <div class="admin-form-help">用于轮播/图集展示，建议上传 3-6 张核心图片。</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="admin-form-section">
+          <div class="admin-form-section-title">内容与参数</div>
+          <div class="admin-form-grid admin-form-grid-2">
+            <div class="form-group admin-col-span-2">
+              <label>产品特点</label>
+              <input type="hidden" name="features" id="productFeaturesInput" value="{{#if product}}{{#if product.features}}{{json product.features}}{{/if}}{{/if}}">
+              <div class="product-features-list" id="productFeaturesList"></div>
+              <button type="button" class="btn btn-secondary btn-sm" id="productBtnAddFeature"><iconify-icon icon="mdi:plus"></iconify-icon> 新增分类</button>
+              <div class="admin-form-help">每个分类对应一个特点分组，每个分组包含标题与特性数组。</div>
+            </div>
+
+            <div class="form-group admin-col-span-2">
+              <label>核心参数（2-3 个）</label>
+              <input type="hidden" name="coreParams" id="productCoreParamsInput" value="{{#if product}}{{#if product.coreParams}}{{json product.coreParams}}{{/if}}{{/if}}">
+              <div class="product-array-list" id="productCoreParamsList"></div>
+              <button type="button" class="btn btn-secondary btn-sm" id="productBtnAddCoreParam"><iconify-icon icon="mdi:plus"></iconify-icon> 新增</button>
+              <div class="admin-form-help">例如容量、电压、循环寿命等最关键的 2-3 个参数。</div>
+            </div>
+
+            <div class="form-group admin-col-span-2">
+              <label>产品参数（分类/值）</label>
+              <input type="hidden" name="paramValueIds" id="productParamValueIdsInput" value="{{#if selectedParamValueIds}}{{json selectedParamValueIds}}{{/if}}">
+              <div class="admin-form-help">每个分类只能选择 1 个参数值；保存后会关联到当前产品（当前语言版本）。</div>
+              <div class="admin-card" style="padding:12px;">
+                {{#if (gt (length paramCategories) 0)}}
+                  {{#each paramCategories}}
+                    <div style="margin:10px 0 6px;font-weight:600;color:var(--admin-text);">{{this.title}}</div>
+                    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                      <select class="product-param-value-select" data-category-id="{{this.id}}" style="min-width:320px;max-width:100%;">
+                        <option value="">请选择</option>
+                        {{#each ../paramValues}}
+                          {{#if (eq this.categoryId ../this.id)}}
+                            <option value="{{this.id}}">{{this.title}}{{#if this.value}} — {{this.value}}{{/if}}</option>
+                          {{/if}}
+                        {{/each}}
+                      </select>
+                    </div>
+                  {{/each}}
+                {{else}}
+                  <div style="color:var(--admin-text-muted);">暂无参数分类/参数值数据，请先在「产品参数管理」里维护。</div>
+                {{/if}}
+              </div>
+            </div>
+
+            <div class="form-group admin-col-span-2">
+              <label>产品参数明细</label>
+              <input type="text" name="paramsTitle" id="productParamsTitle" value="{{#if product}}{{product.paramsTitle}}{{/if}}" placeholder="留空则不显示大标题">
+              <input type="hidden" name="paramsJson" id="productParamsJsonInput" value="{{#if product}}{{#if product.paramsJson}}{{json product.paramsJson}}{{/if}}{{/if}}">
+              <div class="product-params-json-list" id="productParamsJsonList"></div>
+              <button type="button" class="btn btn-secondary btn-sm" id="productBtnAddParamsJson"><iconify-icon icon="mdi:plus"></iconify-icon> 新增一组</button>
+              <div class="admin-form-help">每组填「参数标题」+ Univer 表格；第一行作为表头（如 Item / Unit / Parameters）。同一 Sheet 内可用空行分隔多张表；非 JSON 旧数据将按纯文本显示在前台。</div>
+            </div>
+
+            <div class="form-group admin-col-span-2">
+              <label>产品优势一句话概述</label>
+              <input type="text" name="advantageSummary" value="{{#if product}}{{product.advantageSummary}}{{/if}}" placeholder="一句话概述，例如：高能量密度、长循环寿命">
+            </div>
+
+            <div class="form-group admin-col-span-2">
+              <label>具体优势</label>
+              <input type="hidden" name="advantages" id="productAdvantagesInput" value="{{#if product}}{{#if product.advantages}}{{json product.advantages}}{{/if}}{{/if}}">
+              <div class="product-advantages-list" id="productAdvantagesList"></div>
+              <button type="button" class="btn btn-secondary btn-sm" id="productBtnAddAdvantage"><iconify-icon icon="mdi:plus"></iconify-icon> 新增一组</button>
+              <div class="admin-form-help">每组包含标题、描述、描述展开叙述（可选）与配图，适合在详情页分块展示。</div>
+            </div>
+
+            <div class="form-group admin-col-span-2">
+              <label>产品认证</label>
+              <input type="hidden" name="certifications" id="productCertificationsInput" value="{{#if product}}{{#if product.certifications}}{{json product.certifications}}{{/if}}{{/if}}">
+              <div class="product-certifications-wrap">
+                <div class="product-certifications-list" id="productCertificationsList"></div>
+                <button type="button" class="btn btn-secondary btn-sm" id="productBtnAddCertification"><iconify-icon icon="mdi:image-plus-outline"></iconify-icon> 添加认证标识</button>
+              </div>
+              <div class="admin-form-help">上传认证标识图片，前台可展示认证标识。</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="admin-form-section">
+          <div class="admin-form-section-title">关联产品</div>
+          <p class="admin-form-help" style="margin-bottom:0.75rem;">多语言匹配：当前语言的产品关联当前语言下的其他产品。左侧为可选，右侧为已选；勾选后点击箭头移动。</p>
+          <div class="admin-form-grid admin-form-grid-2">
+            <div class="form-group admin-col-span-2">
+              <label>关联相关产品</label>
+              {{> admin/transfer idPrefix="productRelatedProducts" leftTitle=transferRelatedProducts.leftTitle rightTitle=transferRelatedProducts.rightTitle inputName=transferRelatedProducts.inputName leftItems=transferRelatedProducts.leftItems rightItems=transferRelatedProducts.rightItems value=transferRelatedProducts.value}}
+            </div>
+          </div>
+        </section>
+
+        <section class="admin-form-section admin-form-section-last">
+          <div class="admin-form-section-title">SEO 与状态</div>
+          <div class="admin-form-grid admin-form-grid-2">
+            <div class="form-group admin-col-span-2">
+              <label>SEO 标题</label>
+              <input type="text" name="metaTitle" id="productMetaTitle" value="{{#if product}}{{#if product.metaTitle}}{{product.metaTitle}}{{else}}{{product.name}}{{/if}}{{/if}}" placeholder="留空则使用产品名称">
+            </div>
+            <div class="form-group admin-col-span-2">
+              <label>SEO 关键词</label>
+              <textarea name="metaKeywords" rows="2" placeholder="多个关键词用逗号分隔">{{#if product}}{{product.metaKeywords}}{{/if}}</textarea>
+            </div>
+            <div class="form-group admin-col-span-2">
+              <label>SEO 描述</label>
+              <textarea name="metaDescription" rows="2" placeholder="建议 60-160 字概述产品与应用场景">{{#if product}}{{product.metaDescription}}{{/if}}</textarea>
+            </div>
+            <div class="form-group">
+              <label>状态</label>
+              <select name="status">
+                <option value="1" {{#if product}}{{#if (eq product.status 1)}}selected{{/if}}{{else}}selected{{/if}}>正常</option>
+                <option value="0" {{#if product}}{{#if (eq product.status 0)}}selected{{/if}}{{/if}}>隐藏</option>
+              </select>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">保存</button>
+        <button type="button" class="btn admin-modal-form-cancel">取消</button>
+      </div>
+    </form>
+  </div>
+  
+  <script src="/js/admin-transfer.js"></script>
+  <script>
+    (function () {
+      // 树形选择器组件
+      function initTreeSelect(triggerId, dropdownId, contentId, hiddenInputId, searchInputId) {
+        var trigger = document.getElementById(triggerId);
+        var dropdown = document.getElementById(dropdownId);
+        var content = document.getElementById(contentId);
+        var hiddenInput = document.getElementById(hiddenInputId);
+        var searchInput = searchInputId ? document.getElementById(searchInputId) : null;
+        
+        if (!trigger || !dropdown || !content || !hiddenInput) {
+          console.error('树形选择器初始化失败：', { triggerId, dropdownId, contentId, hiddenInputId });
+          return;
+        }
+        
+        // 切换下拉菜单显示
+        trigger.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          var isOpen = dropdown.classList.contains('is-visible');
+          
+          // 关闭其他打开的下拉菜单
+          document.querySelectorAll('.admin-tree-select__dropdown.is-visible').forEach(function (d) {
+            d.classList.remove('is-visible');
+            d.previousElementSibling.classList.remove('is-open');
+          });
+          
+          if (!isOpen) {
+            dropdown.classList.add('is-visible');
+            trigger.classList.add('is-open');
+          }
+        });
+        
+        // 点击外部关闭
+        document.addEventListener('click', function () {
+          dropdown.classList.remove('is-visible');
+          trigger.classList.remove('is-open');
+        });
+        
+        // 阻止下拉菜单点击冒泡
+        dropdown.addEventListener('click', function (e) {
+          e.stopPropagation();
+        });
+        
+        // 选择分类
+        content.addEventListener('click', function (e) {
+          var item = e.target.closest('.admin-tree-select__item');
+          if (!item) return;
+          
+          var id = item.getAttribute('data-id');
+          var label = item.querySelector('.admin-tree-select__label').textContent;
+          
+          // 设置选中状态
+          content.querySelectorAll('.admin-tree-select__item').forEach(function (i) {
+            i.classList.remove('is-selected');
+          });
+          item.classList.add('is-selected');
+          
+          // 更新隐藏字段和显示
+          hiddenInput.value = id;
+          trigger.querySelector('.admin-tree-select__placeholder').textContent = label;
+          trigger.classList.add('has-value');
+          
+          // 关闭下拉菜单
+          dropdown.classList.remove('is-visible');
+          trigger.classList.remove('is-open');
+        });
+        
+        // 搜索功能
+        if (searchInput) {
+          searchInput.addEventListener('input', function () {
+            var keyword = searchInput.value.toLowerCase();
+            content.querySelectorAll('.admin-tree-select__item').forEach(function (item) {
+              var label = item.querySelector('.admin-tree-select__label').textContent.toLowerCase();
+              if (label.includes(keyword)) {
+                item.style.display = '';
+              } else {
+                item.style.display = 'none';
+              }
+            });
+          });
+        }
+        
+        // 初始化选中状态
+        if (hiddenInput.value) {
+          var selectedItem = content.querySelector('.admin-tree-select__item[data-id="' + hiddenInput.value + '"]');
+          if (selectedItem) {
+            selectedItem.classList.add('is-selected');
+            trigger.querySelector('.admin-tree-select__placeholder').textContent = 
+              selectedItem.querySelector('.admin-tree-select__label').textContent;
+            trigger.classList.add('has-value');
+          }
+        } else {
+          trigger.classList.remove('has-value');
+        }
+      }
+      
+      function initProductCategoryTreeSelect() {
+        // 初始化产品分类树形选择器
+        initTreeSelect(
+          'productCategoryTrigger',
+          'productCategoryDropdown',
+          'productCategoryContent',
+          'productCategoryId',
+          'productCategorySearch'
+        );
+      }
+
+      // 参数值单选：每个分类 1 个；用 hidden JSON 字段提交
+      function initProductParamValues() {
+        var hidden = document.getElementById('productParamValueIdsInput');
+        if (!hidden) return;
+        var selected = [];
+        try { selected = JSON.parse(hidden.value || '[]'); } catch (e) { selected = []; }
+        if (!Array.isArray(selected)) selected = [];
+        selected = selected.map(function (x) { return String(x); });
+
+        var selects = document.querySelectorAll('.product-param-value-select');
+        function syncToHidden() {
+          var ids = [];
+          selects.forEach(function (sel) {
+            var v = (sel && sel.value) ? String(sel.value).trim() : '';
+            var n = parseInt(v, 10);
+            if (n && n > 0) ids.push(n);
+          });
+          hidden.value = JSON.stringify(ids);
+        }
+
+        // 回填：如果 hidden 里已有值，匹配到对应 select 的 option 直接选中
+        selects.forEach(function (sel) {
+          var options = sel ? sel.querySelectorAll('option') : [];
+          var found = '';
+          options.forEach(function (opt) {
+            var v = opt && opt.value ? String(opt.value) : '';
+            if (v && selected.indexOf(v) >= 0) found = v;
+          });
+          if (found) sel.value = found;
+          sel.addEventListener('change', syncToHidden);
+        });
+
+        syncToHidden();
+      }
+
+      // 产品特点：对象格式 {key: [array]}，支持 key 增删改、数组元素增删改
+      function initProductFeatures() {
+        var container = document.getElementById('productFeaturesList');
+        var hidden = document.getElementById('productFeaturesInput');
+        var btnAdd = document.getElementById('productBtnAddFeature');
+        if (!container || !hidden) {
+          console.error('产品特点初始化失败：', { container, hidden, btnAdd });
+          return;
+        }
+
+        var data = {};
+        try { data = JSON.parse(hidden.value || '{}'); } catch (e) { data = {}; }
+        if (typeof data !== 'object' || data === null || Array.isArray(data)) data = {};
+
+        function saveToHidden() {
+          hidden.value = JSON.stringify(data);
+        }
+
+        function render() {
+          container.innerHTML = '';
+          Object.keys(data).forEach(function (key) {
+            var group = document.createElement('div');
+            group.className = 'product-features-group';
+            group.style.cssText = 'margin:12px 0;padding:12px;background:var(--admin-bg);border-radius:var(--admin-radius);';
+
+            var header = document.createElement('div');
+            header.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:8px;';
+
+            var keyInput = document.createElement('input');
+            keyInput.type = 'text';
+            keyInput.value = key;
+            keyInput.placeholder = '分类名称';
+            keyInput.style.cssText = 'flex:1;min-width:0;';
+            keyInput.dataset.originalKey = key;
+            
+            keyInput.addEventListener('input', function () {
+              var newKey = keyInput.value.trim();
+              var originalKey = keyInput.dataset.originalKey;
+              if (newKey && newKey !== originalKey) {
+                data[newKey] = data[originalKey];
+                delete data[originalKey];
+                keyInput.dataset.originalKey = newKey;
+                saveToHidden();
+              }
+            });
+
+            var keyBtnDel = document.createElement('button');
+            keyBtnDel.type = 'button';
+            keyBtnDel.className = 'btn btn-sm btn-secondary';
+            keyBtnDel.textContent = '删除分类';
+            keyBtnDel.addEventListener('click', function () {
+              if (confirm('确定删除该分类？')) {
+                var originalKey = keyInput.dataset.originalKey;
+                delete data[originalKey];
+                saveToHidden();
+                render();
+              }
+            });
+
+            header.appendChild(keyInput);
+            header.appendChild(keyBtnDel);
+
+            var arr = data[key];
+            if (!Array.isArray(arr)) arr = [];
+
+            var items = document.createElement('div');
+            items.style.cssText = 'display:flex;flex-direction:column;gap:6px;';
+
+            arr.forEach(function (item, idx) {
+              var itemRow = document.createElement('div');
+              itemRow.style.cssText = 'display:flex;align-items:center;gap:6px;';
+
+              var itemInput = document.createElement('input');
+              itemInput.type = 'text';
+              itemInput.value = item;
+              itemInput.placeholder = '特性内容';
+              itemInput.style.cssText = 'flex:1;min-width:0;';
+              itemInput.dataset.index = idx;
+              itemInput.dataset.originalKey = key;
+              
+              itemInput.addEventListener('input', function () {
+                var currentKey = itemInput.dataset.originalKey;
+                var index = parseInt(itemInput.dataset.index, 10);
+                if (data[currentKey] && Array.isArray(data[currentKey])) {
+                  data[currentKey][index] = itemInput.value.trim();
+                  saveToHidden();
+                }
+              });
+
+              var itemBtnDel = document.createElement('button');
+              itemBtnDel.type = 'button';
+              itemBtnDel.className = 'btn btn-sm btn-secondary';
+              itemBtnDel.textContent = '删除';
+              itemBtnDel.addEventListener('click', function () {
+                var currentKey = itemInput.dataset.originalKey;
+                var index = parseInt(itemInput.dataset.index, 10);
+                if (data[currentKey] && Array.isArray(data[currentKey])) {
+                  data[currentKey].splice(index, 1);
+                  saveToHidden();
+                  render();
+                }
+              });
+
+              itemRow.appendChild(itemInput);
+              itemRow.appendChild(itemBtnDel);
+              items.appendChild(itemRow);
+            });
+
+            var btnAddItem = document.createElement('button');
+            btnAddItem.type = 'button';
+            btnAddItem.className = 'btn btn-secondary btn-sm';
+            btnAddItem.textContent = '新增特性';
+            btnAddItem.style.cssText = 'margin-top:6px;';
+            btnAddItem.addEventListener('click', function () {
+              arr.push('');
+              saveToHidden();
+              render();
+            });
+
+            group.appendChild(header);
+            group.appendChild(items);
+            group.appendChild(btnAddItem);
+            container.appendChild(group);
+          });
+
+          if (Object.keys(data).length === 0) {
+            container.innerHTML = '<div style="color:var(--admin-text-muted);padding:8px 0;">暂无特点分类，请点击「新增分类」添加。</div>';
+          }
+        }
+
+        if (btnAdd) {
+          btnAdd.addEventListener('click', function () {
+            var newKey = '新分类' + (Object.keys(data).length + 1);
+            data[newKey] = [];
+            saveToHidden();
+            render();
+          });
+        }
+
+        render();
+      }
+
+      // 产品认证：图片路径数组
+      function initProductCertifications() {
+        var input = document.getElementById('productCertificationsInput');
+        var listEl = document.getElementById('productCertificationsList');
+        var addBtn = document.getElementById('productBtnAddCertification');
+        if (!input || !listEl) return;
+
+        function getArr() {
+          var val = (input.value || '').trim();
+          if (!val) return [];
+          try {
+            var p = JSON.parse(val);
+            return Array.isArray(p) ? p.map(function (s) { return String(s || '').trim(); }).filter(Boolean) : [];
+          } catch (e) {
+            return [];
+          }
+        }
+
+        function setArr(arr) {
+          input.value = JSON.stringify(arr);
+          var html = '';
+          arr.forEach(function (url, i) {
+            var safeUrl = String(url).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            html += '<div class="product-certification-item" data-index="' + i + '"><img src="' + safeUrl + '" alt=""><button type="button" class="product-certification-remove" aria-label="删除" title="删除">×</button></div>';
+          });
+          listEl.innerHTML = html;
+        }
+
+        listEl.onclick = function (e) {
+          var btn = e.target && e.target.classList && e.target.classList.contains('product-certification-remove') ? e.target : null;
+          if (!btn) return;
+          var item = btn.closest('.product-certification-item');
+          if (!item) return;
+          var idx = parseInt(item.getAttribute('data-index'), 10);
+          var arr = getArr();
+          if (idx >= 0 && idx < arr.length) { arr.splice(idx, 1); setArr(arr); }
+        };
+
+        if (addBtn) addBtn.onclick = function () {
+          if (window.AdminFileManager && window.AdminFileManager.open) {
+            window.AdminFileManager.open({
+              type: 'image',
+              callback: function (url) {
+                var arr = getArr();
+                arr.push(url);
+                setArr(arr);
+              }
+            });
+          }
+        };
+
+        setArr(getArr());
+      }
+
+      // 等待 DOM 加载完成
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function () {
+          initProductCategoryTreeSelect();
+          initProductParamValues();
+          initProductFeatures();
+          initProductCertifications();
+          // 初始化穿梭框组件
+          if (window.AdminTransfer && window.AdminTransfer.initAll) {
+            window.AdminTransfer.initAll();
+          }
+        });
+      } else {
+        initProductCategoryTreeSelect();
+        initProductParamValues();
+        initProductFeatures();
+        initProductCertifications();
+        // 初始化穿梭框组件
+        if (window.AdminTransfer && window.AdminTransfer.initAll) {
+          window.AdminTransfer.initAll();
+        }
+      }
+    })();
+  </script>
+</div></body></html>

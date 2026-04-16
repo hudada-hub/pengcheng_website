@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} - 鹏成后台</title>
+  <meta name="csrf-token" content="{{csrfToken}}">
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/admin/admin-theme.css">
+  <script src="/js/iconify-icon.min.js"></script>
+</head>
+<body class="admin-layout">
+  {{> admin/header}}
+  <div class="admin-body">
+    {{> admin/sidebar}}
+    <main class="admin-main">
+      <h1>{{title}}</h1>
+      <p class="admin-desc">欢迎使用鹏成官网后台管理系统。</p>
+      <div class="dashboard-stats">
+        <div class="dashboard-stat-card">
+          <div class="icon-wrap"><iconify-icon icon="mdi:package-variant"></iconify-icon></div>
+          <div>
+            <div class="value" id="stat-products">-</div>
+            <div class="label">产品数量</div>
+          </div>
+        </div>
+        <div class="dashboard-stat-card">
+          <div class="icon-wrap"><iconify-icon icon="mdi:newspaper"></iconify-icon></div>
+          <div>
+            <div class="value" id="stat-news">-</div>
+            <div class="label">新闻数量</div>
+          </div>
+        </div>
+        <div class="dashboard-stat-card">
+          <div class="icon-wrap"><iconify-icon icon="mdi:lightbulb-multiple"></iconify-icon></div>
+          <div>
+            <div class="value" id="stat-solutions">-</div>
+            <div class="label">解决方案</div>
+          </div>
+        </div>
+        <div class="dashboard-stat-card">
+          <div class="icon-wrap"><iconify-icon icon="mdi:eye"></iconify-icon></div>
+          <div>
+            <div class="value" id="stat-visits">-</div>
+            <div class="label">页面访问量</div>
+          </div>
+        </div>
+        <div class="dashboard-stat-card">
+          <div class="icon-wrap"><iconify-icon icon="mdi:message-text"></iconify-icon></div>
+          <div>
+            <div class="value" id="stat-messages">-</div>
+            <div class="label">留言数量</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script>
+    (function () {
+      var csrfMeta = document.querySelector('meta[name="csrf-token"]');
+      var csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : '';
+      document.getElementById('btn-clear-cache').onclick = function () {
+        fetch('/admin/clear-cache', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ _csrf: csrfToken })
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (d) { alert(d.message || '完成'); })
+          .catch(function () { alert('请求失败'); });
+      };
+      fetch('/admin/api/stats', { credentials: 'same-origin' })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          var byId = function (id) { return document.getElementById(id); };
+          if (byId('stat-products')) byId('stat-products').textContent = d.products != null ? d.products : '-';
+          if (byId('stat-news')) byId('stat-news').textContent = d.news != null ? d.news : '-';
+          if (byId('stat-solutions')) byId('stat-solutions').textContent = d.solutions != null ? d.solutions : '-';
+          if (byId('stat-visits')) byId('stat-visits').textContent = d.visits != null ? d.visits : '-';
+          if (byId('stat-messages')) byId('stat-messages').textContent = d.messages != null ? d.messages : '-';
+        })
+        .catch(function () {});
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,264 @@
+{{!--
+  关联产品区块：通用 partial，支持案例详情页和解决方案详情页
+  用法：{{> website/common/related-products relatedProducts=relatedProducts hasRelatedProducts=hasRelatedProducts locale=locale relatedProductsConfig=relatedProductsConfig}}
+--}}
+<style>
+  .g-solution-case-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.25s ease, transform 0.2s ease;
+}
+
+.g-solution-case-card:hover {
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.g-solution-case-card__media-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.g-solution-case-card__media {
+  position: relative;
+  padding-top: 58%;
+  background: #f0f0f0;
+}
+
+.g-solution-case-card__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.g-solution-case-card__body {
+  padding: 16px 18px 18px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.g-solution-case-card__title {
+  margin: 0 0 14px;
+  font-family: 'Exo', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.g-solution-case-card__title a {
+  color: #1a1a1a;
+  text-decoration: none;
+}
+
+.g-solution-case-card__title a:hover {
+  color: var(--g-sd-accent);
+}
+
+.g-solution-case-card__footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.g-solution-case-card__spec {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.g-solution-case-card__spec-icon {
+  position: relative;
+  display: inline-flex;
+  color: var(--g-sd-accent);
+  font-size: 1.35rem;
+  flex-shrink: 0;
+}
+
+.g-solution-case-card__spec-icon iconify-icon.g-solution-case-card__bolt {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.75rem;
+}
+
+.g-solution-case-card__spec-text {
+  font-family: 'Exo', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--g-sd-accent);
+}
+
+.g-solution-case-card__spec-text--muted {
+  color: #999;
+  font-weight: 500;
+}
+
+.g-solution-case-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 14px;
+  font-family: 'Exo', sans-serif;
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: #888;
+  border: 1px solid #ddd;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  flex-shrink: 0;
+}
+
+.g-solution-case-card__cta:hover {
+  background: var(--g-sd-accent);
+  border-color: var(--g-sd-accent);
+  color: #fff;
+}
+
+.g-solution-cases-section__more-wrap {
+  text-align: center;
+  margin-top: clamp(28px, 5vw, 44px);
+}
+
+.g-solution-cases-section__more {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  font-family: 'Exo', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #fff;
+  background: #424558;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.g-solution-cases-section__more:hover {
+  background: #2f3d4a;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 767px) {
+  .g-solution-detail-stack {
+    margin-top: -32px;
+  }
+}
+
+
+
+/* 关联产品区块样式 */
+.g-solution-related-products {
+  padding: 40px 0;
+  width: 100%;
+
+}
+
+.g-solution-related-products__head {
+  margin-bottom: 32px;
+  text-align: left;
+}
+
+.g-solution-related-products__title {
+  font-family: 'Exo', sans-serif;
+  font-weight: 600;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #424558;
+  margin: 0;
+}
+
+.g-solution-related-products__subtitle {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+  font-size: 1.5rem;
+  color: #666;
+  margin: 8px 0 0;
+  line-height: 1.5;
+}
+
+.g-solution-related-products__grid {
+  margin: 0 -12px;
+}
+
+.g-solution-related-products__grid > [class*="col-"] {
+  padding: 12px;
+}
+
+@media (max-width: 767px) {
+  .g-solution-related-products {
+    padding: 30px 0;
+  }
+
+  .g-solution-related-products__title {
+    font-size: 1.5rem;
+  }
+}
+</style>
+
+{{#if hasRelatedProducts}}
+<section class="g-solution-related-products" aria-labelledby="g-related-products-heading">
+  <div class="g-solution-related-products__head">
+    <h2 id="g-related-products-heading" class="g-solution-related-products__title">
+      {{#if relatedProductsConfig.title}}
+        {{relatedProductsConfig.title}}
+      {{else}}
+        {{#if (eq locale "zh-CN")}}关联产品{{else}}Related Products{{/if}}
+      {{/if}}
+    </h2>
+    {{#if relatedProductsConfig.description}}
+      <p class="g-solution-related-products__subtitle">
+        {{relatedProductsConfig.description}}
+      </p>
+    {{/if}}
+  </div>
+  <div class="row g-4 g-solution-related-products__grid">
+    {{#each relatedProducts}}
+    <div class="col-12 col-md-6 col-lg-4">
+      <article class="g-solution-case-card">
+        <a href="{{this.url}}" class="g-solution-case-card__media-link">
+          <div class="g-solution-case-card__media">
+            <img src="{{this.picUrl}}" alt="{{this.title}}" class="g-solution-case-card__img" loading="lazy" />
+          </div>
+        </a>
+        <div class="g-solution-case-card__body">
+          <h3 class="g-solution-case-card__title">
+            <a href="{{this.url}}">{{this.title}}</a>
+          </h3>
+          <div class="g-solution-case-card__footer">
+            {{#if this.model}}
+            <div class="g-solution-case-card__spec">
+              <span class="g-solution-case-card__spec-icon" aria-hidden="true">
+                <iconify-icon icon="mdi:hexagon-outline"></iconify-icon>
+                <iconify-icon icon="mdi:lightning-bolt" class="g-solution-case-card__bolt"></iconify-icon>
+              </span>
+              <span class="g-solution-case-card__spec-text">{{this.model}}</span>
+            </div>
+            {{/if}}
+            <a href="{{this.url}}" class="g-solution-case-card__cta">
+              {{#if (eq ../locale "zh-CN")}}查看详情{{else}}View Details{{/if}}
+              <iconify-icon icon="mdi:arrow-right"></iconify-icon>
+            </a>
+          </div>
+        </div>
+      </article>
+    </div>
+    {{/each}}
+  </div>
+</section>
+{{/if}}

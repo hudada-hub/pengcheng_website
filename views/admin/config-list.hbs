@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} - 鹏成后台</title>
+  <meta name="csrf-token" content="{{csrfToken}}">
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/admin/admin-theme.css">
+  <link rel="stylesheet" href="/css/other/wangeditor.css">
+  <script src="/js/iconify-icon.min.js"></script>
+  <script src="/js/wangeditor.js"></script>
+  <script src="/js/admin-file-manager.js"></script>
+  <script src="/js/admin-richtext.js"></script>
+  <script src="/js/admin-config-content.js"></script>
+</head>
+<body class="admin-layout">
+  {{> admin/header}}
+  <div class="admin-body">
+    {{> admin/sidebar}}
+    <main class="admin-main">
+      <div class="admin-page-toolbar">
+        <h1 style="margin:0;">{{title}}</h1>
+        <div class="admin-page-toolbar__row">
+          <label style="font-size:var(--font-size-sm);color:var(--admin-text-muted);">语言</label>
+          <select id="langId" style="max-width:180px;">
+            <option value="">全部</option>
+            {{#each langs}}
+              <option value="{{this.id}}" {{#if (eq this.id ../defaultLangId)}}selected{{/if}}>{{this.name}} ({{this.code}})</option>
+            {{/each}}
+          </select>
+
+          <label style="font-size:var(--font-size-sm);color:var(--admin-text-muted);">区块分类</label>
+          <select id="configCategoryId" style="max-width:200px;">
+            <option value="">全部</option>
+          </select>
+
+          <label style="font-size:var(--font-size-sm);color:var(--admin-text-muted);">名称</label>
+          <input type="text" id="configKeyword" placeholder="名称或 Key 搜索" style="max-width:180px;" aria-label="名称搜索">
+          <button type="button" class="btn btn-secondary" id="btnConfigSearch"><iconify-icon icon="mdi:magnify"></iconify-icon> 搜索</button>
+          <button type="button" class="btn btn-primary" id="btnConfigAdd"><iconify-icon icon="mdi:plus"></iconify-icon> 新增配置</button>
+          <!--<button type="button" class="btn btn-secondary" id="btnConfigBatchDelete"><iconify-icon icon="mdi:delete-sweep"></iconify-icon> 批量删除</button>-->
+          <button type="button" class="btn btn-secondary" id="btnConfigBatchTranslate"><iconify-icon icon="mdi:translate"></iconify-icon> 批量翻译</button>
+        </div>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th style="width:2.5rem;"><input type="checkbox" id="configSelectAll" title="全选" aria-label="全选"></th>
+              <th>ID</th>
+              <th>Key</th>
+              <th>名称</th>
+              <th style="width:92px;">预览</th>
+              <th>类型</th>
+              <th>分类</th>
+              <th>可删除</th>
+              <th id="configLangTh" style="display:none;">语言</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="configRows">
+            <tr><td colspan="10" style="text-align:center;color:var(--admin-text-muted);">加载中...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="configPaginationWrap" class="admin-pagination-wrap" style="margin-top:1rem;display:none;"></div>
+    </main>
+  </div>
+  {{> admin/modal-form title="配置"}}
+  {{> admin/file-manager-modal}}
+  {{> admin/translate-modal idPrefix="adminTranslate"}}
+  {{> admin/confirm-modal}}
+  {{> admin/image-preview-modal}}
+  <script>
+    (function () {
+      var csrfMeta = document.querySelector('meta[name="csrf-token"]');
+      var csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : '';
+      var btn = document.getElementById('btn-clear-cache');
+      if (btn) btn.onclick = function () {
+        fetch('/admin/clear-cache', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ _csrf: csrfToken }) })
+          .then(function (r) { return r.json(); }).then(function (d) { alert(d.message || '完成'); }).catch(function () { alert('请求失败'); });
+      };
+
+      var langSelect = document.getElementById('langId');
+      var categorySelect = document.getElementById('configCategoryId');
+      var rowsEl = document.getElementById('configRows');
+      var categoryMap = {};
+
+      function typeLabel(t) {
+        if (t === 1) return '文本';
+        if (t === 2) return '单图';
+        if (t === 3) return '图+标题';
+        if (t === 4) return '图+链接';
+        if (t === 5) return '标题+内容+图';
+        if (t === 6) return '图+标题+链接';
+        if (t === 7) return '双图+标题+链接';
+        if (t === 8) return '标题+内容+描述+图';
+        if (t === 9) return '双图+标题';
+        if (t === 10) return '标题+描述';
+        if (t === 11) return '标题+描述+图片+链接';
+        if (t === 12) return '大标题+标题+描述+小标题+小描述+图片';
+        if (t === 13) return '富文本';
+        return String(t || '-');
+      }
+
+      function escapeHtml(s) {
+        return String(s == null ? '' : s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/\"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      var configListState = { page: 1, pageSize: 15, totalPages: 1, total: 0, keyword: '' };
+
+      function parseConfigListQuery() {
+        var params = new URLSearchParams(window.location.search || '');
+        var page = Math.max(1, parseInt(params.get('page') || '1', 10) || 1);
+        var pageSize = Math.min(50, Math.max(5, parseInt(params.get('pageSize') || '15', 10) || 15));
+        return {
+          page: page,
+          pageSize: pageSize,
+          langId: (params.get('langId') || '').trim(),
+          categoryId: (params.get('categoryId') || '').trim(),
+          keyword: (params.get('keyword') || '').trim()
+        };
+      }
+
+      function updateConfigListUrl() {
+        var s = configListState;
+        var langId = (langSelect && langSelect.value ? langSelect.value : '').trim();
+        var categoryId = (categorySelect && categorySelect.value ? categorySelect.value : '').trim();
+        var keywordEl = document.getElementById('configKeyword');
+        var keyword = (keywordEl && keywordEl.value) || s.keyword || '';
+        var params = new URLSearchParams();
+        if (s.page > 1) params.set('page', String(s.page));
+        if (s.pageSize && s.pageSize !== 15) params.set('pageSize', String(s.pageSize));
+        if (langId) params.set('langId', langId);
+        if (categoryId) params.set('categoryId', categoryId);
+        if (keyword) params.set('keyword', keyword);
+        var qs = params.toString();
+        var newUrl = '/admin/config' + (qs ? '?' + qs : '');
+        if (window.location.pathname + (window.location.search || '') !== newUrl) {
+          history.replaceState(null, '', newUrl);
+        }
+      }
+
+      function looksLikeImageUrl(url) {
+        var s = (url || '').trim();
+        if (!s) return false;
+        if (/^data:image\//i.test(s)) return true;
+        // 绝对/相对路径都允许；按常见图片后缀判断
+        return /\.(png|jpe?g|webp|gif|svg)(\?.*)?$/i.test(s);
+      }
+
+      function extractFirstImgFromHtml(html) {
+        var s = (html || '').trim();
+        if (!s) return '';
+        // 简单提取 <img src="...">
+        var m = s.match(/<img[^>]+src\s*=\s*["']([^"']+)["']/i);
+        if (m && m[1]) return m[1];
+        // 或者直接抓取第一个看起来像图片的 url
+        var u = s.match(/(https?:\/\/[^\s"']+\.(?:png|jpe?g|webp|gif|svg)(?:\?[^\s"']*)?)/i);
+        if (u && u[1]) return u[1];
+        return '';
+      }
+
+      function findFirstImageInContent(content) {
+        if (content == null) return '';
+        if (typeof content === 'string') {
+          var fromHtml = extractFirstImgFromHtml(content);
+          if (looksLikeImageUrl(fromHtml)) return fromHtml;
+          if (looksLikeImageUrl(content)) return content.trim();
+          return '';
+        }
+        if (Array.isArray(content)) {
+          for (var i = 0; i < content.length; i++) {
+            var r = findFirstImageInContent(content[i]);
+            if (r) return r;
+          }
+          return '';
+        }
+        if (typeof content === 'object') {
+          // 优先按约定字段查找
+          var keys = ['pic1Url', 'pic2Url', 'picUrl', 'imageUrl', 'imgUrl', 'coverUrl', 'thumbUrl', 'url'];
+          for (var k = 0; k < keys.length; k++) {
+            var v = content[keys[k]];
+            if (typeof v === 'string') {
+              var vv = v.trim();
+              if (looksLikeImageUrl(vv)) return vv;
+              var vh = extractFirstImgFromHtml(vv);
+              if (looksLikeImageUrl(vh)) return vh;
+            }
+          }
+          // 兜底：递归遍历对象的值（限制一下深度/数量，避免过大）
+          var count = 0;
+          for (var key in content) {
+            if (!Object.prototype.hasOwnProperty.call(content, key)) continue;
+            count++;
+            if (count > 50) break;
+            var r2 = findFirstImageInContent(content[key]);
+            if (r2) return r2;
+          }
+        }
+        return '';
+      }
+
+      function getPreviewUrl(c) {
+        if (!c) return '';
+        var bg = (c.bgPicUrl || '').trim();
+        if (looksLikeImageUrl(bg)) return bg;
+        return findFirstImageInContent(c.content);
+      }
+
+      function render(list, showLangColumn) {
+        // 加了「预览」列：基础列 +1
+        var colSpan = showLangColumn ? 10 : 9;
+        var langTh = document.getElementById('configLangTh');
+        if (langTh) langTh.style.display = showLangColumn ? '' : 'none';
+        if (!list || !list.length) {
+          rowsEl.innerHTML = '<tr><td colspan="' + colSpan + '" style="text-align:center;color:var(--admin-text-muted);">暂无配置</td></tr>';
+          return;
+        }
+        var html = '';
+        for (var i = 0; i < list.length; i++) {
+          var c = list[i];
+          var cat = c.categoryId != null ? (categoryMap[String(c.categoryId)] || c.categoryId) : '-';
+          var langCell = showLangColumn ? '<td>' + escapeHtml(c.lang ? (c.lang.name + ' (' + (c.lang.code || '') + ')') : '-') + '</td>' : '';
+          var previewUrl = getPreviewUrl(c);
+          var previewCell = previewUrl
+            ? '<td><img src="' + escapeHtml(previewUrl) + '" alt="" class="admin-thumb-clickable" data-image-preview="' + escapeHtml(previewUrl) + '" style="width:72px;height:40px;object-fit:cover;border:1px solid #eee;border-radius:4px;background:#fafafa;"></td>'
+            : '<td style="color:var(--admin-text-muted);">-</td>';
+          var cbCell = c.deletable === 1
+            ? '<td><input type="checkbox" class="config-row-cb" value="' + escapeHtml(String(c.id)) + '" aria-label="选择"></td>'
+            : '<td></td>';
+          html += '<tr>' +
+            cbCell +
+            '<td>' + escapeHtml(c.id) + '</td>' +
+            '<td>' + escapeHtml(c.keyName) + '</td>' +
+            '<td>' + escapeHtml(c.name) + '</td>' +
+            previewCell +
+            '<td>' + escapeHtml(typeLabel(c.type)) + '</td>' +
+            '<td>' + escapeHtml(cat) + '</td>' +
+            '<td>' + (c.deletable === 1 ? '是' : '否') + '</td>' +
+            langCell +
+            '<td class="actions">' +
+              '<a href="#" class="config-edit-link" data-id="' + encodeURIComponent(c.id) + '">编辑</a>' +
+              ' <a href="#" class="config-translate-link" data-id="' + encodeURIComponent(c.id) + '">一键翻译</a>' +
+              '' +
+            '</td>' +
+          '</tr>';
+        }
+        rowsEl.innerHTML = html;
+        bindConfigSelectAll();
+      }
+
+      /** 与 admin/pagination.hbs 数字区逻辑一致 */
+      function buildAdminPaginationNumbersHtml(cur, total) {
+        if (total <= 1) return '';
+        var h = '<div class="admin-pagination-numbers">';
+        if (cur > 3) {
+          h += '<button type="button" class="btn admin-pagination-number" data-page="1">1</button>';
+          if (cur > 4) h += '<span class="admin-pagination-ellipsis">...</span>';
+        }
+        var start = Math.max(1, cur - 2);
+        var end = Math.min(total, cur + 2);
+        for (var p = start; p <= end; p++) {
+          h += '<button type="button" class="btn admin-pagination-number' + (p === cur ? ' is-active' : '') + '" data-page="' + p + '">' + p + '</button>';
+        }
+        if (cur < total - 2) {
+          if (cur < total - 3) h += '<span class="admin-pagination-ellipsis">...</span>';
+          h += '<button type="button" class="btn admin-pagination-number" data-page="' + total + '">' + total + '</button>';
+        }
+        h += '</div>';
+        return h;
+      }
+
+      function buildConfigPageSizeSelectHtml(currentPs) {
+        var opts = [10, 15, 20, 50];
+        var h = '<div class="admin-pagination-pagesize"><label>每页</label><select class="admin-pagination-pagesize-select">';
+        for (var i = 0; i < opts.length; i++) {
+          var n = opts[i];
+          h += '<option value="' + n + '"' + (n === currentPs ? ' selected' : '') + '>' + n + ' 条</option>';
+        }
+        h += '</select></div>';
+        return h;
+      }
+
+      function renderPagination() {
+        var wrap = document.getElementById('configPaginationWrap');
+        if (!wrap) return;
+        var s = configListState;
+        var ps = s.pageSize || 15;
+        if (s.totalPages <= 1 && s.total <= ps) {
+          wrap.style.display = 'none';
+          wrap.innerHTML = '';
+          return;
+        }
+        wrap.style.display = 'block';
+        var tp = Math.max(1, s.totalPages);
+        var pg = Math.min(Math.max(1, s.page), tp);
+        wrap.innerHTML =
+          '<nav class="admin-pagination" aria-label="分页" data-current="' + pg + '" data-total="' + tp + '" data-page-size="' + ps + '">' +
+          '  <div class="admin-pagination-inner">' +
+          '    <button type="button" class="btn admin-pagination-prev" ' + (pg <= 1 ? 'disabled' : '') + ' aria-label="上一页">' +
+          '      <iconify-icon icon="mdi:chevron-left"></iconify-icon> 上一页' +
+          '    </button>' +
+          buildAdminPaginationNumbersHtml(pg, tp) +
+          '    <span class="admin-pagination-text">第 ' + pg + ' / ' + tp + ' 页，共 ' + s.total + ' 条</span>' +
+          buildConfigPageSizeSelectHtml(ps) +
+          '    <div class="admin-pagination-jump">' +
+          '      <label>跳至</label>' +
+          '      <input type="number" class="admin-pagination-jump-input" min="1" max="' + tp + '" value="' + pg + '">' +
+          '      <button type="button" class="btn admin-pagination-jump-btn">确定</button>' +
+          '    </div>' +
+          '    <button type="button" class="btn admin-pagination-next" ' + (pg >= tp ? 'disabled' : '') + ' aria-label="下一页">' +
+          '      下一页 <iconify-icon icon="mdi:chevron-right"></iconify-icon>' +
+          '    </button>' +
+          '  </div>' +
+          '</nav>';
+
+        var nav = wrap.querySelector('.admin-pagination');
+        if (!nav) return;
+        var cur = pg;
+        var total = tp;
+        var pageSize = ps;
+
+        var prevBtn = nav.querySelector('.admin-pagination-prev');
+        var nextBtn = nav.querySelector('.admin-pagination-next');
+        if (prevBtn) {
+          prevBtn.onclick = function () {
+            if (cur > 1) loadConfigs({ page: cur - 1 });
+          };
+        }
+        if (nextBtn) {
+          nextBtn.onclick = function () {
+            if (cur < total) loadConfigs({ page: cur + 1 });
+          };
+        }
+
+        nav.querySelectorAll('.admin-pagination-number').forEach(function (btn) {
+          btn.onclick = function () {
+            var p = parseInt(btn.getAttribute('data-page'), 10);
+            if (p && p !== cur) loadConfigs({ page: p });
+          };
+        });
+
+        var pageSizeSelect = nav.querySelector('.admin-pagination-pagesize-select');
+        if (pageSizeSelect) {
+          pageSizeSelect.onchange = function () {
+            var newPs = parseInt(pageSizeSelect.value, 10);
+            if (newPs && newPs !== pageSize) loadConfigs({ page: 1, pageSize: newPs });
+          };
+        }
+
+        var jumpInput = nav.querySelector('.admin-pagination-jump-input');
+        var jumpBtn = nav.querySelector('.admin-pagination-jump-btn');
+        if (jumpInput && jumpBtn) {
+          jumpBtn.onclick = function () {
+            var jp = parseInt(jumpInput.value, 10);
+            if (jp && jp >= 1 && jp <= total && jp !== cur) {
+              loadConfigs({ page: jp });
+            } else if (jp < 1 || jp > total) {
+              alert('请输入 1 到 ' + total + ' 之间的页码');
+            }
+          };
+          jumpInput.onkeydown = function (e) {
+            if (e.key === 'Enter') jumpBtn.onclick();
+          };
+        }
+      }
+
+      function bindConfigSelectAll() {
+        var selectAll = document.getElementById('configSelectAll');
+        var rowCbs = document.querySelectorAll('.config-row-cb');
+        if (selectAll && rowCbs.length) {
+          selectAll.onchange = function () { rowCbs.forEach(function (cb) { cb.checked = selectAll.checked; }); };
+        }
+      }
+
+      function loadCategories() {
+        return fetch('/admin/api/config/categories', { credentials: 'same-origin' })
+          .then(function (r) { return r.json(); })
+          .then(function (list) {
+            categoryMap = {};
+            (list || []).forEach(function (it) { categoryMap[String(it.id)] = it.name; });
+            if (categorySelect) {
+              var current = categorySelect.value || '';
+              var html = '<option value="">全部</option>';
+              (list || []).forEach(function (it) {
+                var idStr = String(it.id);
+                var selected = current && current === idStr ? ' selected' : '';
+                html += '<option value="' + idStr.replace(/"/g, '&quot;') + '"' + selected + '>' +
+                  (it.name || idStr).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') +
+                  '</option>';
+              });
+              categorySelect.innerHTML = html;
+            }
+          })
+          .catch(function () {});
+      }
+
+      function loadConfigs(opts) {
+        if (opts && opts.keyword !== undefined) configListState.keyword = opts.keyword;
+        if (opts && opts.page !== undefined) configListState.page = opts.page;
+        if (opts && opts.pageSize !== undefined) configListState.pageSize = opts.pageSize;
+        var langId = (langSelect && langSelect.value ? langSelect.value : '').trim();
+        var isAll = langId === '';
+        var categoryId = (categorySelect && categorySelect.value ? categorySelect.value : '').trim();
+        var keywordEl = document.getElementById('configKeyword');
+        var keyword = (keywordEl && keywordEl.value) || configListState.keyword || '';
+        if (opts && opts.keyword !== undefined) keyword = opts.keyword;
+        configListState.keyword = keyword;
+        rowsEl.innerHTML = '<tr><td colspan="10" style="text-align:center;color:var(--admin-text-muted);">加载中...</td></tr>';
+        var url = '/admin/api/config?page=' + encodeURIComponent(String(configListState.page)) + '&pageSize=' + encodeURIComponent(String(configListState.pageSize || 15));
+        if (langId) url += '&langId=' + encodeURIComponent(langId);
+        if (categoryId) url += '&categoryId=' + encodeURIComponent(categoryId);
+        if (keyword) url += '&keyword=' + encodeURIComponent(keyword);
+        fetch(url, { credentials: 'same-origin' })
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            var list, showLangColumn = isAll;
+            if (Array.isArray(data)) {
+              list = data;
+              configListState.total = list.length;
+              configListState.totalPages = 1;
+            } else if (data && Array.isArray(data.list)) {
+              list = data.list;
+              configListState.total = data.total || 0;
+              configListState.totalPages = Math.max(1, data.totalPages || 1);
+              configListState.page = data.page || 1;
+              configListState.pageSize = data.pageSize || 15;
+            } else {
+              list = [];
+              configListState.total = 0;
+              configListState.totalPages = 1;
+            }
+            render(list, showLangColumn);
+            renderPagination();
+            updateConfigListUrl();
+          })
+          .catch(function () { rowsEl.innerHTML = '<tr><td colspan="10" style="text-align:center;color:var(--admin-text-muted);">加载失败</td></tr>'; });
+      }
+
+      (function initConfigListFromUrl() {
+        var q = parseConfigListQuery();
+        configListState.page = q.page;
+        configListState.pageSize = q.pageSize;
+        configListState.keyword = q.keyword;
+        if (langSelect && q.langId) langSelect.value = q.langId;
+        var keywordEl = document.getElementById('configKeyword');
+        if (keywordEl && q.keyword) keywordEl.value = q.keyword;
+        window._configListInitialQuery = q;
+      })();
+
+      loadCategories().then(function () {
+        var q = window._configListInitialQuery || parseConfigListQuery();
+        if (categorySelect && q.categoryId) categorySelect.value = q.categoryId;
+        loadConfigs({ page: q.page, pageSize: q.pageSize, keyword: q.keyword });
+      });
+      if (langSelect) langSelect.onchange = function () { loadConfigs({ page: 1 }); };
+      if (categorySelect) categorySelect.onchange = function () { loadConfigs({ page: 1 }); };
+      var keywordInput = document.getElementById('configKeyword');
+      if (keywordInput) {
+        keywordInput.onkeydown = function (e) { if (e.key === 'Enter') { e.preventDefault(); loadConfigs({ keyword: keywordInput.value, page: 1 }); } };
+      }
+      document.getElementById('btnConfigSearch').onclick = function () {
+        var kw = (document.getElementById('configKeyword') && document.getElementById('configKeyword').value) || '';
+        loadConfigs({ keyword: kw, page: 1 });
+      };
+      var btnBatchDelete = document.getElementById('btnConfigBatchDelete');
+      if (btnBatchDelete) btnBatchDelete.onclick = function () {
+        var checked = document.querySelectorAll('.config-row-cb:checked');
+        var ids = [];
+        checked.forEach(function (cb) { ids.push(parseInt(cb.value, 10)); });
+        if (!ids.length) { alert('请先勾选要删除的配置（仅可删除“可删除”为是的项）'); return; }
+        var msg = '确定删除所选 ' + ids.length + ' 条配置吗？';
+        if (window.showConfirmModal) {
+          window.showConfirmModal(msg, function () {
+            fetch('/admin/api/config/batch-delete', {
+              method: 'POST',
+              credentials: 'same-origin',
+              headers: { 'Content-Type': 'application/json', 'csrf-token': csrfToken },
+              body: JSON.stringify({ _csrf: csrfToken, ids: ids })
+            })
+              .then(function (r) { return r.json(); })
+              .then(function (d) {
+                if (d && d.ok) { alert(d.message || '已删除'); loadConfigs({ page: configListState.page }); }
+                else { alert(d && d.message ? d.message : '删除失败'); }
+              })
+              .catch(function () { alert('请求失败'); });
+          });
+        } else {
+          if (!confirm(msg)) return;
+          fetch('/admin/api/config/batch-delete', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json', 'csrf-token': csrfToken },
+            body: JSON.stringify({ _csrf: csrfToken, ids: ids })
+          })
+            .then(function (r) { return r.json(); })
+            .then(function (d) {
+              if (d && d.ok) { alert(d.message || '已删除'); loadConfigs({ page: configListState.page }); }
+              else { alert(d && d.message ? d.message : '删除失败'); }
+            })
+            .catch(function () { alert('请求失败'); });
+        }
+      };
+      document.getElementById('btnConfigBatchTranslate').onclick = function () {
+        var checked = document.querySelectorAll('.config-row-cb:checked');
+        var ids = [];
+        checked.forEach(function (cb) { ids.push(parseInt(cb.value, 10)); });
+        if (!ids.length) { alert('请先勾选要翻译的配置'); return; }
+        openBatchTranslateModal(ids);
+      };
+
+      var overlay = document.getElementById('adminModalFormOverlay');
+      var modalBody = document.querySelector('.admin-modal-form-body');
+      var modalTitle = document.getElementById('adminModalFormTitle');
+      function openModal(titleText, formUrl) {
+        if (!overlay || !modalBody) return;
+        var prevForm = modalBody.querySelector('form[action="/admin/config/save"]');
+        if (prevForm && window.ConfigContentEditor && window.ConfigContentEditor.destroyRichEditors) {
+          window.ConfigContentEditor.destroyRichEditors(prevForm);
+        }
+        modalTitle.textContent = titleText;
+        modalBody.innerHTML = '<p style="text-align:center;color:var(--admin-text-muted);">加载中...</p>';
+        overlay.classList.add('open');
+        overlay.setAttribute('aria-hidden', 'false');
+        fetch(formUrl, { credentials: 'same-origin' })
+          .then(function (r) { return r.text(); })
+          .then(function (html) {
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(html, 'text/html');
+            var frag = doc.getElementById('admin-form-fragment');
+            modalBody.innerHTML = frag ? frag.innerHTML : html;
+            var cancelBtn = modalBody.querySelector('.admin-modal-form-cancel');
+            if (cancelBtn) cancelBtn.onclick = closeModal;
+            var pickBtn = modalBody.querySelector('#btnPickBgPic');
+            var input = modalBody.querySelector('#bgPicUrl');
+            var preview = modalBody.querySelector('#bgPicPreview');
+            if (pickBtn && input && window.AdminFileManager && window.AdminFileManager.open) {
+              pickBtn.onclick = function () {
+                window.AdminFileManager.open({ type: 'image', callback: function (url) {
+                  input.value = url;
+                  if (preview) preview.innerHTML = url ? '<img src="' + url.replace(/"/g, '&quot;') + '" alt="">' : '';
+                }});
+              };
+            }
+            // 视频选择按钮
+            var videoPickBtn = modalBody.querySelector('#btnPickVideo');
+            var videoInput = modalBody.querySelector('#videoUrl');
+            var videoPreview = modalBody.querySelector('#videoPreview');
+            if (videoPickBtn && videoInput && window.AdminFileManager && window.AdminFileManager.open) {
+              videoPickBtn.onclick = function () {
+                window.AdminFileManager.open({ type: 'video', callback: function (url) {
+                  videoInput.value = url;
+                  if (videoPreview) videoPreview.innerHTML = url ? '<video src="' + url.replace(/"/g, '&quot;') + '" controls style="max-height:100px;"></video>' : '';
+                }});
+              };
+            }
+            var form = modalBody.querySelector('form[action="/admin/config/save"]');
+            if (form) {
+              var returnInp = document.createElement('input');
+              returnInp.type = 'hidden';
+              returnInp.name = 'returnUrl';
+              returnInp.value = window.location.href;
+              form.appendChild(returnInp);
+            }
+            if (form && window.ConfigContentEditor && window.ConfigContentEditor.bindForm) {
+              window.ConfigContentEditor.bindForm(form);
+            }
+          })
+          .catch(function () { modalBody.innerHTML = '<p style="color:var(--admin-danger);">加载失败</p>'; });
+      }
+      function closeModal() {
+        if (modalBody) {
+          var cf = modalBody.querySelector('form[action="/admin/config/save"]');
+          if (cf && window.ConfigContentEditor && window.ConfigContentEditor.destroyRichEditors) {
+            window.ConfigContentEditor.destroyRichEditors(cf);
+          }
+        }
+        if (overlay) { overlay.classList.remove('open'); overlay.setAttribute('aria-hidden', 'true'); }
+      }
+      document.getElementById('adminModalFormClose').onclick = closeModal;
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && overlay && overlay.classList.contains('open')) closeModal(); });
+      document.getElementById('btnConfigAdd').onclick = function () { openModal('新增配置', '/admin/config/edit?modal=1'); };
+      document.addEventListener('click', function (e) {
+        var el = e.target;
+        while (el && el !== document.body) {
+          if (el.classList && el.classList.contains('config-edit-link')) {
+            e.preventDefault();
+            var id = el.getAttribute('data-id');
+            if (id) openModal('编辑配置', '/admin/config/edit/' + id + '?modal=1');
+            return;
+          }
+          if (el.classList && el.classList.contains('config-translate-link')) {
+            e.preventDefault();
+            var tid = el.getAttribute('data-id');
+            if (tid) openTranslateModal(parseInt(tid, 10));
+            return;
+          }
+          if (el.classList && el.classList.contains('config-delete-link')) {
+            e.preventDefault();
+            var did = el.getAttribute('data-id');
+            if (!did) return;
+            var msg = '确定删除该配置吗？';
+            var doDelete = function () {
+              fetch('/admin/api/config/' + did, {
+                method: 'DELETE',
+                credentials: 'same-origin',
+                headers: { 'csrf-token': csrfToken }
+              })
+                .then(function (r) { return r.json(); })
+                .then(function (d) {
+                  if (d && d.ok) { loadConfigs(); } else { alert(d && d.message ? d.message : '删除失败'); }
+                })
+                .catch(function () { alert('请求失败'); });
+            };
+            if (window.showConfirmModal) {
+              window.showConfirmModal(msg, doDelete);
+            } else if (window.confirm(msg)) {
+              doDelete();
+            }
+            return;
+          }
+          el = el.parentNode;
+        }
+      });
+
+      var translateOverlay = document.getElementById('adminTranslateModalOverlay');
+      var translateBody = document.getElementById('adminTranslateModalBody');
+      var translateSourceId = 0;
+      var batchTranslateIds = [];
+      function loadConfigTranslateLangs() {
+        if (!translateBody || !translateSourceId) return;
+        var retranslateEl = document.getElementById('adminTranslateRetranslateCb');
+        var retranslate = retranslateEl ? retranslateEl.checked : false;
+        translateBody.innerHTML = '<p class="admin-text-muted">加载中...</p>';
+        var url = '/admin/api/config/missing-langs?id=' + encodeURIComponent(translateSourceId);
+        if (retranslate) url += '&retranslate=1';
+        fetch(url, { credentials: 'same-origin' })
+          .then(function (r) { return r.json(); })
+          .then(function (langs) {
+            if (!langs || !langs.length) {
+              translateBody.innerHTML = '<p class="admin-text-muted">' + (retranslate ? '暂无其他语言。' : '暂无缺失语言，或请先保存当前配置后再翻译。') + '</p>';
+              return;
+            }
+            var html = '<p style="margin-bottom:0.5rem;">选择要翻译成的语言：</p>' +
+              '<button type="button" class="btn btn-secondary btn-sm" id="adminTranslateSelectAll">一键补充缺失的所有语言</button>' +
+              '<div class="admin-translate-langs" style="margin-top:0.75rem;max-height:200px;overflow:auto;">';
+            langs.forEach(function (l) {
+              html += '<label style="display:block;margin-bottom:0.25rem;"><input type="checkbox" class="admin-translate-lang-cb" value="' + escapeHtml(String(l.id)) + '"> ' + escapeHtml(l.name) + ' (' + escapeHtml(l.code) + ')</label>';
+            });
+            html += '</div>';
+            translateBody.innerHTML = html;
+            document.getElementById('adminTranslateSelectAll').onclick = function () {
+              translateBody.querySelectorAll('.admin-translate-lang-cb').forEach(function (cb) { cb.checked = true; });
+            };
+          })
+          .catch(function () { translateBody.innerHTML = '<p style="color:var(--admin-danger);">加载失败</p>'; });
+      }
+      function openTranslateModal(configId) {
+        translateSourceId = configId;
+        batchTranslateIds = [];
+        if (!translateOverlay || !translateBody) return;
+        var retranslateCb = document.getElementById('adminTranslateRetranslateCb');
+        if (retranslateCb) retranslateCb.checked = false;
+        translateBody.innerHTML = '<p class="admin-text-muted">加载中...</p>';
+        translateOverlay.classList.add('open');
+        translateOverlay.setAttribute('aria-hidden', 'false');
+        document.getElementById('adminTranslateModalTitle').textContent = '一键翻译';
+        loadConfigTranslateLangs();
+      }
+      function openBatchTranslateModal(ids) {
+        batchTranslateIds = ids;
+        translateSourceId = 0;
+        if (!translateOverlay || !translateBody) return;
+        var retranslateCb = document.getElementById('adminTranslateRetranslateCb');
+        if (retranslateCb) retranslateCb.checked = false;
+        translateBody.innerHTML = '<p class="admin-text-muted">加载中...</p>';
+        translateOverlay.classList.add('open');
+        translateOverlay.setAttribute('aria-hidden', 'false');
+        document.getElementById('adminTranslateModalTitle').textContent = '批量翻译（已选 ' + ids.length + ' 条）';
+        loadBatchTranslateLangs();
+      }
+      function loadBatchTranslateLangs() {
+        if (!translateBody) return;
+        var langSelect = document.getElementById('langId');
+        var langOptions = langSelect ? langSelect.querySelectorAll('option[value]:not([value=""])') : [];
+        if (!langOptions.length) {
+          translateBody.innerHTML = '<p class="admin-text-muted">暂无可用的目标语言。</p>';
+          return;
+        }
+        var html = '<p style="margin-bottom:0.5rem;">已选中 ' + batchTranslateIds.length + ' 条配置，将翻译到所选语言：</p>' +
+          '<button type="button" class="btn btn-secondary btn-sm" id="adminBatchTranslateSelectAll">全选所有语言</button>' +
+          '<div class="admin-translate-langs" style="margin-top:0.75rem;max-height:200px;overflow:auto;">';
+        langOptions.forEach(function (opt) {
+          var id = opt.value;
+          var name = opt.textContent || '';
+          html += '<label style="display:block;margin-bottom:0.25rem;"><input type="checkbox" class="admin-translate-lang-cb" value="' + escapeHtml(id) + '"> ' + escapeHtml(name) + '</label>';
+        });
+        html += '</div>';
+        translateBody.innerHTML = html;
+        document.getElementById('adminBatchTranslateSelectAll').onclick = function () {
+          translateBody.querySelectorAll('.admin-translate-lang-cb').forEach(function (cb) { cb.checked = true; });
+        };
+      }
+      var adminTranslateRetranslateCb = document.getElementById('adminTranslateRetranslateCb');
+      if (adminTranslateRetranslateCb) adminTranslateRetranslateCb.onchange = loadConfigTranslateLangs;
+      function closeTranslateModal() {
+        if (translateOverlay) { translateOverlay.classList.remove('open'); translateOverlay.setAttribute('aria-hidden', 'true'); }
+        batchTranslateIds = [];
+      }
+      document.getElementById('adminTranslateModalClose').onclick = closeTranslateModal;
+      document.getElementById('adminTranslateModalCancel').onclick = closeTranslateModal;
+      if (translateOverlay) translateOverlay.onclick = function (ev) { if (ev.target === translateOverlay) closeTranslateModal(); };
+      document.getElementById('adminTranslateModalSubmit').onclick = function () {
+        var cbs = document.querySelectorAll('#adminTranslateModalBody .admin-translate-lang-cb:checked');
+        var langIds = [];
+        cbs.forEach(function (cb) { langIds.push(parseInt(cb.value, 10)); });
+        if (!langIds.length) { alert('请至少选择一种语言'); return; }
+        var btn = document.getElementById('adminTranslateModalSubmit');
+        var oldText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = '翻译中...';
+        var url, body;
+        if (batchTranslateIds && batchTranslateIds.length > 0) {
+          url = '/admin/api/config/translate-batch';
+          body = JSON.stringify({ _csrf: csrfToken, sourceIds: batchTranslateIds, targetLangIds: langIds });
+        } else {
+          url = '/admin/api/config/translate';
+          body = JSON.stringify({ _csrf: csrfToken, sourceConfigId: translateSourceId, targetLangIds: langIds });
+        }
+        fetch(url, {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json', 'csrf-token': csrfToken },
+          body: body
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            btn.disabled = false;
+            btn.textContent = oldText;
+            if (d && d.ok) { alert(d.message || '翻译完成'); closeTranslateModal(); loadConfigs(); }
+            else { alert(d && d.message ? d.message : '翻译失败'); }
+          })
+          .catch(function () { btn.disabled = false; btn.textContent = oldText; alert('请求失败'); });
+      };
+    })();
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} - 鹏成后台</title>
+  <meta name="csrf-token" content="{{csrfToken}}">
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/admin/admin-theme.css">
+  <script src="/js/iconify-icon.min.js"></script>
+  <script src="/js/admin-file-manager.js"></script>
+</head>
+<body class="admin-layout">
+  {{> admin/header}}
+  <div class="admin-body">
+    {{> admin/sidebar}}
+    <main class="admin-main">
+      <div class="admin-page-toolbar">
+        <h1 style="margin:0;">{{title}}</h1>
+        <div class="admin-page-toolbar__row">
+          <label style="font-size:var(--font-size-sm);color:var(--admin-text-muted);">语言</label>
+          <select id="downloadLangId" style="max-width:220px;">
+            <option value="all" {{#if (eq selectedLangId '')}}selected{{/if}}>全部</option>
+            {{#each langs}}
+              <option value="{{this.id}}" {{#if (eq this.id ../selectedLangId)}}selected{{/if}}>{{this.name}} ({{this.code}})</option>
+            {{/each}}
+          </select>
+          <label style="font-size:var(--font-size-sm);color:var(--admin-text-muted);">资源类型</label>
+          <select id="downloadCategoryId" style="max-width:200px;">
+            <option value="">全部</option>
+            {{#each categories}}
+              <option value="{{this.id}}" {{#if (eq this.id ../selectedCategoryId)}}selected{{/if}}>{{this.name}}</option>
+            {{/each}}
+          </select>
+          <label style="font-size:var(--font-size-sm);color:var(--admin-text-muted);">产品系列</label>
+          <select id="downloadSeriesId" style="max-width:200px;">
+            <option value="">全部</option>
+            {{#each seriesList}}
+              <option value="{{this.id}}" {{#if (eq this.id ../selectedSeriesId)}}selected{{/if}}>{{this.name}}{{#if this.lang}} ({{this.lang.code}}){{/if}}</option>
+            {{/each}}
+          </select>
+          <a href="/admin/download-series" class="btn">产品系列</a>
+          <a href="/admin/download-file-types" class="btn">产品文件类型</a>
+          <button type="button" class="btn btn-primary" id="btnDownloadAdd"><iconify-icon icon="mdi:plus"></iconify-icon> 新增</button>
+          <button type="button" class="btn btn-secondary" id="btnDownloadBatchDelete" style="margin-left:0.25rem;"><iconify-icon icon="mdi:delete-sweep"></iconify-icon> 批量删除</button>
+          <button type="button" class="btn btn-primary" id="btnDownloadBatchTranslate" style="margin-left:0.25rem;" disabled><iconify-icon icon="mdi:translate"></iconify-icon> 批量翻译</button>
+        </div>
+      </div>
+      <form id="downloadBatchDeleteForm" method="post" action="/admin/downloads/batch-delete" style="display:none;">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      </form>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th style="width:2.5rem;">
+                <input type="checkbox" id="downloadSelectAll" title="全选" aria-label="全选">
+              </th>
+              <th>ID</th>
+              <th>文件名</th>
+              <th>资源类型</th>
+              <th>产品系列</th>
+              <th>文件类型</th>
+              <th id="downloadLangTh" style="{{#if (eq selectedLangId '')}}display:table-cell;{{else}}display:none;{{/if}}">语言</th>
+              <th>下载次数</th>
+              <th>状态</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each downloadList}}
+            <tr>
+              <td><input type="checkbox" class="download-row-cb" value="{{this.id}}" aria-label="选择"></td>
+              <td>{{this.id}}</td>
+              <td>{{this.fileName}}</td>
+              <td>{{#if this.resourceType}}{{this.resourceType.name}}{{else}}-{{/if}}</td>
+              <td>{{#if this.series}}{{this.series.name}}{{else}}-{{/if}}</td>
+              <td>{{#if this.downloadFileType}}{{this.downloadFileType.name}}{{else}}-{{/if}}</td>
+              <td class="download-lang-cell" style="{{#if (eq ../selectedLangId '')}}display:table-cell;{{else}}display:none;{{/if}}">{{#if this.lang}}{{this.lang.name}}{{#if this.lang.code}} ({{this.lang.code}}){{/if}}{{else}}-{{/if}}</td>
+              <td>{{this.downloadCount}}</td>
+              <td>{{#if (eq this.status 1)}}<span class="status-normal">正常</span>{{else}}<span class="status-hidden">隐藏</span>{{/if}}</td>
+              <td class="actions">
+                <a href="#" class="btn-link download-edit-link" data-id="{{this.id}}">编辑</a>
+                <a href="#" class="btn-link download-translate-link" data-id="{{this.id}}">一键翻译</a>
+                <form method="post" action="/admin/downloads/delete/{{this.id}}" style="display:inline;">
+                  <input type="hidden" name="_csrf" value="{{../csrfToken}}">
+                  <button type="submit" class="btn-link" data-popconfirm="确定删除该资源吗？">删除</button>
+                </form>
+              </td>
+            </tr>
+            {{else}}
+            <tr><td colspan="10" style="text-align:center;color:var(--admin-text-muted);">暂无数据</td></tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+      {{#if pagination}}
+      <div class="admin-pagination-wrap" style="margin-top:1rem;">
+        {{> admin/pagination currentPage=pagination.currentPage totalPages=pagination.totalPages baseUrl=pagination.baseUrl pageSize=pagination.pageSize}}
+      </div>
+      {{/if}}
+    </main>
+  </div>
+  {{> admin/modal-form title="资源下载管理"}}
+  {{> admin/file-manager-modal}}
+  {{> admin/translate-modal idPrefix="downloadTranslate"}}
+  <div id="downloadBatchTranslateModalOverlay" class="admin-modal-overlay admin-translate-modal-overlay" aria-hidden="true">
+    <div class="admin-modal-dialog admin-translate-modal" role="dialog" aria-modal="true" aria-labelledby="downloadBatchTranslateModalTitle">
+      <div class="admin-translate-modal-header">
+        <h2 class="admin-translate-modal-title" id="downloadBatchTranslateModalTitle">批量翻译</h2>
+        <button type="button" class="admin-translate-modal-close" id="downloadBatchTranslateModalClose" aria-label="关闭">
+          <iconify-icon icon="mdi:close"></iconify-icon>
+        </button>
+      </div>
+      <div class="admin-translate-modal-body" id="downloadBatchTranslateModalBody">
+        <p style="margin-bottom:0.5rem;">选择要翻译成的语言（可多选）：</p>
+        <div style="max-height:200px;overflow:auto;">
+          {{#each langs}}
+          <label style="display:block;margin-bottom:0.25rem;"><input type="checkbox" class="download-batch-translate-lang-cb" value="{{this.id}}"> {{this.name}} ({{this.code}})</label>
+          {{/each}}
+        </div>
+      </div>
+      <div class="admin-translate-modal-footer">
+        <div class="admin-translate-modal-actions">
+          <button type="button" class="btn btn-secondary" id="downloadBatchTranslateModalCancel">取消</button>
+          <button type="button" class="btn btn-primary" id="downloadBatchTranslateModalSubmit">开始翻译</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{> admin/confirm-modal}}
+  <script>
+    (function () {
+      var csrfToken = document.querySelector('meta[name="csrf-token"]') ? document.querySelector('meta[name="csrf-token"]').getAttribute('content') : '';
+
+      function buildDownloadListUrl(opts) {
+        var langId = opts && opts.langId !== undefined ? opts.langId : (document.getElementById('downloadLangId') && document.getElementById('downloadLangId').value) || '';
+        var categoryId = opts && opts.categoryId !== undefined ? opts.categoryId : (document.getElementById('downloadCategoryId') && document.getElementById('downloadCategoryId').value) || '';
+        var seriesId = opts && opts.seriesId !== undefined ? opts.seriesId : (document.getElementById('downloadSeriesId') && document.getElementById('downloadSeriesId').value) || '';
+        var page = opts && opts.page !== undefined ? opts.page : null;
+        var pageSize = opts && opts.pageSize !== undefined ? opts.pageSize : ({{#if pagination}}{{pagination.pageSize}}{{else}}15{{/if}});
+        var params = [];
+        if (langId && langId !== 'all') params.push('langId=' + encodeURIComponent(langId));
+        else if (langId === 'all') params.push('langId=all');
+        if (categoryId) params.push('categoryId=' + encodeURIComponent(categoryId));
+        if (seriesId) params.push('seriesId=' + encodeURIComponent(seriesId));
+        params.push('pageSize=' + encodeURIComponent(String(pageSize)));
+        if (page != null && page > 1) params.push('page=' + encodeURIComponent(String(page)));
+        return '/admin/downloads' + (params.length ? '?' + params.join('&') : '');
+      }
+
+      var langSelect = document.getElementById('downloadLangId');
+      if (langSelect) langSelect.onchange = function () {
+        window.location.href = buildDownloadListUrl({ langId: langSelect.value, page: 1 });
+      };
+      var catSelect = document.getElementById('downloadCategoryId');
+      if (catSelect) catSelect.onchange = function () {
+        window.location.href = buildDownloadListUrl({ categoryId: catSelect.value, page: 1 });
+      };
+      var seriesSelect = document.getElementById('downloadSeriesId');
+      if (seriesSelect) seriesSelect.onchange = function () {
+        window.location.href = buildDownloadListUrl({ seriesId: seriesSelect.value, page: 1 });
+      };
+
+      var paginationNav = document.querySelector('.admin-pagination');
+      if (paginationNav) {
+        var baseUrl = paginationNav.getAttribute('data-base-url');
+        var cur = parseInt(paginationNav.getAttribute('data-current'), 10) || 1;
+        var total = parseInt(paginationNav.getAttribute('data-total'), 10) || 1;
+        var prevBtn = paginationNav.querySelector('.admin-pagination-prev');
+        var nextBtn = paginationNav.querySelector('.admin-pagination-next');
+        if (prevBtn && baseUrl) prevBtn.onclick = function () { if (cur > 1) window.location.href = baseUrl + '&page=' + (cur - 1); };
+        if (nextBtn && baseUrl) nextBtn.onclick = function () { if (cur < total) window.location.href = baseUrl + '&page=' + (cur + 1); };
+      }
+
+      var selectAllCb = document.getElementById('downloadSelectAll');
+      var rowCbs = document.querySelectorAll('.download-row-cb');
+      if (selectAllCb && rowCbs.length) {
+        selectAllCb.onchange = function () {
+          rowCbs.forEach(function (cb) { cb.checked = selectAllCb.checked; });
+        };
+      }
+      var batchDeleteBtn = document.getElementById('btnDownloadBatchDelete');
+      var btnBatchTranslate = document.getElementById('btnDownloadBatchTranslate');
+      function syncBatchButtons() {
+        var checked = document.querySelectorAll('.download-row-cb:checked');
+        if (btnBatchTranslate) btnBatchTranslate.disabled = checked.length === 0;
+      }
+      rowCbs.forEach(function (cb) { cb.addEventListener('change', syncBatchButtons); });
+      if (selectAllCb) selectAllCb.addEventListener('change', syncBatchButtons);
+      syncBatchButtons();
+
+      var batchDeleteForm = document.getElementById('downloadBatchDeleteForm');
+      if (batchDeleteBtn && batchDeleteForm) {
+        batchDeleteBtn.onclick = function () {
+          var checked = document.querySelectorAll('.download-row-cb:checked');
+          var ids = [];
+          checked.forEach(function (cb) { ids.push(cb.value); });
+          if (!ids.length) { alert('请先勾选要删除的资源'); return; }
+          var msg = '确定删除所选 ' + ids.length + ' 条资源吗？';
+          var doSubmit = function () {
+            batchDeleteForm.innerHTML = '<input type="hidden" name="_csrf" value="' + (csrfToken || '') + '">';
+            ids.forEach(function (id) {
+              var input = document.createElement('input');
+              input.type = 'hidden';
+              input.name = 'ids';
+              input.value = id;
+              batchDeleteForm.appendChild(input);
+            });
+            batchDeleteForm.submit();
+          };
+          if (window.showConfirmModal) {
+            window.showConfirmModal(msg, doSubmit);
+          } else if (confirm(msg)) {
+            doSubmit();
+          }
+        };
+      }
+
+      var batchTranslateOverlay = document.getElementById('downloadBatchTranslateModalOverlay');
+      function openBatchTranslateModal() {
+        var ids = Array.prototype.slice.call(document.querySelectorAll('.download-row-cb:checked')).map(function (cb) { return parseInt(cb.value, 10); }).filter(function (n) { return !isNaN(n); });
+        if (!ids.length) { alert('请先勾选要翻译的资源'); return; }
+        if (!batchTranslateOverlay) return;
+        batchTranslateOverlay.classList.add('open');
+        batchTranslateOverlay.setAttribute('aria-hidden', 'false');
+        batchTranslateOverlay.dataset.sourceIds = ids.join(',');
+      }
+      function closeBatchTranslateModal() {
+        if (batchTranslateOverlay) { batchTranslateOverlay.classList.remove('open'); batchTranslateOverlay.setAttribute('aria-hidden', 'true'); }
+      }
+      if (btnBatchTranslate) btnBatchTranslate.onclick = openBatchTranslateModal;
+      var dbtc = document.getElementById('downloadBatchTranslateModalClose');
+      if (dbtc) dbtc.onclick = closeBatchTranslateModal;
+      var dbtcan = document.getElementById('downloadBatchTranslateModalCancel');
+      if (dbtcan) dbtcan.onclick = closeBatchTranslateModal;
+      if (batchTranslateOverlay) batchTranslateOverlay.onclick = function (e) { if (e.target === batchTranslateOverlay) closeBatchTranslateModal(); };
+      var dbtsubmit = document.getElementById('downloadBatchTranslateModalSubmit');
+      if (dbtsubmit) dbtsubmit.onclick = function () {
+        var langCbs = document.querySelectorAll('.download-batch-translate-lang-cb:checked');
+        var targetLangIds = [];
+        langCbs.forEach(function (cb) { targetLangIds.push(parseInt(cb.value, 10)); });
+        if (!targetLangIds.length) { alert('请至少选择一种目标语言'); return; }
+        var sourceIdsStr = batchTranslateOverlay && batchTranslateOverlay.dataset.sourceIds ? batchTranslateOverlay.dataset.sourceIds : '';
+        var sourceIds = sourceIdsStr.split(',').map(function (s) { return parseInt(s.trim(), 10); }).filter(function (n) { return !isNaN(n) && n > 0; });
+        if (!sourceIds.length) { alert('未找到要翻译的资源'); return; }
+        var btn = document.getElementById('downloadBatchTranslateModalSubmit');
+        var oldText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = '翻译中...';
+        fetch('/admin/api/download/translate-batch', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json', 'csrf-token': csrfToken },
+          body: JSON.stringify({ _csrf: csrfToken, sourceIds: sourceIds, targetLangIds: targetLangIds })
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            btn.disabled = false;
+            btn.textContent = oldText;
+            if (d && d.ok) { alert(d.message || '翻译完成'); closeBatchTranslateModal(); window.location.reload(); }
+            else { alert(d && d.message ? d.message : '翻译失败'); }
+          })
+          .catch(function () { btn.disabled = false; btn.textContent = oldText; alert('请求失败'); });
+      };
+
+      var translateOverlay = document.getElementById('downloadTranslateModalOverlay');
+      var translateBody = document.getElementById('downloadTranslateModalBody');
+      var translateSourceId = 0;
+      function escapeHtml(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;').replace(/'/g, '&#039;'); }
+      function loadTranslateLangs() {
+        if (!translateBody || !translateSourceId) return;
+        var retranslateEl = document.getElementById('downloadTranslateRetranslateCb');
+        var retranslate = retranslateEl ? retranslateEl.checked : false;
+        translateBody.innerHTML = '<p class="admin-text-muted">加载中...</p>';
+        var url = '/admin/api/download/missing-langs?id=' + encodeURIComponent(translateSourceId);
+        if (retranslate) url += '&retranslate=1';
+        fetch(url, { credentials: 'same-origin' }).then(function (r) { return r.json(); })
+          .then(function (langs) {
+            if (!langs || !langs.length) { translateBody.innerHTML = '<p class="admin-text-muted">' + (retranslate ? '暂无其他语言。' : '暂无缺失语言。') + '</p>'; return; }
+            var html = '<p style="margin-bottom:0.5rem;">选择要翻译成的语言：</p><button type="button" class="btn btn-secondary btn-sm" id="downloadTranslateSelectAll">一键补充缺失的所有语言</button><div style="margin-top:0.75rem;max-height:200px;overflow:auto;">';
+            langs.forEach(function (l) { html += '<label style="display:block;margin-bottom:0.25rem;"><input type="checkbox" class="download-translate-cb" value="' + escapeHtml(String(l.id)) + '"> ' + escapeHtml(l.name) + ' (' + escapeHtml(l.code) + ')</label>'; });
+            html += '</div>';
+            translateBody.innerHTML = html;
+            var selAll = document.getElementById('downloadTranslateSelectAll');
+            if (selAll) selAll.onclick = function () { translateBody.querySelectorAll('.download-translate-cb').forEach(function (cb) { cb.checked = true; }); };
+          }).catch(function () { translateBody.innerHTML = '<p style="color:var(--admin-danger);">加载失败</p>'; });
+      }
+      function openTranslateModal(id) {
+        translateSourceId = id;
+        if (!translateOverlay || !translateBody) return;
+        var cb = document.getElementById('downloadTranslateRetranslateCb');
+        if (cb) cb.checked = false;
+        translateBody.innerHTML = '<p class="admin-text-muted">加载中...</p>';
+        translateOverlay.classList.add('open');
+        translateOverlay.setAttribute('aria-hidden', 'false');
+        loadTranslateLangs();
+      }
+      function closeTranslateModal() { if (translateOverlay) { translateOverlay.classList.remove('open'); translateOverlay.setAttribute('aria-hidden', 'true'); } }
+      var dtmClose = document.getElementById('downloadTranslateModalClose');
+      if (dtmClose) dtmClose.onclick = closeTranslateModal;
+      var dtmCancel = document.getElementById('downloadTranslateModalCancel');
+      if (dtmCancel) dtmCancel.onclick = closeTranslateModal;
+      if (translateOverlay) translateOverlay.onclick = function (e) { if (e.target === translateOverlay) closeTranslateModal(); };
+      var retranslateCb = document.getElementById('downloadTranslateRetranslateCb');
+      if (retranslateCb) retranslateCb.onchange = loadTranslateLangs;
+      document.querySelectorAll('.download-translate-link').forEach(function (a) {
+        a.onclick = function (e) { e.preventDefault(); var id = a.getAttribute('data-id'); if (id) openTranslateModal(parseInt(id, 10)); };
+      });
+      var dtmSubmit = document.getElementById('downloadTranslateModalSubmit');
+      if (dtmSubmit) dtmSubmit.onclick = function () {
+        var cbs = document.querySelectorAll('#downloadTranslateModalBody .download-translate-cb:checked');
+        var ids = [];
+        cbs.forEach(function (cb) { ids.push(parseInt(cb.value, 10)); });
+        if (!ids.length) { alert('请至少选择一种语言'); return; }
+        var btn = document.getElementById('downloadTranslateModalSubmit');
+        var oldText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = '翻译中...';
+        fetch('/admin/api/download/translate', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'csrf-token': csrfToken }, body: JSON.stringify({ _csrf: csrfToken, sourceId: translateSourceId, targetLangIds: ids }) })
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            btn.disabled = false;
+            btn.textContent = oldText;
+            if (d && d.ok) { alert(d.message || '翻译完成'); closeTranslateModal(); window.location.reload(); }
+            else { alert(d && d.message ? d.message : '翻译失败'); }
+          })
+          .catch(function () { btn.disabled = false; btn.textContent = oldText; alert('请求失败'); });
+      };
+    })();
+
+    (function () {
+      var overlay = document.getElementById('adminModalFormOverlay');
+      var modalBody = document.querySelector('.admin-modal-form-body');
+      var modalTitle = document.getElementById('adminModalFormTitle');
+
+      function closeModal() {
+        if (overlay) { overlay.classList.remove('open'); overlay.setAttribute('aria-hidden', 'true'); }
+      }
+
+      function bindFilePicker() {
+        if (!window.AdminFileManager || !window.AdminFileManager.open) return;
+        var btn = document.getElementById('downloadUrlPickBtn');
+        var input = document.getElementById('downloadUrlInput');
+        if (btn && input) {
+          btn.onclick = function () {
+            window.AdminFileManager.open({ targetInput: input });
+          };
+        }
+      }
+
+      function openModal(titleText, formUrl) {
+        if (!overlay || !modalBody) return;
+        modalTitle.textContent = titleText;
+        modalBody.innerHTML = '<p style="text-align:center;color:var(--admin-text-muted);">加载中...</p>';
+        overlay.classList.add('open');
+        overlay.setAttribute('aria-hidden', 'false');
+        fetch(formUrl, { credentials: 'same-origin' })
+          .then(function (r) { return r.text(); })
+          .then(function (html) {
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(html, 'text/html');
+            var frag = doc.getElementById('admin-form-fragment');
+            modalBody.innerHTML = frag ? frag.innerHTML : html;
+            var _form = modalBody.querySelector('form');
+            if (_form) { var _inp = document.createElement('input'); _inp.type = 'hidden'; _inp.name = 'returnUrl'; _inp.value = window.location.href; _form.appendChild(_inp); }
+            var cancelBtn = modalBody.querySelector('.admin-modal-form-cancel');
+            if (cancelBtn) cancelBtn.onclick = closeModal;
+            bindFilePicker();
+            var resSel = modalBody.querySelector('#downloadFormResourceTypeId');
+            var serSel = modalBody.querySelector('#downloadFormSeriesId');
+            var ftSel = modalBody.querySelector('#downloadFormFileTypeId');
+            var langInp = modalBody.querySelector('#downloadFormLangId');
+            var dlForm = modalBody.querySelector('.download-form');
+            if (resSel) {
+              function downloadCategoryLangId() {
+                var opt = resSel.options[resSel.selectedIndex];
+                if (!opt || !opt.value) return NaN;
+                return parseInt(opt.getAttribute('data-lang-id'), 10);
+              }
+              function downloadFilterLangId() {
+                var cl = downloadCategoryLangId();
+                if (Number.isFinite(cl)) return cl;
+                var formEl = modalBody.querySelector('.download-form');
+                var raw = formEl ? formEl.getAttribute('data-default-lang-id') : '';
+                var def = raw ? parseInt(raw, 10) : NaN;
+                return Number.isFinite(def) ? def : NaN;
+              }
+              function syncDownloadLangFromCategory() {
+                if (!langInp) return;
+                var lid = downloadCategoryLangId();
+                langInp.value = Number.isFinite(lid) ? String(lid) : '';
+              }
+              function syncSelectByCategoryLang(sel) {
+                if (!sel) return;
+                var lid = downloadFilterLangId();
+                Array.from(sel.options).forEach(function (o) {
+                  if (!o.value) {
+                    o.disabled = false;
+                    return;
+                  }
+                  var sl = parseInt(o.getAttribute('data-lang-id'), 10);
+                  o.disabled = !(Number.isFinite(lid) && sl === lid);
+                });
+                var so = sel.options[sel.selectedIndex];
+                if (so && so.disabled) sel.value = '';
+              }
+              function syncAllDownloadDepends() {
+                syncDownloadLangFromCategory();
+                syncSelectByCategoryLang(serSel);
+                syncSelectByCategoryLang(ftSel);
+              }
+              resSel.addEventListener('change', syncAllDownloadDepends);
+              syncAllDownloadDepends();
+            }
+            if (dlForm) {
+              dlForm.addEventListener('submit', function (e) {
+                var li = modalBody.querySelector('#downloadFormLangId');
+                if (li && !li.value) {
+                  e.preventDefault();
+                  alert('请先选择资源类型（将自动确定语言）');
+                  return false;
+                }
+              });
+            }
+          })
+          .catch(function () { modalBody.innerHTML = '<p style="color:var(--admin-danger);">加载失败</p>'; });
+      }
+
+      var closeBtn = document.getElementById('adminModalFormClose');
+      if (closeBtn) closeBtn.onclick = closeModal;
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && overlay && overlay.classList.contains('open')) closeModal(); });
+
+      var addBtn = document.getElementById('btnDownloadAdd');
+      if (addBtn) {
+        addBtn.onclick = function () {
+          var langSel = document.getElementById('downloadLangId');
+          var lv = langSel ? langSel.value : '';
+          var q = 'modal=1';
+          if (lv && lv !== 'all') q += '&langId=' + encodeURIComponent(lv);
+          openModal('新增资源下载', '/admin/downloads/edit?' + q);
+        };
+      }
+      document.querySelectorAll('.download-edit-link').forEach(function (a) {
+        a.onclick = function (e) { e.preventDefault(); var id = a.getAttribute('data-id'); if (id) openModal('编辑资源下载', '/admin/downloads/edit/' + id + '?modal=1'); };
+      });
+    })();
+  </script>
+</body>
+</html>

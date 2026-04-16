@@ -1,0 +1,81 @@
+{{!-- About Us - 使用 config �?about-us 数据，移动端优先 --}}
+{{#if aboutUs.stats.length}}
+<section class="g-section g-about " aria-label="About Us">
+  <div class="container">
+    <h2 class="g-section-title">{{aboutUs.title}}</h2>
+    <div class="g-about__wrap" {{#if aboutUs.bgPicUrl}} style="background-image: url('{{aboutUs.bgPicUrl}}');"{{/if}}>
+      {{#if aboutUs.videoUrl}}
+      <button type="button" class="g-about__cirplay" data-video-url="{{aboutUs.videoUrl}}" aria-label="播放视频"></button>
+      {{else}}
+      <span class="g-about__cirplay" role="img" aria-label="About us"></span>
+      {{/if}}
+     
+      <div class="g-about__content">
+        <div class="g-about__content-horizontalline">
+        </div>
+        <h3 class="g-about__heading">{{aboutUs.description}}</h3>
+        <div class="g-about__stats">
+          {{#each aboutUs.stats}}
+          <div class="g-about__stat ">
+            <p class="g-about__stat-value">{{value}}</p>
+            <p class="g-about__stat-label">{{label}}</p>
+          </div>
+          {{/each}}
+        </div>
+        <a href="{{basePath}}/about-us" class="g-about__link">{{aboutUs.readMoreLabel}} <img src="/images/global/arrow-right-white.png" alt=""></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{{!-- 视频弹窗 --}}
+{{#if aboutUs.videoUrl}}
+<div class="g-video-modal" id="aboutVideoModal" aria-hidden="true">
+  <div class="g-video-modal__overlay"></div>
+  <div class="g-video-modal__content">
+    <button class="g-video-modal__close" aria-label="关闭视频">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+    <video class="g-video-modal__video" controls playsinline>
+      <source src="{{aboutUs.videoUrl}}" type="video/mp4">
+    </video>
+  </div>
+</div>
+{{/if}}
+{{!-- About stats value: if value contains spaces, wrap second part --}}
+<script>
+(function () {
+  var container = document.querySelector('.g-about');
+  if (!container) return;
+
+  // 依次延迟出现的统计卡片（WOW已禁用，保留动画逻辑�?
+  var els = container.querySelectorAll('.g-about__stat-value');
+  function splitAndWrap(el) {
+    if (!el || el.getAttribute('data-wrapped') === '1') return;
+    var raw = (el.textContent || '').trim();
+    if (!raw) return;
+
+    var parts = raw.split(/\s+/);
+    if (parts.length < 2) return;
+
+    var first = parts.shift();
+    var rest = parts.join(' ');
+
+    el.textContent = '';
+    el.appendChild(document.createTextNode(first + ' '));
+
+    var span = document.createElement('span');
+    span.className = 'g-about__stat-value-second';
+    span.textContent = rest;
+    el.appendChild(span);
+
+    el.setAttribute('data-wrapped', '1');
+  }
+
+  els.forEach(function (el) { splitAndWrap(el); });
+})();
+</script>
+{{/if}}

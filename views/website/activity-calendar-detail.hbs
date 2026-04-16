@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="{{locale}}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  {{#if description}}<meta name="description" content="{{description}}">{{/if}}
+  {{#if keywords}}<meta name="keywords" content="{{keywords}}">{{/if}}
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/bootstrap-grid.css">
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/grid.css">
+  <link rel="stylesheet" href="/css/global/common-global.css">
+  <link rel="stylesheet" href="/css/global/events-global.css">
+  <link rel="stylesheet" href="/css/exo.css">
+</head>
+<body class="g-activity-calendar-detail-page">
+  {{> website/common/nav-drawer}}
+  {{> website/common/header}}
+
+  <main class="g-main">
+    <article class="g-events-detail">
+      {{#if dateRangeFormatted}}<div class="g-events-detail__meta">{{dateRangeFormatted}}</div>{{/if}}
+      <h1 class="g-events-detail__title">{{event.title}}</h1>
+      {{#if event.location}}
+      <div class="g-events-detail__location">
+        <span class="g-events-card__icon g-events-card__icon--pin" aria-hidden="true"></span>
+        {{event.location}}
+      </div>
+      {{/if}}
+      {{#if event.thumbUrl}}
+      <img src="{{event.thumbUrl}}" alt="" class="g-events-detail__thumb" loading="lazy" />
+      {{/if}}
+      {{#if hasExternal}}
+      <p class="g-events-detail__cta-top">
+        <a href="{{externalUrl}}" class="g-events-btn g-events-btn--primary" target="_blank" rel="noopener noreferrer">{{labels.visitEvent}}</a>
+      </p>
+      {{/if}}
+      <div class="g-events-detail__content">
+        {{{event.content}}}
+      </div>
+      <a href="{{listUrl}}" class="g-events-detail__back">�?{{labels.backToList}}</a>
+    </article>
+
+    {{> website/common/footer}}
+  </main>
+
+  <script>
+    (function () {
+      var nav = document.querySelector('.g-activity-calendar-detail-page .pc-nav');
+      if (!nav) return;
+      function onScroll() {
+        nav.classList.toggle('nav-scrolled', window.scrollY > 10);
+      }
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    })();
+  </script>
+</body>
+</html>

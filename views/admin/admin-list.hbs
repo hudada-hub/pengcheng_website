@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} - 官网后台</title>
+  <meta name="csrf-token" content="{{csrfToken}}">
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/admin/admin-theme.css">
+  <script src="/js/iconify-icon.min.js"></script>
+</head>
+<body class="admin-layout">
+  {{> admin/header}}
+  <div class="admin-body">
+    {{> admin/sidebar}}
+    <main class="admin-main">
+      <div class="admin-page-toolbar">
+        <h1 style="margin:0;">{{title}}</h1>
+        <button type="button" class="btn btn-primary" id="btnAdminAdd"><iconify-icon icon="mdi:plus"></iconify-icon> 新增</button>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>用户名</th>
+              <th>类型</th>
+              <th>状态</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each admins}}
+            <tr>
+              <td>{{this.id}}</td>
+              <td>{{this.username}}</td>
+              <td>{{#if (eq this.isSystem 1)}}系统默认（不可删除）{{else}}普通管理员{{/if}}</td>
+              <td>{{#if (eq this.status 1)}}正常{{else}}隐藏{{/if}}</td>
+              <td class="actions">
+                <a href="#" class="btn-link admin-edit-link" data-id="{{this.id}}">编辑</a>
+                {{#unless (eq this.isSystem 1)}}
+                <button type="button" class="btn-link btn-delete-admin" data-id="{{this.id}}">删除</button>
+                {{/unless}}
+              </td>
+            </tr>
+            {{else}}
+            <tr><td colspan="5" style="text-align:center;color:var(--admin-text-muted);">暂无管理员</td></tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+  {{> admin/modal-form title="管理员"}}
+  {{> admin/confirm-modal}}
+  <script>
+    (function () {
+      var csrfMeta = document.querySelector('meta[name="csrf-token"]');
+      var csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : '';
+      document.querySelectorAll('.btn-delete-admin').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var id = parseInt(btn.getAttribute('data-id'), 10);
+          if (!id) return;
+          var msg = '确定要删除该管理员吗？';
+          var doDelete = function () {
+            fetch('/admin/api/admins/delete', {
+              method: 'POST',
+              credentials: 'same-origin',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id: id, _csrf: csrfToken })
+            }).then(function (r) { return r.json(); })
+              .then(function (d) {
+                if (d.ok) { location.reload(); } else { alert(d.message || '删除失败'); }
+              })
+              .catch(function () { alert('请求失败'); });
+          };
+          if (window.showConfirmModal) {
+            window.showConfirmModal(msg, doDelete);
+          } else if (confirm(msg)) {
+            doDelete();
+          }
+        });
+      });
+    })();
+    (function () {
+      var overlay = document.getElementById('adminModalFormOverlay');
+      var modalBody = document.querySelector('.admin-modal-form-body');
+      var modalTitle = document.getElementById('adminModalFormTitle');
+
+      function closeModal() {
+        if (overlay) { overlay.classList.remove('open'); overlay.setAttribute('aria-hidden', 'true'); }
+      }
+
+      function openModal(titleText, formUrl) {
+        if (!overlay || !modalBody) return;
+        modalTitle.textContent = titleText;
+        modalBody.innerHTML = '<p style="text-align:center;color:var(--admin-text-muted);">加载中...</p>';
+        overlay.classList.add('open');
+        overlay.setAttribute('aria-hidden', 'false');
+        fetch(formUrl, { credentials: 'same-origin' })
+          .then(function (r) { return r.text(); })
+          .then(function (html) {
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(html, 'text/html');
+            var frag = doc.getElementById('admin-form-fragment');
+            modalBody.innerHTML = frag ? frag.innerHTML : html;
+            var _form = modalBody.querySelector('form');
+            if (_form) { var _inp = document.createElement('input'); _inp.type = 'hidden'; _inp.name = 'returnUrl'; _inp.value = window.location.href; _form.appendChild(_inp); }
+            var cancelBtn = modalBody.querySelector('.admin-modal-form-cancel');
+            if (cancelBtn) cancelBtn.onclick = closeModal;
+          })
+          .catch(function () { modalBody.innerHTML = '<p style="color:var(--admin-danger);">加载失败</p>'; });
+      }
+
+      var closeBtn = document.getElementById('adminModalFormClose');
+      if (closeBtn) closeBtn.onclick = closeModal;
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && overlay && overlay.classList.contains('open')) closeModal(); });
+
+      var addBtn = document.getElementById('btnAdminAdd');
+      if (addBtn) addBtn.onclick = function () { openModal('新增管理员', '/admin/admins/edit?modal=1'); };
+      document.querySelectorAll('.admin-edit-link').forEach(function (a) {
+        a.onclick = function (e) {
+          e.preventDefault();
+          var id = a.getAttribute('data-id');
+          if (id) openModal('编辑管理员', '/admin/admins/edit/' + id + '?modal=1');
+        };
+      });
+    })();
+  </script>
+</body>
+</html>

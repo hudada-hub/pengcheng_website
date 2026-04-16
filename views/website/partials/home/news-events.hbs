@@ -1,0 +1,251 @@
+{{!-- News & Events - Swiper轮播版（新闻水平轮播，活动垂直滚动） --}}
+<section class="g-section g-news " aria-label="News and Events">
+  <div class="container">
+    <h2 class="g-section-title">NEWS & EVENTS</h2>
+    <div class="g-news__wrap">
+      {{!-- Left: News Swiper --}}
+      <div class="g-news__left">
+        <div class="swiper g-news__swiper">
+          <div class="swiper-wrapper">
+            {{#if newsList.length}}
+              {{#each newsList}}
+                <div class="swiper-slide g-news__slide">
+                  <a href="{{../basePath}}/news/{{newsUrlId}}" class="g-news__card">
+                    <div class="g-news__card-img-wrap">
+                      {{#if thumbUrl}}
+                        <img src="{{thumbUrl}}" alt="{{title}}" class="g-news__card-img" loading="lazy">
+                   
+                      {{/if}}
+                    </div>
+                    <div class="g-news__card-overlay">
+                      {{#if publishAt}}
+                        <div class="g-news__card-date-badge">
+                          <svg class="g-news__card-date-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M12 22c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9Z" stroke="currentColor" stroke-width="2"/>
+                            <path d="M12 7v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M9 2h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                          </svg>
+                          <span>{{formatDate publishAt 'MMM.DD-YYYY'}}</span>
+                        </div>
+                      {{/if}}
+                      <h3 class="g-news__card-title">{{truncate title 80}}</h3>
+                      <div class="g-news__card-arrow" aria-hidden="true">
+                        <svg width="29" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform:scale(1.2)">
+                          <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              {{/each}}
+           
+            {{/if}}
+          </div>
+        
+          {{!-- 新闻轮播导航按钮 --}}
+      <div class="swiper-button-prev g-news__prev">
+
+</div>
+<div class="swiper-button-next g-news__next">
+ 
+</div>
+        </div>
+      </div>
+
+      {{!-- Right: Events Vertical Swiper --}}
+      <div class="g-news__right">
+        <div class="swiper g-events__swiper swiper-vertical">
+          <div class="swiper-wrapper">
+            {{#if activities.length}}
+              {{#each activities}}
+                <div class="swiper-slide g-events__slide">
+                  <a href="{{../basePath}}/activity-calendar/{{activityUrlId}}" class="g-events__item">
+                    <div class="g-events__date-block">
+                      <span class="g-events__date-weekday">{{formatDate eventDateStart 'ddd' 'en'}}</span>
+                      <span class="g-events__date-num">{{formatDate eventDateStart 'DD'}}</span>
+                    </div>
+                    <div class="g-events__content">
+                      <div class="g-events__header">
+                        <h4 class="g-events__title">
+                          <span class="g-events__title-arrow" style="color:var(--g-color-primary); margin-right:4px;">
+                            <img src="/images/global/arrow-right-noline.png" alt="">
+                          </span>
+                          {{title}}
+                        </h4>
+                        <span class="g-events__arrow">
+                          <span class="iconify" data-icon="vuesax:linear-arrow-right" width="16" height="16"></span>
+                        </span>
+                      </div>
+                      <div class="g-events__meta">
+                        {{#if location}}
+                          <span class="g-events__meta-item">
+                                       <img src="/images/global/location.png" alt="">
+                            {{location}}
+                          </span>
+                        {{/if}}
+                        <span class="g-events__meta-item">
+                          <img src="/images/global/calendar.png" alt="">
+                          {{#if eventDateEnd}}
+                            {{formatDate eventDateStart 'MMM DD'}} - {{formatDate eventDateEnd 'MMM DD'}}
+                          {{else}}
+                            {{formatDate eventDateStart 'MMM DD'}}
+                          {{/if}}
+                        </span>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              {{/each}}
+            {{else}}
+              {{!-- Fallback --}}
+              <div class="swiper-slide g-events__slide">
+                <a href="{{basePath}}/activity-calendar" class="g-events__item">
+                  <div class="g-events__date-block">
+                    <span class="g-events__date-weekday">TUES</span>
+                    <span class="g-events__date-num">20</span>
+                  </div>
+                  <div class="g-events__content">
+                    <div class="g-events__header">
+                      <h4 class="g-events__title">
+                        <span class="g-events__title-arrow" style="color:var(--g-color-primary); margin-right:4px;">&gt;</span>
+                        PGA SHOW 2026
+                      </h4>
+                      <span class="g-events__arrow">
+                        <span class="iconify" data-icon="vuesax:linear-arrow-right" width="16" height="16"></span>
+                      </span>
+                    </div>
+                    <div class="g-events__meta">
+                      <span class="g-events__meta-item">
+                        <span class="iconify" data-icon="vuesax:linear-location" width="16" height="16"></span>
+                        Orlando, Florida
+                      </span>
+                      <span class="g-events__meta-item">
+                        <span class="iconify" data-icon="vuesax:linear-calendar" width="16" height="16"></span>
+                        Jan 20 - Jan 23
+                      </span>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            {{/if}}
+          </div>
+          {{!-- 垂直滚动条--}}
+          <div class="swiper-scrollbar g-events__scrollbar"></div>
+        </div>
+        <div class="g-news__learn-more-wrap">
+          <a href="{{basePath}}/activity-calendar" class="g-news__learn-more">{{@root.heroLearnMoreLabel}}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{{!-- News & Events Swiper 初始化--}}
+<script>
+(function() {
+  // 新闻水平轮播 - 支持10条新闻
+  var newsLen = {{newsList.length}};
+  var newsSwiper = new Swiper('.g-news__swiper', {
+    slidesPerView: 2,
+    spaceBetween: 20,
+    loop: {{#if (gt newsList.length 1)}}true{{else}}false{{/if}},
+    autoplay: {
+      delay: 5000,
+      disableOnInteraction: false,
+    },
+    pagination: {
+      el: '.g-news__pagination',
+      clickable: true,
+      bulletClass: 'swiper-pagination-bullet',
+      bulletActiveClass: 'swiper-pagination-bullet-active',
+      dynamicBullets: {{#if (gt newsList.length 5)}}true{{else}}false{{/if}},
+      dynamicMainBullets: 5,
+    },
+    navigation: {
+      nextEl: '.g-news__next',
+      prevEl: '.g-news__prev',
+    },
+    on: {
+      init: function() {
+        updateNavigation(this);
+        applySlideWidth(this);
+      },
+      slideChange: function() {
+        updateNavigation(this);
+        applySlideWidth(this);
+      }
+    },
+    breakpoints: {
+      768: {
+        slidesPerView: 2,
+        spaceBetween: 20,
+      },
+      1200: {
+        slidesPerView: 2,
+        spaceBetween: 20,
+      }
+    }
+  });
+
+  function updateNavigation(swiper) {
+    var prevBtn = document.querySelector('.g-news__prev');
+    if (prevBtn) {
+      // loop 模式下用 realIndex：初始 realIndex=0 时隐藏左箭头
+      if ((swiper.realIndex || 0) > 0) {
+        prevBtn.classList.add('show');
+      } else {
+        prevBtn.classList.remove('show');
+      }
+    }
+  }
+
+  // 视觉还原：只有一张宽卡（2倍宽），其余窄卡1倍宽
+  function applySlideWidth(swiper) {
+    if (!swiper || newsLen <= 0) return;
+    var wideIndex = swiper.realIndex || 0;
+
+    var slides = swiper.slides || [];
+    slides.forEach(function (slideEl) {
+      var idxStr = slideEl.getAttribute('data-swiper-slide-index');
+      var idx = idxStr != null ? parseInt(idxStr, 10) : NaN;
+      slideEl.classList.remove('g-news__slide--wide', 'g-news__slide--narrow');
+      if (!Number.isFinite(idx)) return;
+
+      // 当 newsLen >= 2 时：当前 wideIndex 为宽，其余为窄
+      if (newsLen >= 2) {
+        // 处理 loop 模式下的索引
+        var normalizedIdx = idx % newsLen;
+        slideEl.classList.add(normalizedIdx === wideIndex ? 'g-news__slide--wide' : 'g-news__slide--narrow');
+      } else {
+        slideEl.classList.add('g-news__slide--wide');
+      }
+    });
+  }
+
+  // 活动日历垂直滚动 - 支持10条活动
+  var eventsSwiper = new Swiper('.g-events__swiper', {
+    direction: 'vertical',
+    slidesPerView: 3,
+    slidesPerGroup: 1,
+    spaceBetween: 55,
+    freeMode: false,
+    loop: {{#if (gt activities.length 3)}}true{{else}}false{{/if}},
+    autoplay: {
+      delay: 5000,
+      disableOnInteraction: false,
+      pauseOnMouseEnter: true,
+    },
+    mousewheel: {
+      forceToAxis: true,
+      sensitivity: 1,
+      releaseOnEdges: true,
+    },
+    scrollbar: {
+      el: '.g-events__scrollbar',
+      draggable: true,
+      hide: false,
+    },
+    height: 324, // 显示3个活动项 108 * 3 + 20 * 2
+  });
+})();
+</script>

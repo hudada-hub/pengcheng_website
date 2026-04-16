@@ -1,0 +1,178 @@
+{{!-- Business Areas & Application Scenarios - 使用 config 表数�?--}}
+{{#if businessAreas.length}}
+<section class="g-section g-business " aria-label="Business Areas" id="businessAreas" >
+  <div class="container">
+    <h2 class="g-section-title">{{#if businessAreasTitle}}{{businessAreasTitle}}{{else}}BUSINESS AREAS & APPLICATION SCENARIOS{{/if}}</h2>
+    
+    {{!-- 标签切换 --}}
+    <div class="g-business__tabs">
+      <span class="g-business__tab-slider" aria-hidden="true"></span>
+      {{#each businessAreas}}
+      <button type="button" class="g-business__tab {{#if @first}}active{{/if}}" data-tab="{{key}}">
+        {{label}}
+      </button>
+      {{/each}}
+    </div>
+    
+    {{!-- 内容区域：Swiper 仅自动轮播，无箭�?分页 --}}
+    <div class="g-business__panels swiper g-business__swiper">
+    <div class="swiper-wrapper">
+    {{#each businessAreas}}
+    <div class="swiper-slide g-business__panel" data-panel="{{key}}">
+      {{!-- 横幅 --}}
+      {{#if data.bgPicUrl}}
+      <div class="g-business__banner">
+        <img src="{{data.bgPicUrl}}" alt="{{data.title}}" class="g-business__banner-img" loading="lazy">
+        <div class="g-business__banner-overlay"></div>
+        <div class="g-business__banner-text">
+          <p class="g-business__banner-title">{{data.title}}</p>
+          {{#if data.description}}
+          <p class="g-business__banner-desc">{{data.description}}</p>
+          {{/if}}
+        </div>
+      </div>
+      {{/if}}
+      
+      {{!-- 卡片列表 --}}
+      {{#if data.items.length}}
+      <div class="g-business__cards">
+        {{#each data.items}}
+        <a href="{{#if url}}{{url}}{{else}}{{../basePath}}/products{{/if}}" class="g-business__card ">
+          {{#if picUrl}}
+          <img src="{{picUrl}}" alt="{{title}}" class="g-business__card-img" loading="lazy">
+          {{/if}}
+          <div class="g-business__card-overlay"></div>
+          {{#if title}}
+          <h3 class="g-business__card-title">{{title}}</h3>
+          {{/if}}
+          {{#if content}}
+          <p class="g-business__card-desc">{{content}}</p>
+          {{/if}}
+        </a>
+        {{/each}}
+      </div>
+      {{/if}}
+    </div>
+    {{/each}}
+    </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function() {
+  var section = document.getElementById('businessAreas');
+  if (!section) return;
+
+  var AUTO_DELAY_MS = 3000;
+  var tabsWrap = section.querySelector('.g-business__tabs');
+  var slider = section.querySelector('.g-business__tab-slider');
+  var tabList = Array.prototype.slice.call(section.querySelectorAll('.g-business__tab'));
+  var swiperEl = section.querySelector('.g-business__swiper');
+
+  function updateSlider() {
+    if (!slider || !tabsWrap) return;
+    var active = tabsWrap.querySelector('.g-business__tab.active');
+    if (!active) return;
+    var wrapRect = tabsWrap.getBoundingClientRect();
+    var tabRect = active.getBoundingClientRect();
+    slider.style.left = (tabRect.left - wrapRect.left) + 'px';
+    slider.style.width = tabRect.width + 'px';
+  }
+
+  function applyCardWowDelay(panel) {
+    if (!panel) return;
+    // WOW已禁用，这里保留空函数以避免报错
+  }
+
+  function setActiveTabIndex(idx) {
+    if (idx < 0 || idx >= tabList.length) return;
+    tabList.forEach(function(t, i) {
+      t.classList.toggle('active', i === idx);
+    });
+    updateSlider();
+  }
+
+  section.querySelectorAll('.g-business__panel').forEach(function(panel) {
+    applyCardWowDelay(panel);
+  });
+
+  if (!swiperEl) {
+    updateSlider();
+    window.addEventListener('resize', function() { updateSlider(); });
+    return;
+  }
+
+  if (typeof Swiper === 'undefined') {
+    swiperEl.classList.add('g-business__swiper--fallback');
+    tabList.forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        var key = this.getAttribute('data-tab');
+        tabList.forEach(function(t, i) {
+          t.classList.toggle('active', t.getAttribute('data-tab') === key);
+        });
+        section.querySelectorAll('.g-business__panel').forEach(function(panel) {
+          panel.classList.toggle('is-active', panel.getAttribute('data-panel') === key);
+        });
+        updateSlider();
+      });
+    });
+    if (tabList[0]) {
+      var k0 = tabList[0].getAttribute('data-tab');
+      section.querySelectorAll('.g-business__panel').forEach(function(panel) {
+        panel.classList.toggle('is-active', panel.getAttribute('data-panel') === k0);
+      });
+    }
+    updateSlider();
+    window.addEventListener('resize', function() { updateSlider(); });
+    return;
+  }
+
+  var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var swiper = new Swiper(swiperEl, {
+    slidesPerView: 1,
+    spaceBetween: 0,
+    speed: 600,
+    autoHeight: true,
+    allowTouchMove: false,
+    rewind: true,
+    autoplay:
+      tabList.length > 1 && !reducedMotion
+        ? {
+            delay: AUTO_DELAY_MS,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true,
+          }
+        : false,
+    pagination: false,
+    navigation: false,
+    scrollbar: false,
+    on: {
+      init: function (sw) {
+        setActiveTabIndex(sw.activeIndex);
+      },
+      slideChange: function (sw) {
+        setActiveTabIndex(sw.activeIndex);
+        var el = sw.slides[sw.activeIndex];
+        if (el) {
+          applyCardWowDelay(el);
+          // WOW已禁用，移除sync调用
+        }
+      },
+    },
+  });
+
+  tabList.forEach(function(tab, idx) {
+    tab.addEventListener('click', function() {
+      swiper.slideTo(idx);
+    });
+  });
+
+  window.addEventListener('resize', function() {
+    updateSlider();
+    swiper.update();
+  });
+})();
+</script>
+{{/if}}

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="{{locale}}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  {{#if description}}<meta name="description" content="{{description}}">{{/if}}
+  {{#if keywords}}<meta name="keywords" content="{{keywords}}">{{/if}}
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/bootstrap-grid.css">
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/grid.css">
+  <link rel="stylesheet" href="/js/swiper/swiper-bundle.min.css">
+  <link rel="stylesheet" href="/css/global/common-global.css">
+  <link rel="stylesheet" href="/css/global/products-global.css">
+  <link rel="stylesheet" href="/css/global/home-global.css">
+  <link rel="stylesheet" href="/css/global/about-us-global.css">
+  
+  <link rel="stylesheet" href="/css/exo.css">
+  <script src="/js/iconify-icon.min.js" defer></script>
+</head>
+<body class="g-products-page g-about-us-page">
+  {{> website/common/nav-drawer}}
+  {{> website/common/header}}
+
+  <main class="g-main">
+    {{> website/about-us/banner}}
+    {{> website/about-us/anchor-nav}}
+    {{> website/about-us/who-we-are}}
+    {{> website/about-us/lead-energy}}
+    {{> website/about-us/culture}}
+    {{> website/about-us/history}}
+    {{> website/about-us/partner}}
+    {{> website/about-us/innovative}}
+    {{> website/about-us/battery}}
+    {{> website/about-us/customers}}
+    {{> website/common/global-map}}
+    <div class="g-about-us-subscription-wrap">
+      {{> website/common/contactus}}
+    </div>
+    {{> website/common/footer}}
+  </main>
+
+  <script src="/js/univerjs/echarts.min.js" defer></script>
+  <script src="/js/univerjs/word/world.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="/js/swiper/swiper-bundle.min.js" defer></script>
+  <script src="/js/about-us-anchor.js" defer></script>
+  <script src="/js/about-us-banner-reveal.js" defer></script>
+  <script src="/js/about-us-who-are-reveal.js" defer></script>
+  <script src="/js/about-us-lead-energy-stats.js" defer></script>
+  <script src="/js/about-us-history.js" defer></script>
+  <script src="/js/about-us-partner.js" defer></script>
+  <script src="/js/about-us-battery.js" defer></script>
+  <script src="/js/about-us-culture.js" defer></script>
+  <script src="/js/about-us-innovative.js" defer></script>
+  <script src="/js/about-us-customers.js" defer></script>
+  <script src="/js/global-map.js" defer></script>
+  <script>
+    (function () {
+      var nav = document.querySelector('.g-about-us-page .pc-nav');
+      if (!nav) return;
+      function onScroll() {
+        nav.classList.toggle('nav-scrolled', window.scrollY > 10);
+      }
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    })();
+  </script>
+</body>
+</html>

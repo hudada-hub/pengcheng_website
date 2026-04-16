@@ -1,0 +1,376 @@
+/* 应用案例列表 / 详情 */
+
+.g-cases-page .g-cases-hero {
+  position: relative;
+  min-height: 220px;
+  background: #2c3e50;
+}
+
+.g-cases-page .g-cases-hero__inner {
+  position: relative;
+  z-index: 1;
+  padding: 72px 0 48px;
+  color: #fff;
+}
+
+.g-cases-page .g-cases-hero__title {
+  margin: 0;
+  font-family: 'Exo', sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  letter-spacing: 0.04em;
+}
+
+.g-cases-page .g-cases-hero__search {
+  margin-top: 1.5rem;
+  max-width: 42rem;
+}
+
+.g-cases-page .g-cases-hero__search-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.g-cases-page .g-cases-hero__search-input {
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 999px;
+  padding: 14px 52px 14px 22px;
+  font-size: 1rem;
+  background: #fff;
+  color: #2b2b2b;
+  outline: none;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.g-cases-page .g-cases-hero__search-input::placeholder {
+  color: #888;
+}
+
+.g-cases-page .g-cases-hero__search-btn {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  padding: 0;
+  background: transparent;
+  color: #333;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.g-cases-page .g-cases-hero__search-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #111;
+}
+
+/* 案例详情 Banner：居中标题 + 白底圆角搜索（与参考稿一致） */
+.g-case-detail-page .g-case-detail-banner {
+  height: clamp(380px, 52vw, 556px);
+}
+
+.g-case-detail-page .g-case-detail-banner .g-products-banner__overlay {
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.g-case-detail-page .g-case-detail-banner__inner {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(72px, 14vh, 120px) 24px 40px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.g-case-detail-page .g-case-detail-banner__title {
+  margin: 0 0 clamp(1rem, 3vw, 2rem);
+  max-width: 56rem;
+  font-family: 'Exo', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.2rem, 3.5vw, 2.75rem);
+  line-height: 1.28;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+
+.g-case-detail-page .g-case-detail-banner__search {
+  position: relative;
+  width: 100%;
+  max-width: 42rem;
+  margin: 0;
+}
+
+.g-case-detail-page .g-case-detail-banner__search-input {
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 999px;
+  padding: 16px 56px 16px 24px;
+  font-size: 1rem;
+  background: #fff;
+  color: #2b2b2b;
+  outline: none;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.14);
+}
+
+.g-case-detail-page .g-case-detail-banner__search-input::placeholder {
+  color: #888;
+}
+
+.g-case-detail-page .g-case-detail-banner__search-submit {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  padding: 0;
+  background: transparent;
+  color: #333;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.g-case-detail-page .g-case-detail-banner__search-submit:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #000;
+}
+
+.g-case-detail-page .g-case-detail-banner__search-submit iconify-icon {
+  font-size: 1.5rem;
+}
+
+.g-case-detail-page .g-case-detail-main {
+  padding: 40px 0 96px;
+  background: #f5f5f7;
+}
+
+/* 案例详情主区域：参考 container 1200px 居中 + padding 20px（覆盖 Bootstrap .container 断点宽度） */
+.g-case-detail-page .g-case-detail-main > .container.g-case-detail-container {
+  max-width: 1200px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+@media (min-width: 992px) {
+  .g-case-detail-page .g-case-detail-main {
+    padding-bottom: 80px;
+  }
+}
+
+@media (max-width: 991px) {
+  .g-case-detail-page .g-case-detail-main {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* 主文卡片（移动端全宽居中；lg+ 与侧栏同排 max 600px） */
+.g-case-detail-article {
+  width: 100%;
+  max-width: min(1200px, 100%);
+  margin-left: auto;
+  margin-right: auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: clamp(20px, 3vw, 80px);
+}
+
+.g-case-detail-h1 {
+  font-family: 'Exo', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.35rem, 3vw, 1.85rem);
+  color: #333;
+  margin: 0 0 40px;
+  line-height: 1.3;
+  text-align: left;
+}
+
+.g-case-detail-spec {
+  margin: 0.75rem 0 0;
+  font-family: 'Exo', sans-serif;
+  font-weight: 600;
+  color: #f89d1b;
+}
+
+/* 发布时间 + 标签（设计稿：左侧时间，右侧标签胶囊） */
+.g-case-detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+.g-case-detail-meta__date {
+  flex: 0 0 auto;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: #888;
+}
+
+.g-case-detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1 1 auto;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+@media (max-width: 575px) {
+  .g-case-detail-tags {
+    justify-content: flex-start;
+  }
+}
+
+.g-case-detail-tag {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: #f0f0f0;
+  color: #2b2b2b;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  font-weight: 500;
+}
+
+.g-case-detail-thumb {
+  margin: 1.25rem 0 0;
+  padding: 0;
+}
+
+.g-case-detail-thumb__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.g-case-detail-page .g-case-detail-content {
+  font-size: 16px;
+  line-height: 1.75;
+  color: #333;
+  max-width: 100%;
+  margin: 1.25rem 0 0;
+}
+
+/* 桌面：正文居中 + 右侧侧栏（与正文间距 25px），高度随正文撑开 */
+@media (min-width: 992px) {
+  .g-case-detail-layout .g-case-detail-article {
+    max-width: 1200px;
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+.g-case-detail-page .g-case-detail-content img {
+  max-width: 100%;
+  height: auto;
+}
+
+.g-cases-list-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 32px 0 64px;
+}
+
+@media (max-width: 991px) {
+  .g-cases-list-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 575px) {
+  .g-cases-list-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.g-cases-list-card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: box-shadow 0.25s ease;
+}
+
+.g-cases-list-card:hover {
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+}
+
+.g-cases-list-card__media {
+  display: block;
+  position: relative;
+  padding-top: 56%;
+  background: #f5f5f5;
+}
+
+.g-cases-list-card__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.g-cases-list-card__body {
+  padding: 16px;
+}
+
+.g-cases-list-card__title {
+  margin: 0;
+  font-family: 'Exo', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.g-cases-list-card__title a {
+  color: #2b2b2b;
+  text-decoration: none;
+}
+
+.g-cases-list-card__title a:hover {
+  color: #f89d1b;
+}
+
+.g-cases-list-card__spec {
+  margin-top: 8px;
+  font-size: 0.88rem;
+  color: #f89d1b;
+  font-weight: 600;
+}
+
+/* 地图样式见 common-global.css（.g-global-map） */

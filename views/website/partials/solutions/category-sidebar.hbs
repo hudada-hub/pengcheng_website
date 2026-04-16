@@ -1,0 +1,90 @@
+<aside class="g-products-sidebar g-solutions-sidebar" aria-label="{{configTexts.solutionCategories}}">
+  <div class="g-products-sidebar__inner">
+    <div class="g-products-sidebar__header">
+      <button type="button" class="g-products-sidebar__toggle" id="categoryToggleBtn" aria-expanded="false" aria-controls="categoryList">
+        
+        <span class="g-products-sidebar__title">
+          {{configTexts.solutionCategories}}
+        </span>
+      </button>
+    </div>
+    <div class="g-products-sidebar__content" id="categoryList">
+      <!-- 全部分类 -->
+      {{#each solutionSidebarItems}}
+        {{#unless this.group}}
+          <div class="g-solutions-sidebar__row">
+            <a href="{{this.url}}" class="g-solutions-sidebar__link{{#if this.active}} is-active{{/if}}">
+              {{this.title}}
+              {{#if this.count}}
+                <span class="g-solutions-sidebar__count">{{this.count}}</span>
+              {{/if}}
+            </a>
+          </div>
+        {{/unless}}
+      {{/each}}
+      
+      <!-- 业务板块 -->
+      <div class="g-solutions-sidebar__group">
+        <button type="button" class="g-solutions-sidebar__group-toggle" data-type="1" aria-expanded="true" aria-controls="group-1">
+          <span class="g-solutions-sidebar__group-title">{{configTexts.businessSegments}}</span>
+          <span class="g-solutions-sidebar__group-icon">▼</span>
+        </button>
+        <div class="g-solutions-sidebar__group-content" id="group-1">
+          {{#each solutionSidebarItems}}
+            {{#if (eq this.group 1)}}
+              <div class="g-solutions-sidebar__row">
+                <a href="{{this.url}}" class="g-solutions-sidebar__link{{#if this.active}} is-active{{/if}}">
+                  {{this.title}}
+                  {{#if this.count}}
+                    <span class="g-solutions-sidebar__count">{{this.count}}</span>
+                  {{/if}}
+                </a>
+              </div>
+            {{/if}}
+          {{/each}}
+        </div>
+      </div>
+      
+      <!-- 应用场景 -->
+      <div class="g-solutions-sidebar__group">
+        <button type="button" class="g-solutions-sidebar__group-toggle" data-type="2" aria-expanded="false" aria-controls="group-2">
+          <span class="g-solutions-sidebar__group-title">{{configTexts.applicationScenarios}}</span>
+          <span class="g-solutions-sidebar__group-icon">▶</span>
+        </button>
+        <div class="g-solutions-sidebar__group-content" id="group-2" style="display: none;">
+          {{#each solutionSidebarItems}}
+            {{#if (eq this.group 2)}}
+              <div class="g-solutions-sidebar__row">
+                <a href="{{this.url}}" class="g-solutions-sidebar__link{{#if this.active}} is-active{{/if}}">
+                  {{this.title}}
+                  {{#if this.count}}
+                    <span class="g-solutions-sidebar__count">{{this.count}}</span>
+                  {{/if}}
+                </a>
+              </div>
+            {{/if}}
+          {{/each}}
+        </div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // 分类分组折叠功能
+    const groupToggles = document.querySelectorAll('.g-solutions-sidebar__group-toggle');
+    groupToggles.forEach(toggle => {
+      toggle.addEventListener('click', function() {
+        const type = this.getAttribute('data-type');
+        const content = document.getElementById('group-' + type);
+        const expanded = this.getAttribute('aria-expanded') === 'true';
+        
+        // 切换展开/折叠状态
+        this.setAttribute('aria-expanded', !expanded);
+        this.querySelector('.g-solutions-sidebar__group-icon').textContent = !expanded ? '▼' : '▶';
+        content.style.display = !expanded ? 'block' : 'none';
+      });
+    });
+  });
+</script>

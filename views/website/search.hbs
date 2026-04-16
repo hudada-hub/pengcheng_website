@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="{{locale}}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  {{#if description}}<meta name="description" content="{{description}}">{{/if}}
+  {{#if keywords}}<meta name="keywords" content="{{keywords}}">{{/if}}
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/bootstrap-grid.css">
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/grid.css">
+  <link rel="stylesheet" href="/css/global/common-global.css">
+  <link rel="stylesheet" href="/css/global/products-global.css">
+  <link rel="stylesheet" href="/css/global/search-global.css">
+  <link rel="stylesheet" href="/css/global/news-global.css">
+  <link rel="stylesheet" href="/css/global/cases-global.css">
+  
+  <link rel="stylesheet" href="/css/exo.css">
+</head>
+<body class="g-search-page">
+  {{> website/common/nav-drawer}}
+  {{> website/common/header}}
+
+  <main class="g-main">
+    <section class="g-search" aria-label="{{searchAriaSectionLabel}}">
+      <div class="g-searchTop">
+        <div class="container g-searchTop__wrap">
+          <form class="g-searchTop__form" action="{{#if basePath}}{{basePath}}/search{{else}}/search{{/if}}" method="get" role="search">
+            <label class="visually-hidden" for="gSearchHeroInput">{{searchAriaKeywordsLabel}}</label>
+            <input
+              id="gSearchHeroInput"
+              type="search"
+              name="q"
+              class="g-searchTop__field"
+              value="{{searchQuery}}"
+              placeholder="{{heroSearchPlaceholder}}"
+              maxlength="120"
+              autocomplete="off"
+              aria-label="{{searchAriaKeywordsLabel}}"
+            />
+            <button type="submit" class="g-searchTop__icon-btn" aria-label="{{headlineSearchPrefix}}">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            </button>
+          </form>
+
+          {{#if searchQuery}}
+            <h1 class="g-search__title">{{headlineSearchPrefix}} “{{searchQuery}}�?{{headlineSearchReturned}} <strong>{{totalMatches}}</strong> {{headlineSearchMatches}}</h1>
+          {{else}}
+            <h1 class="g-search__title">{{headlineSearchPrefix}}</h1>
+            <p class="g-search__sub">{{emptyHint}}</p>
+          {{/if}}
+        </div>
+      </div>
+
+      {{#if searchQuery}}
+      <div class="container g-search__body">
+        <nav class="g-search__tabs" aria-label="{{searchAriaResultTabsLabel}}">
+          <a href="{{urlSearchAll}}" class="g-search__tab {{#if tabAll}}is-active{{/if}}">{{labelTabAll}}</a>
+          <a href="{{urlSearchUsecases}}" class="g-search__tab {{#if tabUsecases}}is-active{{/if}}">{{labelTabUsecases}}</a>
+          <a href="{{urlSearchProducts}}" class="g-search__tab {{#if tabProducts}}is-active{{/if}}">{{labelTabProducts}}</a>
+          <a href="{{urlSearchNews}}" class="g-search__tab {{#if tabNews}}is-active{{/if}}">{{labelTabNews}}</a>
+        </nav>
+
+        {{#if tabAll}}
+          {{#if products.length}}
+          <div class="g-search__section">
+            <h2 class="g-search__section-label">{{labelSectionProducts}}</h2>
+            {{> website/search/search-product-cards}}
+            {{#if showMoreProducts}}
+            <p class="g-search__more"><a href="{{urlSearchProducts}}">{{labelViewMore}} �?{{labelTabProducts}}</a></p>
+            {{/if}}
+          </div>
+          {{/if}}
+
+          {{#if solutions.length}}
+          <div class="g-search__section">
+            <h2 class="g-search__section-label">{{labelSectionUsecases}}</h2>
+            {{> website/search/search-usecase-cards}}
+            {{#if showMoreSolutions}}
+            <p class="g-search__more"><a href="{{urlSearchUsecases}}">{{labelViewMore}} �?{{labelTabUsecases}}</a></p>
+            {{/if}}
+          </div>
+          {{/if}}
+
+          {{#if newsItems.length}}
+          <div class="g-search__section">
+            <h2 class="g-search__section-label">{{labelSectionNews}}</h2>
+            {{> website/search/search-news-cards}}
+            {{#if showMoreNews}}
+            <p class="g-search__more"><a href="{{urlSearchNews}}">{{labelViewMore}} �?{{labelTabNews}}</a></p>
+            {{/if}}
+          </div>
+          {{/if}}
+
+          {{#unless products.length}}{{#unless solutions.length}}{{#unless newsItems.length}}
+          <p class="g-search__empty">{{noResultsHint}}</p>
+          {{/unless}}{{/unless}}{{/unless}}
+
+        {{else if tabProducts}}
+          {{#if products.length}}
+          {{> website/search/search-product-cards}}
+          {{else}}
+          <p class="g-search__empty">{{noResultsHint}}</p>
+          {{/if}}
+          {{#if pagination}}
+          <div class="g-search__pagination">
+            {{> website/common/list-pagination pagination locale=locale}}
+          </div>
+          {{/if}}
+
+        {{else if tabUsecases}}
+          {{#if solutions.length}}
+          {{> website/search/search-usecase-cards}}
+          {{else}}
+          <p class="g-search__empty">{{noResultsHint}}</p>
+          {{/if}}
+          {{#if pagination}}
+          <div class="g-search__pagination">
+            {{> website/common/list-pagination pagination locale=locale}}
+          </div>
+          {{/if}}
+
+        {{else if tabNews}}
+          {{#if newsItems.length}}
+          {{> website/search/search-news-cards}}
+          {{else}}
+          <p class="g-search__empty">{{noResultsHint}}</p>
+          {{/if}}
+          {{#if pagination}}
+          <div class="g-search__pagination">
+            {{> website/common/list-pagination pagination locale=locale}}
+          </div>
+          {{/if}}
+        {{/if}}
+      </div>
+      {{/if}}
+    </section>
+
+    {{> website/common/footer}}
+  </main>
+
+  <script>
+    (function () {
+      var nav = document.querySelector('.g-search-page .pc-nav');
+      if (!nav) return;
+      function onScroll() {
+        nav.classList.toggle('nav-scrolled', window.scrollY > 10);
+      }
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    })();
+  </script>
+</body>
+</html>

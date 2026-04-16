@@ -1,0 +1,283 @@
+/**
+ * 后台公共样式：主题变量、按钮、表单、表格、头部/侧栏等
+ * 被 admin-theme.css 引用，页面只需引入 admin/admin-theme.css 即可
+ */
+/* 后台变量：无阴影，贴近 Ant Design 风格 */
+:root {
+  --admin-bg: #f5f5f5;
+  --admin-sidebar: #001529;
+  --admin-header: #fff;
+  --admin-card: #fff;
+  --admin-border: #d9d9d9;
+  --admin-text: #262626;
+  --admin-text-muted: #8c8c8c;
+  --admin-primary: #ffa418;
+  --admin-primary-hover: #e89310;
+  --admin-danger: #ff4d4f;
+  --admin-radius: 4px;
+  --admin-shadow: none;
+  --admin-shadow-lg: none;
+}
+
+/* 弹窗打开时禁止背景滚动（由 JS 统一加 class） */
+body.admin-scroll-locked {
+  overflow: hidden;
+}
+
+/* ---------- 按钮 ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  font-size: var(--font-size-sm);
+  border-radius: var(--admin-radius);
+  border: 1px solid var(--admin-border);
+  background: var(--admin-card);
+  color: var(--admin-text);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  line-height: 1.2;
+}
+button.btn { appearance: none; }
+.btn:hover {
+  background: var(--admin-bg);
+  border-color: rgba(100, 116, 139, 0.7);
+}
+.btn.btn-primary {
+  background: var(--admin-primary);
+  border-color: var(--admin-primary);
+  color: #fff;
+}
+.btn.btn-primary:hover {
+  background: var(--admin-primary-hover);
+  border-color: var(--admin-primary-hover);
+}
+.btn.btn-danger {
+  background: var(--admin-danger);
+  border-color: var(--admin-danger);
+  color: #fff;
+}
+.btn.btn-danger:hover {
+  filter: brightness(0.95);
+}
+.btn:disabled,
+.btn.is-loading { pointer-events: none; opacity: 0.7; }
+.btn .spinner {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: admin-spin 0.6s linear infinite;
+}
+@keyframes admin-spin { to { transform: rotate(360deg); } }
+
+/* ---------- 表单：输入框、选择框、文本域 ---------- */
+.admin-form .form-group { margin-bottom: 1rem; }
+.admin-form label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--admin-text);
+}
+.admin-form input[type="text"],
+.admin-form input[type="number"],
+.admin-form input[type="url"],
+.admin-form input[type="email"],
+.admin-form input[type="password"],
+.admin-form textarea,
+.admin-form select {
+  width: 100%;
+  max-width: 480px;
+  padding: 0.4rem 0.7rem;
+  font-size: var(--font-size-base);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  box-sizing: border-box;
+}
+.admin-form textarea { min-height: 80px; resize: vertical; }
+.admin-form input:focus,
+.admin-form textarea:focus,
+.admin-form select:focus {
+  outline: none;
+  border-color: var(--admin-primary);
+}
+.admin-form .form-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+.admin-form .form-actions .btn,
+.admin-form .form-actions button.btn { min-width: 96px; margin-right: 0; }
+
+/* 选择框 select */
+.admin-form select {
+  cursor: pointer;
+  background: var(--admin-card);
+}
+
+/* 单选框、多选框 */
+.admin-form input[type="radio"],
+.admin-form input[type="checkbox"] {
+  width: auto;
+  max-width: none;
+  margin-right: 0.35rem;
+  vertical-align: middle;
+  cursor: pointer;
+}
+.admin-form .radio-group,
+.admin-form .checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  align-items: center;
+}
+.admin-form .radio-group label,
+.admin-form .checkbox-group label {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 0;
+  cursor: pointer;
+  font-weight: normal;
+}
+
+/* 输入行（URL + 选择文件按钮 + 预览） */
+.admin-input-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.admin-input-row input[type="text"] {
+  flex: 1;
+  min-width: 260px;
+  max-width: 480px;
+}
+.admin-input-preview {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--admin-radius);
+  border: 1px solid var(--admin-border);
+  background: var(--admin-bg);
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.admin-input-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* 配置内容项：预览区有值时才显示 */
+.content-pic-preview:empty {
+  display: none;
+}
+
+/* ---------- 表格 ---------- */
+.admin-table-wrap {
+  overflow-x: auto;
+  border-radius: var(--admin-radius);
+  border: 1px solid var(--admin-border);
+  background: var(--admin-card);
+}
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+.admin-table th,
+.admin-table td {
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--admin-border);
+}
+.admin-table th {
+  background: #fff;
+  font-weight: 600;
+  color: var(--admin-text);
+}
+.admin-table tbody tr:last-child td { border-bottom: none; }
+.admin-table tbody tr:hover td { background: #fafafa; }
+.admin-table .status-normal { color: #52c41a; }
+.admin-table .status-hidden { color: var(--admin-text-muted); }
+.admin-table .status-top { color: #f89d1b; font-weight: 500; }
+.admin-table .actions a,
+.admin-table .actions button {
+  margin-right: 0.5rem;
+  font-size: var(--font-size-sm);
+  color: var(--admin-primary);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  text-decoration: none;
+}
+.admin-table .actions a:hover,
+.admin-table .actions button:hover { text-decoration: underline; }
+.admin-table-empty {
+  text-align: center;
+  color: var(--admin-text-muted);
+  padding: 2rem;
+}
+
+/* ---------- 页面工具栏（列表页头部） ---------- */
+.admin-page-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+/* 筛选 + 操作按钮同一行，避免「批量翻译」等单独换行；窄屏可横向滚动 */
+.admin-page-toolbar__row {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  max-width: 100%;
+  /* 不可对整行设 overflow-x: auto：纵轴会变成 auto，裁切 .admin-tree-select 绝对定位下拉 */
+  overflow: visible;
+  -webkit-overflow-scrolling: touch;
+}
+.admin-page-toolbar__row > label {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.admin-page-toolbar__row > .btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.admin-page-toolbar .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  font-size: var(--font-size-sm);
+  border-radius: var(--admin-radius);
+  border: 1px solid var(--admin-border);
+  background: var(--admin-card);
+  color: var(--admin-text);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s;
+}
+.admin-page-toolbar .btn:hover { background: var(--admin-bg); }
+.admin-page-toolbar .btn.btn-primary {
+  background: var(--admin-primary);
+  border-color: var(--admin-primary);
+  color: #fff;
+}
+.admin-page-toolbar .btn.btn-primary:hover {
+  background: var(--admin-primary-hover);
+}

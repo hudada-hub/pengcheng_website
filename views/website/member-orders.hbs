@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="{{locale}}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  {{#if description}}<meta name="description" content="{{description}}">{{/if}}
+  {{#if keywords}}<meta name="keywords" content="{{keywords}}">{{/if}}
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/bootstrap-grid.css">
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/grid.css">
+  <link rel="stylesheet" href="/css/global/common-global.css">
+  <link rel="stylesheet" href="/css/global/member-orders.css">
+  
+  <link rel="stylesheet" href="/css/exo.css">
+</head>
+<body class="g-member-page" data-base-path="{{basePath}}">
+  {{> website/common/nav-drawer}}
+  {{> website/common/header}}
+
+  <main class="g-main g-member-main">
+    <div class="container member-orders-layout">
+      <!-- 左侧菜单 -->
+      <aside class="member-sidebar">
+        <div class="member-user-info">
+          <div class="member-avatar">
+            <iconify-icon icon="mdi:account-circle" class="avatar-svg"></iconify-icon>
+          </div>
+          <div class="member-user-details">
+            <h3 class="member-user-name">{{memberEmail}}</h3>
+            <p class="member-user-id">ID:{{memberId}}</p>
+          </div>
+        </div>
+        <nav class="member-menu">
+          <a href="{{basePath}}/member/orders" class="member-menu-item active">
+            <iconify-icon icon="mdi:cart-outline"></iconify-icon>
+            <span>{{texts.text_1}}</span>
+          </a>
+          <a href="{{basePath}}/member/security" class="member-menu-item">
+            <iconify-icon icon="mdi:shield-account-outline"></iconify-icon>
+            <span>{{texts.text_2}}</span>
+          </a>
+        </nav>
+      </aside>
+
+      <!-- 右侧内容 -->
+      <section class="member-content">
+        <h1 class="member-page-title">{{texts.text_1}}({{orderList.length}})</h1>
+        
+        {{#if orderList.length}}
+        <div class="orders-table-wrap">
+          <table class="orders-table">
+            <thead>
+              <tr>
+                <th class="col-item">{{texts.text_4}}</th>
+                <th class="col-order-no">{{texts.text_5}}</th>
+                <th class="col-time">{{texts.text_6}}</th>
+                {{!-- <th class="col-action"></th> --}}
+              </tr>
+            </thead>
+            <tbody>
+              {{#each orderList}}
+              <tr class="order-row" data-order-id="{{this.id}}">
+                <td class="col-item">
+                  <div class="order-items">
+                    {{#each this.items}}
+                    <div class="order-product">
+                      <div class="product-thumb">
+                        {{#if this.thumbUrl}}
+                        <img src="{{this.thumbUrl}}" alt="{{this.productName}}">
+                        {{else}}
+                        <div class="product-thumb-placeholder">
+                          <iconify-icon icon="mdi:image-outline"></iconify-icon>
+                        </div>
+                        {{/if}}
+                      </div>
+                      <div class="product-info">
+                        <h4 class="product-name">{{this.productName}}</h4>
+                        {{#if this.productModel}}
+                        <p class="product-model">{{this.productModel}}</p>
+                        {{/if}}
+                        {{#if this.attributes.length}}
+                        <div class="product-attrs">
+                          {{#each this.attributes}}
+                          <span class="product-attr">{{this.categoryTitle}}: {{this.valueTitle}}</span>
+                          {{/each}}
+                        </div>
+                        {{/if}}
+                      </div>
+                    </div>
+                    {{/each}}
+                  </div>
+                </td>
+                <td class="col-order-no">
+                  <span class="order-number">{{this.orderNumber}}</span>
+                </td>
+                <td class="col-time">
+                  <span class="order-time">{{this.createdAtLabel}}</span>
+                </td>
+                {{!-- <td class="col-action">
+                  <button type="button" class="order-delete-btn" data-order-id="{{this.id}}" title="{{../texts.text_7}}">
+                    <iconify-icon icon="mdi:delete-outline"></iconify-icon>
+                  </button>
+                </td> --}}
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+        {{else}}
+        <div class="orders-empty">
+          <iconify-icon icon="mdi:cart-outline" class="empty-icon"></iconify-icon>
+          <p>{{#if isDomestic}}暂无订单记录{{else}}No orders yet{{/if}}</p>
+        </div>
+        {{/if}}
+
+        {{#if pagination}}
+        {{> website/common/list-pagination pagination=pagination locale=locale}}
+        {{/if}}
+      </section>
+    </div>
+    {{> website/common/footer}}
+  </main>
+
+  <!-- 删除确认弹窗 -->
+  <div class="delete-modal" id="deleteModal" style="display:none;">
+    <div class="delete-modal-content">
+      <button type="button" class="delete-modal-close" id="closeDeleteModal">
+        <iconify-icon icon="mdi:close"></iconify-icon>
+      </button>
+      <div class="delete-modal-header">
+        <div class="delete-modal-icon">
+          <iconify-icon icon="mdi:alert-circle"></iconify-icon>
+        </div>
+        <h3 class="delete-modal-title">{{texts.text_7}}</h3>
+      </div>
+      <p class="delete-modal-desc">{{texts.text_8}}</p>
+      <div class="delete-modal-actions">
+        <button type="button" class="btn-confirm" id="confirmDelete">{{texts.text_9}}</button>
+        <button type="button" class="btn-cancel" id="cancelDelete">{{texts.text_10}}</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/iconify-icon.min.js"></script>
+  <script>
+    (function() {
+      // 删除订单功能
+      let deleteOrderId = null;
+      const deleteModal = document.getElementById('deleteModal');
+      const confirmBtn = document.getElementById('confirmDelete');
+      const cancelBtn = document.getElementById('cancelDelete');
+      const closeBtn = document.getElementById('closeDeleteModal');
+
+      function closeModal() {
+        deleteModal.style.display = 'none';
+        deleteOrderId = null;
+      }
+
+      // 点击删除按钮
+      document.querySelectorAll('.order-delete-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          deleteOrderId = this.dataset.orderId;
+          deleteModal.style.display = 'flex';
+        });
+      });
+
+      // 确认删除
+      confirmBtn.addEventListener('click', async function() {
+        if (!deleteOrderId) return;
+        
+        try {
+          const response = await fetch('/api/member/orders/' + deleteOrderId, {
+            method: 'DELETE'
+          });
+          
+          if (response.ok) {
+            // 删除成功，刷新页面
+            window.location.reload();
+          } else {
+            alert('Delete failed');
+          }
+        } catch (error) {
+          alert('Network error');
+        }
+        
+        closeModal();
+      });
+
+      // 取消删除
+      cancelBtn.addEventListener('click', closeModal);
+
+      // 关闭按钮
+      closeBtn.addEventListener('click', closeModal);
+
+      // 点击遮罩关闭
+      deleteModal.addEventListener('click', function(e) {
+        if (e.target === deleteModal) {
+          deleteModal.style.display = 'none';
+          deleteOrderId = null;
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

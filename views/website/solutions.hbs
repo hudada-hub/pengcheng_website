@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="{{locale}}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  {{#if description}}<meta name="description" content="{{description}}">{{/if}}
+  {{#if keywords}}<meta name="keywords" content="{{keywords}}">{{/if}}
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/bootstrap-grid.css">
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/grid.css">
+  <link rel="stylesheet" href="/css/global/common-global.css">
+  <link rel="stylesheet" href="/css/global/products-global.css">
+  <link rel="stylesheet" href="/css/global/solutions-global.css">
+  <link rel="stylesheet" href="/css/other/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/exo.css">
+</head>
+<body class="g-products-page g-solutions-page">
+  {{> website/common/nav-drawer}}
+  {{> website/common/header}}
+
+  <main class="g-main">
+    {{> website/solutions/banner}}
+    {{> website/solutions/breadcrumb}}
+    <div class="g-products-layout">
+      <div class="container g-products-layout__inner">
+        <!-- DEBUG: configTexts={{configTexts}} -->
+        {{> website/solutions/category-sidebar}}
+        {{> website/solutions/solution-list}}
+      </div>
+    </div>
+    {{> website/common/footer}}
+  </main>
+
+  <script src="/js/wow.min.js"></script>
+  <script src="/js/solutions.js"></script>
+  <script>
+    (function () {
+      if (typeof WOW === 'function') {
+        window.wow = new WOW({ boxClass: 'wow', animateClass: 'animated', offset: 0, mobile: true, live: true });
+        window.wow.init();
+      }
+    })();
+  </script>
+</body>
+</html>

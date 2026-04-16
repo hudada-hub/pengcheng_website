@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} - 鹏成后台</title>
+  <meta name="csrf-token" content="{{csrfToken}}">
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/admin/admin-theme.css">
+  <script src="/js/iconify-icon.min.js"></script>
+  <script src="/js/admin-file-manager.js"></script>
+</head>
+<body class="admin-layout">
+  {{> admin/header}}
+  <div class="admin-body">
+    {{> admin/sidebar}}
+    <main class="admin-main">
+      <div class="admin-page-toolbar">
+           <div>
+          <h1 style="margin:0;">{{title}}</h1>
+          <div style="font-size:var(--font-size-sm);color:var(--admin-text-muted);margin:0.25rem 0;">排序数字越大，在列表中显示越靠前</div>
+        </div>
+      
+        <div class="admin-page-toolbar__row">
+          <label style="font-size:var(--font-size-sm);color:var(--admin-text-muted);">语言</label>
+          <select id="productLangId" style="max-width:220px;">
+            <option value="all" {{#if (eq selectedLangId '')}}selected{{/if}}>全部</option>
+            {{#each langs}}
+              <option value="{{this.id}}" {{#if (eq this.id ../selectedLangId)}}selected{{/if}}>{{this.name}} ({{this.code}})</option>
+            {{/each}}
+          </select>
+          <label style="font-size:var(--font-size-sm);color:var(--admin-text-muted);">产品分类</label>
+          <div class="admin-tree-select" id="productListCategoryTreeSelect" style="max-width:200px; position: relative;">
+            <input type="hidden" id="productListCategoryId" value="{{selectedCategoryIdNum}}">
+            <div class="admin-tree-select__trigger{{#if selectedCategoryIdNum}} has-value{{/if}}" id="productListCategoryTrigger" style="max-width:200px;">
+              <span class="admin-tree-select__placeholder">{{#if selectedCategoryIdNum}}{{#each categories}}{{#if (eq this.id ../selectedCategoryIdNum)}}{{this.name}}{{/if}}{{/each}}{{else}}请选择{{/if}}</span>
+              <iconify-icon icon="mdi:chevron-down" class="admin-tree-select__arrow"></iconify-icon>
+            </div>
+            <div class="admin-tree-select__dropdown" id="productListCategoryDropdown">
+              <div class="admin-tree-select__search">
+                <input type="text" placeholder="搜索分类..." class="admin-tree-select__search-input" id="productListCategorySearch">
+              </div>
+              <div class="admin-tree-select__content" id="productListCategoryContent">
+                {{#each categories}}
+                  <div class="admin-tree-select__item" data-id="{{this.id}}" data-level="{{this.level}}" data-parent-id="{{this.parentId}}">
+                    {{#if (gt this.level 0)}}
+                      <span class="admin-tree-select__indent" style="width: {{multiply this.level 20}}px;"></span>
+                      <iconify-icon icon="mdi:arrow-bottom-right" class="admin-tree-select__icon"></iconify-icon>
+                    {{/if}}
+                    <span class="admin-tree-select__label">{{this.name}}{{#if this.lang}} ({{this.lang.code}}){{/if}}</span>
+                  </div>
+                {{/each}}
+              </div>
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary" id="btnProductAdd"><iconify-icon icon="mdi:plus"></iconify-icon> 新增</button>
+          <button type="button" class="btn btn-secondary" id="btnProductBatchDelete" style="margin-left:0.25rem;"><iconify-icon icon="mdi:delete-sweep"></iconify-icon> 批量删除</button>
+          <button type="button" class="btn btn-primary" id="btnProductBatchTranslate" style="margin-left:0.25rem;" disabled><iconify-icon icon="mdi:translate"></iconify-icon> 批量翻译</button>
+        </div>
+      </div>
+      <form id="productBatchDeleteForm" method="post" action="/admin/products/batch-delete" style="display:none;">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      </form>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th style="width:2.5rem;">
+                <input type="checkbox" id="productSelectAll" title="全选" aria-label="全选">
+              </th>
+              <th>ID</th>
+              <th>缩略图</th>
+              <th>产品名称</th>
+              <th>型号</th>
+              <th>排序</th>
+              <th id="productLangTh" style="{{#if (eq selectedLangId '')}}display:table-cell;{{else}}display:none;{{/if}}">语言</th>
+              <th>分类</th>
+              <th>状态</th>
+              <th style="width:180px;">操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each productList}}
+            <tr>
+              <td><input type="checkbox" class="product-row-cb" value="{{this.id}}" aria-label="选择"></td>
+              <td>{{this.id}}</td>
+              <td>{{#if this.thumbUrl}}<img src="{{this.thumbUrl}}" data-image-preview="{{this.thumbUrl}}" alt="" class="product-list-thumb admin-thumb-clickable" style="max-width:60px;max-height:60px;object-fit:cover;">{{else}}-{{/if}}</td>
+              <td>{{this.name}}</td>
+              <td>{{this.model}}{{#unless this.model}}-{{/unless}}</td>
+              <td>
+                <input type="number" class="product-sort-input" data-id="{{this.id}}" value="{{this.sort}}" min="0" style="width:60px;">
+              </td>
+              <td class="product-lang-cell" style="{{#if (eq ../selectedLangId '')}}display:table-cell;{{else}}display:none;{{/if}}">{{#if this.lang}}{{this.lang.name}} ({{this.lang.code}}){{else}}-{{/if}}</td>
+              <td>{{#if this.category}}{{this.category.name}}{{else}}-{{/if}}</td>
+              <td>{{#if (eq this.status 1)}}<span class="status-normal">正常</span>{{else}}<span class="status-hidden">隐藏</span>{{/if}}</td>
+              <td class="actions">
+                <a href="#" class="product-edit-link" data-id="{{this.id}}">编辑</a>
+                <a href="#" class="product-translate-link" data-id="{{this.id}}">一键翻译</a>
+                <button type="button" class="btn-link product-delete-btn" data-id="{{this.id}}" data-popconfirm="确定删除该产品吗？">删除</button>
+              </td>
+            </tr>
+            {{else}}
+            <tr><td colspan="10" style="text-align:center;color:var(--admin-text-muted);">暂无数据</td></tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+      {{#if pagination}}
+      <div class="admin-pagination-wrap" style="margin-top:1rem;">
+        {{> admin/pagination currentPage=pagination.currentPage totalPages=pagination.totalPages baseUrl=pagination.baseUrl}}
+      </div>
+      {{/if}}
+    </main>
+  </div>
+  {{> admin/modal-form title="产品"}}
+  {{> admin/file-manager-modal}}
+  {{> admin/product-params-univer-modal}}
+  {{> admin/translate-modal idPrefix="productTranslate"}}
+  {{!-- 批量翻译弹窗：勾选目标语言后提交 --}}
+  <div id="productBatchTranslateModalOverlay" class="admin-modal-overlay admin-translate-modal-overlay" aria-hidden="true">
+    <div class="admin-modal-dialog admin-translate-modal" role="dialog" aria-modal="true" aria-labelledby="productBatchTranslateModalTitle">
+      <div class="admin-translate-modal-header">
+        <h2 class="admin-translate-modal-title" id="productBatchTranslateModalTitle">批量翻译</h2>
+        <button type="button" class="admin-translate-modal-close" id="productBatchTranslateModalClose" aria-label="关闭">
+          <iconify-icon icon="mdi:close"></iconify-icon>
+        </button>
+      </div>
+      <div class="admin-translate-modal-body" id="productBatchTranslateModalBody">
+        <p style="margin-bottom:0.5rem;">选择要翻译成的语言（可多选）：</p>
+        <div style="max-height:200px;overflow:auto;">
+          {{#each langs}}
+          <label style="display:block;margin-bottom:0.25rem;"><input type="checkbox" class="product-batch-translate-lang-cb" value="{{this.id}}"> {{this.name}} ({{this.code}})</label>
+          {{/each}}
+        </div>
+      </div>
+      <div class="admin-translate-modal-footer">
+        <div class="admin-translate-modal-actions">
+          <button type="button" class="btn btn-secondary" id="productBatchTranslateModalCancel">取消</button>
+          <button type="button" class="btn btn-primary" id="productBatchTranslateModalSubmit">开始翻译</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{> admin/image-preview-modal}}
+  {{> admin/confirm-modal}}
+  <link rel="stylesheet" href="/js/univerjs/index.css" />
+  <script src="/js/univerjs/react.production.min.js"></script>
+  <script src="/js/univerjs/react-dom.production.min.js"></script>
+  <script src="/js/univerjs/rxjs.umd.min.js"></script>
+  <script src="/js/univerjs/echarts.min.js"></script>
+  <script src="/js/univerjs/presets-index.js"></script>
+  <script src="/js/univerjs/preset-sheets-core-index.js"></script>
+  <script src="/js/univerjs/zh-CN.js"></script>
+  <script>
+    (function () {
+      var overlay = document.getElementById('productParamsUniverOverlay');
+      var confirmBtn = document.getElementById('productParamsUniverConfirm');
+      var cancelBtn = document.getElementById('productParamsUniverCancel');
+      var closeBtn = document.getElementById('productParamsUniverClose');
+      function closeUniverModal() {
+        if (overlay) { overlay.classList.remove('open'); overlay.setAttribute('aria-hidden', 'true'); }
+      }
+      function openUniverModal(dataJsonString, onConfirm) {
+        if (!overlay) return;
+        overlay.classList.add('open');
+        overlay.setAttribute('aria-hidden', 'false');
+        window._productParamsExcelOnConfirm = onConfirm;
+        if (!window.UniverPresets || !window.UniverCore || !window.UniverPresetSheetsCore) {
+          console.warn('Univer 未加载');
+          return;
+        }
+        if (!window._productParamsUniverAPI) {
+          try {
+            var createUniver = window.UniverPresets.createUniver;
+            var LocaleType = window.UniverCore.LocaleType;
+            var mergeLocales = window.UniverCore.mergeLocales;
+            var UniverSheetsCorePreset = window.UniverPresetSheetsCore.UniverSheetsCorePreset;
+            var UniverPresetSheetsCoreZhCN = window.UniverPresetSheetsCoreZhCN || window.UniverPresetSheetsCore['zh-CN'] || {};
+            window._productParamsUniverAPI = createUniver({
+              locale: LocaleType.ZH_CN,
+              locales: { [LocaleType.ZH_CN]: mergeLocales(UniverPresetSheetsCoreZhCN) },
+              presets: [UniverSheetsCorePreset({ container: document.getElementById('app') })],
+            }).univerAPI;
+          } catch (e) {
+            console.error('Univer init', e);
+            closeUniverModal();
+            return;
+          }
+        }
+        var univerAPI = window._productParamsUniverAPI;
+        function doCreateAndFill() {
+          try {
+            var wb = univerAPI.getActiveWorkbook();
+            if (wb) {
+              var unitId = wb.getId();
+              if (unitId) univerAPI.disposeUnit(unitId);
+            }
+          } catch (e) { /* 无工作簿或已销毁 */ }
+          /* 支持两种格式：1) IWorkbookData 完整快照（含样式） 2) 纯二维数组（仅文字，兼容旧数据） */
+          var raw = (dataJsonString || '').trim();
+          var workbookData = null;
+          if (raw) {
+            try {
+              var p = JSON.parse(raw);
+              if (typeof p === 'string') p = JSON.parse(p);
+              if (p && typeof p === 'object' && p.sheets && p.sheetOrder && Array.isArray(p.sheetOrder)) {
+                p.id = 'product-params-' + Date.now();
+                workbookData = p;
+              } else if (Array.isArray(p) && p.length) {
+                var data = Array.isArray(p[0]) ? p : [p];
+                var rows = data.length;
+                var cols = Math.max.apply(null, data.map(function (r) { return (r && r.length) || 0; })) || 1;
+                var valuesToSet = data.map(function (r) {
+                  var row = [];
+                  for (var c = 0; c < cols; c++) row.push(String((r && r[c]) != null ? r[c] : ''));
+                  return row;
+                });
+                var cellData = {};
+                for (var r = 0; r < rows; r++) {
+                  cellData[r] = {};
+                  for (var c = 0; c < cols; c++) cellData[r][c] = { v: valuesToSet[r][c] };
+                }
+                var sheetId = 'sheet1';
+                workbookData = {
+                  id: 'product-params-' + Date.now(),
+                  name: 'Sheet1',
+                  sheetOrder: [sheetId],
+                  sheets: {}
+                };
+                workbookData.sheets[sheetId] = { id: sheetId, name: 'Sheet1', cellData: cellData };
+              }
+            } catch (e) {}
+          }
+          if (!workbookData) {
+            workbookData = {
+              id: 'product-params-' + Date.now(),
+              name: 'Sheet1',
+              sheetOrder: ['sheet1'],
+              sheets: { sheet1: { id: 'sheet1', name: 'Sheet1', cellData: { 0: { 0: { v: '' } } } } }
+            };
+          }
+          try {
+            univerAPI.createWorkbook(workbookData);
+          } catch (e) {
+            console.warn('Univer createWorkbook', e);
+            closeUniverModal();
+            return;
+          }
+        }
+        try {
+          if (univerAPI.getActiveWorkbook()) {
+            setTimeout(doCreateAndFill, 120);
+          } else {
+            doCreateAndFill();
+          }
+        } catch (e) {
+          doCreateAndFill();
+        }
+      }
+      window.openProductParamsExcelModal = openUniverModal;
+      if (confirmBtn) confirmBtn.onclick = function () {
+        var onConfirm = window._productParamsExcelOnConfirm;
+        if (window._productParamsUniverAPI && onConfirm) {
+          try {
+            var wb = window._productParamsUniverAPI.getActiveWorkbook();
+            if (!wb) { onConfirm(JSON.stringify([['']])); closeUniverModal(); return; }
+            var snapshot = wb.save();
+            if (snapshot && typeof snapshot === 'object' && snapshot.sheets) {
+              onConfirm(JSON.stringify(snapshot));
+            } else {
+              var sheet = wb.getActiveSheet();
+              var range = sheet.getRange(0, 0, 999, 19);
+              var values = range.getValues();
+              var maxR = 0, maxC = 0;
+              for (var r = 0; r < (values && values.length) || 0; r++) {
+                for (var c = 0; c < ((values[r] && values[r].length) || 0); c++) {
+                  var v = values[r][c];
+                  if (v != null && v !== '') { maxR = Math.max(maxR, r + 1); maxC = Math.max(maxC, c + 1); }
+                }
+              }
+              var trimmed = [];
+              for (var r = 0; r < maxR; r++) {
+                trimmed.push([]);
+                for (var c = 0; c < maxC; c++) trimmed[r].push((values[r] && values[r][c] != null) ? values[r][c] : '');
+              }
+              onConfirm(maxR && maxC ? JSON.stringify(trimmed) : JSON.stringify([['']]));
+            }
+          } catch (e) { console.warn(e); onConfirm(JSON.stringify([['']])); }
+        }
+        closeUniverModal();
+      };
+      if (cancelBtn) cancelBtn.onclick = closeUniverModal;
+      if (closeBtn) closeBtn.onclick = closeUniverModal;
+      if (overlay) overlay.onclick = function (e) { if (e.target === overlay) closeUniverModal(); };
+    })();
+  </script>
+  <script>
+    (function () {
+      var csrfToken = document.querySelector('meta[name="csrf-token"]') ? document.querySelector('meta[name="csrf-token"]').getAttribute('content') : '';
+      var formOverlay = document.getElementById('adminModalFormOverlay');
+      var formModalBody = document.querySelector('.admin-modal-form-body');
+      var formModalTitle = document.getElementById('adminModalFormTitle');
+
+      function openFormModal(titleText, formUrl) {
+        if (!formOverlay || !formModalBody) return;
+        formModalTitle.textContent = titleText;
+        formModalBody.innerHTML = '<p style="text-align:center;color:var(--admin-text-muted);">加载中...</p>';
+        formOverlay.classList.add('open');
+        formOverlay.setAttribute('aria-hidden', 'false');
+        fetch(formUrl, { credentials: 'same-origin' })
+          .then(function (r) { return r.text(); })
+          .then(function (html) {
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(html, 'text/html');
+            var frag = doc.getElementById('admin-form-fragment');
+            
+            // 提取 HTML 和脚本
+            var contentHtml = frag ? frag.innerHTML : html;
+            var scripts = frag ? frag.querySelectorAll('script') : doc.querySelectorAll('script');
+            
+            // 先插入 HTML 内容
+            formModalBody.innerHTML = contentHtml;
+            
+            // 手动执行脚本（因为 innerHTML 不会执行 script 标签）
+            for (var i = 0; i < scripts.length; i++) {
+              var script = scripts[i];
+              if (script.src) {
+                // 外部脚本
+                var newScript = document.createElement('script');
+                newScript.src = script.src;
+                if (script.type) newScript.type = script.type;
+                document.head.appendChild(newScript);
+              } else if (script.textContent) {
+                // 内联脚本
+                try {
+                  eval(script.textContent);
+                } catch (e) {
+                  console.error('执行脚本失败:', e, script.textContent);
+                }
+              }
+            }
+            
+            var _form = formModalBody.querySelector('form');
+            if (_form) { var _inp = document.createElement('input'); _inp.type = 'hidden'; _inp.name = 'returnUrl'; _inp.value = window.location.href; _form.appendChild(_inp); }
+            var cancelBtn = formModalBody.querySelector('.admin-modal-form-cancel');
+            if (cancelBtn) cancelBtn.onclick = closeFormModal;
+            bindProductFormPickers(formModalBody);
+          })
+          .catch(function () { formModalBody.innerHTML = '<p style="color:var(--admin-danger);">加载失败</p>'; });
+      }
+      function closeFormModal() {
+        if (formOverlay) { formOverlay.classList.remove('open'); formOverlay.setAttribute('aria-hidden', 'true'); }
+      }
+      function bindProductFormPickers(container) {
+        if (!container || !window.AdminFileManager || !window.AdminFileManager.open) return;
+        var thumbBtn = container.querySelector('#productBtnPickThumb');
+        var thumbInput = container.querySelector('#productThumbUrl');
+        var thumbPreview = container.querySelector('#productThumbPreview');
+        if (thumbBtn && thumbInput && thumbPreview) thumbBtn.onclick = function () { window.AdminFileManager.open({ type: 'image', targetInput: thumbInput, targetPreview: thumbPreview }); };
+        var bannerBtn = container.querySelector('#productBtnPickBanner');
+        var bannerInput = container.querySelector('#productBannerUrl');
+        var bannerPreview = container.querySelector('#productBannerPreview');
+        if (bannerBtn && bannerInput && bannerPreview) bannerBtn.onclick = function () { window.AdminFileManager.open({ type: 'image', targetInput: bannerInput, targetPreview: bannerPreview }); };
+        (function initMainPics(cont) {
+          if (!cont) return;
+          var input = cont.querySelector('#productMainPicsInput');
+          var listEl = cont.querySelector('#productMainPicsList');
+          var addBtn = cont.querySelector('#productBtnAddMainPic');
+          if (!input || !listEl) return;
+          function getArr() {
+            var val = (input.value || '').trim();
+            if (!val) return [];
+            try {
+              var p = JSON.parse(val);
+              return Array.isArray(p) ? p.map(function (s) { return String(s || '').trim(); }).filter(Boolean) : val.split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+            } catch (e) {
+              return val.split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+            }
+          }
+          function setArr(arr) {
+            input.value = JSON.stringify(arr);
+            var html = '';
+            arr.forEach(function (url, i) {
+              var safeUrl = String(url).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            html += '<div class="product-main-pics-item" data-index="' + i + '"><img src="' + safeUrl + '" alt=""><button type="button" class="product-main-pics-remove" aria-label="删除" title="删除">×</button></div>';
+            });
+            listEl.innerHTML = html;
+          }
+          listEl.onclick = function (e) {
+            var btn = e.target && e.target.classList && e.target.classList.contains('product-main-pics-remove') ? e.target : null;
+            if (!btn) return;
+            var item = btn.closest('.product-main-pics-item');
+            if (!item) return;
+            var idx = parseInt(item.getAttribute('data-index'), 10);
+            var arr = getArr();
+            if (idx >= 0 && idx < arr.length) { arr.splice(idx, 1); setArr(arr); }
+          };
+          if (addBtn) addBtn.onclick = function () {
+            window.AdminFileManager.open({ type: 'image', callback: function (url) {
+              var arr = getArr();
+              arr.push(url);
+              setArr(arr);
+            } });
+          };
+          setArr(getArr());
+        })(container);
+        (function initProductFeatures(cont) {
+          if (!cont) return;
+          var container = cont.querySelector('#productFeaturesList');
+          var hidden = cont.querySelector('#productFeaturesInput');
+          var btnAdd = cont.querySelector('#productBtnAddFeature');
+          if (!container || !hidden) {
+            console.error('产品特点初始化失败：', { container, hidden, btnAdd });
+            return;
+          }
+
+          var data = {};
+          try { data = JSON.parse(hidden.value || '{}'); } catch (e) { data = {}; }
+          if (typeof data !== 'object' || data === null || Array.isArray(data)) data = {};
+
+          function saveToHidden() {
+            hidden.value = JSON.stringify(data);
+          }
+
+          function render() {
+            container.innerHTML = '';
+            Object.keys(data).forEach(function (key) {
+              var group = document.createElement('div');
+              group.className = 'product-features-group';
+              group.style.cssText = 'margin:12px 0;padding:12px;background:var(--admin-bg);border-radius:var(--admin-radius);';
+
+              var header = document.createElement('div');
+              header.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:8px;';
+
+              var keyInput = document.createElement('input');
+              keyInput.type = 'text';
+              keyInput.value = key;
+              keyInput.placeholder = '分类名称';
+              keyInput.style.cssText = 'flex:1;min-width:0;';
+              keyInput.dataset.originalKey = key;
+              
+              keyInput.addEventListener('input', function () {
+                var newKey = keyInput.value.trim();
+                var originalKey = keyInput.dataset.originalKey;
+                if (newKey && newKey !== originalKey) {
+                  data[newKey] = data[originalKey];
+                  delete data[originalKey];
+                  keyInput.dataset.originalKey = newKey;
+                  saveToHidden();
+                }
+              });
+
+              var keyBtnDel = document.createElement('button');
+              keyBtnDel.type = 'button';
+              keyBtnDel.className = 'btn btn-sm btn-secondary';
+              keyBtnDel.textContent = '删除分类';
+              keyBtnDel.addEventListener('click', function () {
+                if (confirm('确定删除该分类？')) {
+                  var originalKey = keyInput.dataset.originalKey;
+                  delete data[originalKey];
+                  saveToHidden();
+                  render();
+                }
+              });
+
+              header.appendChild(keyInput);
+              header.appendChild(keyBtnDel);
+
+              var arr = data[key];
+              if (!Array.isArray(arr)) arr = [];
+
+              var items = document.createElement('div');
+              items.style.cssText = 'display:flex;flex-direction:column;gap:6px;';
+
+              arr.forEach(function (item, idx) {
+                var itemRow = document.createElement('div');
+                itemRow.style.cssText = 'display:flex;align-items:center;gap:6px;';
+
+                var itemInput = document.createElement('input');
+                itemInput.type = 'text';
+                itemInput.value = item;
+                itemInput.placeholder = '特性内容';
+                itemInput.style.cssText = 'flex:1;min-width:0;';
+                itemInput.dataset.index = idx;
+                itemInput.dataset.originalKey = key;
+                
+                itemInput.addEventListener('input', function () {
+                  var currentKey = itemInput.dataset.originalKey;
+                  var index = parseInt(itemInput.dataset.index, 10);
+                  if (data[currentKey] && Array.isArray(data[currentKey])) {
+                    data[currentKey][index] = itemInput.value.trim();
+                    saveToHidden();
+                  }
+                });
+
+                var itemBtnDel = document.createElement('button');
+                itemBtnDel.type = 'button';
+                itemBtnDel.className = 'btn btn-sm btn-secondary';
+                itemBtnDel.textContent = '删除';
+                itemBtnDel.addEventListener('click', function () {
+                  var currentKey = itemInput.dataset.originalKey;
+                  var index = parseInt(itemInput.dataset.index, 10);
+                  if (data[currentKey] && Array.isArray(data[currentKey])) {
+                    data[currentKey].splice(index, 1);
+                    saveToHidden();
+                    render();
+                  }
+                });
+
+                itemRow.appendChild(itemInput);
+                itemRow.appendChild(itemBtnDel);
+                items.appendChild(itemRow);
+              });
+
+              var btnAddItem = document.createElement('button');
+              btnAddItem.type = 'button';
+              btnAddItem.className = 'btn btn-secondary btn-sm';
+              btnAddItem.textContent = '新增特性';
+              btnAddItem.style.cssText = 'margin-top:6px;';
+              btnAddItem.addEventListener('click', function () {
+                arr.push('');
+                saveToHidden();
+                render();
+              });
+
+              group.appendChild(header);
+              group.appendChild(items);
+              group.appendChild(btnAddItem);
+              container.appendChild(group);
+            });
+
+            if (Object.keys(data).length === 0) {
+              container.innerHTML = '<div style="color:var(--admin-text-muted);padding:8px 0;">暂无特点分类，请点击「新增分类」添加。</div>';
+            }
+          }
+
+          if (btnAdd) {
+            btnAdd.addEventListener('click', function () {
+              var newKey = '新分类' + (Object.keys(data).length + 1);
+              data[newKey] = [];
+              saveToHidden();
+              render();
+            });
+          }
+
+          render();
+        })(container);
+        (function initSummaryList(cont) {
+          if (!cont) return;
+          var input = cont.querySelector('#productSummaryInput');
+          var listEl = cont.querySelector('#productSummaryList');
+          var addBtn = cont.querySelector('#productBtnAddSummary');
+          if (!input || !listEl) return;
+          function getArr() {
+            var val = (input.value || '').trim();
+            if (!val) return [];
+            try {
+              var p = JSON.parse(val);
+              return Array.isArray(p) ? p.map(function (s) { return String(s ?? ''); }) : [];
+            } catch (e) { return []; }
+          }
+          function setArr(arr) {
+            input.value = JSON.stringify(arr);
+            var html = '';
+            arr.forEach(function (val, i) {
+              var v = (val || '').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+              html += '<div class="product-array-item"><input type="text" class="product-array-input" data-index="' + i + '" value="' + v + '" placeholder="卖点说明' + (i + 1) + '"><button type="button" class="product-array-remove" aria-label="删除">×</button></div>';
+            });
+            listEl.innerHTML = html;
+            listEl.querySelectorAll('.product-array-input').forEach(function (inp) {
+              inp.oninput = inp.onchange = function () { syncFromInputs(); };
+            });
+          }
+          function syncFromInputs() {
+            var inputs = listEl.querySelectorAll('.product-array-input');
+            var arr = [];
+            inputs.forEach(function (inp) { arr.push((inp.value || '').trim()); });
+            input.value = JSON.stringify(arr);
+          }
+          listEl.onclick = function (e) {
+            if (!e.target || !e.target.classList.contains('product-array-remove')) return;
+            var row = e.target.closest('.product-array-item');
+            if (row) { row.remove(); syncFromInputs(); }
+          };
+          if (addBtn) addBtn.onclick = function () { var arr = getArr(); arr.push(''); setArr(arr); };
+          setArr(getArr());
+        })(container);
+        (function initCoreParamsList(cont) {
+          if (!cont) return;
+          var input = cont.querySelector('#productCoreParamsInput');
+          var listEl = cont.querySelector('#productCoreParamsList');
+          var addBtn = cont.querySelector('#productBtnAddCoreParam');
+          if (!input || !listEl) return;
+          function getArr() {
+            var val = (input.value || '').trim();
+            if (!val) return [];
+            try {
+              var p = JSON.parse(val);
+              return Array.isArray(p) ? p.map(function (s) { return String(s ?? ''); }) : [];
+            } catch (e) { return []; }
+          }
+          function setArr(arr) {
+            input.value = JSON.stringify(arr);
+            var html = '';
+            arr.forEach(function (val, i) {
+              var v = (val || '').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+              html += '<div class="product-array-item"><input type="text" class="product-array-input" data-index="' + i + '" value="' + v + '" placeholder="参数' + (i + 1) + '"><button type="button" class="product-array-remove" aria-label="删除">×</button></div>';
+            });
+            listEl.innerHTML = html;
+            listEl.querySelectorAll('.product-array-input').forEach(function (inp) {
+              inp.oninput = inp.onchange = function () { syncFromInputs(); };
+            });
+          }
+          function syncFromInputs() {
+            var inputs = listEl.querySelectorAll('.product-array-input');
+            var arr = [];
+            inputs.forEach(function (inp) { arr.push((inp.value || '').trim()); });
+            input.value = JSON.stringify(arr);
+          }
+          listEl.onclick = function (e) {
+            if (!e.target || !e.target.classList.contains('product-array-remove')) return;
+            var row = e.target.closest('.product-array-item');
+            if (row) { row.remove(); syncFromInputs(); }
+          };
+          if (addBtn) addBtn.onclick = function () { var arr = getArr(); arr.push(''); setArr(arr); };
+          setArr(getArr());
+        })(container);
+        (function initParamsJsonList(cont) {
+          if (!cont) return;
+          var input = cont.querySelector('#productParamsJsonInput');
+          var listEl = cont.querySelector('#productParamsJsonList');
+          var addBtn = cont.querySelector('#productBtnAddParamsJson');
+          if (!input || !listEl) return;
+          function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+          function getArr() {
+            var val = (input.value || '').trim();
+            if (!val) return [];
+            try {
+              var p = JSON.parse(val);
+              if (!Array.isArray(p)) return [];
+              return p.map(function (x) {
+                var d = (x && x.data) != null ? x.data : '';
+                var dataStr = typeof d === 'string' ? d : JSON.stringify(d);
+                return { title: String((x && x.title) != null ? x.title : ''), data: dataStr };
+              });
+            } catch (e) { return []; }
+          }
+          function setArr(arr) {
+            input.value = JSON.stringify(arr);
+            var html = '';
+            arr.forEach(function (item) {
+              html += '<div class="product-params-json-item"><input type="text" class="product-params-json-title" placeholder="参数标题" value="' + esc(item.title) + '"><input type="hidden" class="product-params-json-data" value="' + esc(item.data) + '"><button type="button" class="btn btn-sm product-params-json-excel-btn"><iconify-icon icon="mdi:table-edit"></iconify-icon> 编辑 Excel 数据</button><button type="button" class="product-array-remove" aria-label="删除">×</button></div>';
+            });
+            listEl.innerHTML = html;
+            listEl.querySelectorAll('.product-params-json-title').forEach(function (inp) {
+              inp.oninput = inp.onchange = function () { syncFromInputs(); };
+            });
+            listEl.querySelectorAll('.product-params-json-excel-btn').forEach(function (btn) {
+              var row = btn.closest('.product-params-json-item');
+              if (!row) return;
+              var dataInp = row.querySelector('.product-params-json-data');
+              btn.onclick = function () {
+                if (window.openProductParamsExcelModal) window.openProductParamsExcelModal(dataInp ? dataInp.value : '', function (newDataJson) {
+                  if (dataInp) dataInp.value = newDataJson;
+                  syncFromInputs();
+                });
+              };
+            });
+          }
+          function syncFromInputs() {
+            var rows = listEl.querySelectorAll('.product-params-json-item');
+            var arr = [];
+            rows.forEach(function (row) {
+              var t = row.querySelector('.product-params-json-title');
+              var d = row.querySelector('.product-params-json-data');
+              arr.push({ title: (t && t.value ? t.value : '').trim(), data: (d && d.value ? d.value : '').trim() });
+            });
+            input.value = JSON.stringify(arr);
+          }
+          listEl.onclick = function (e) {
+            if (!e.target || !e.target.classList.contains('product-array-remove')) return;
+            var row = e.target.closest('.product-params-json-item');
+            if (row) { row.remove(); syncFromInputs(); }
+          };
+          if (addBtn) addBtn.onclick = function () { var arr = getArr(); arr.push({ title: '', data: '' }); setArr(arr); };
+          setArr(getArr());
+        })(container);
+        (function ensureParamsJsonOnSubmit(cont) {
+          if (!cont) return;
+          var form = cont.querySelector('#productEditForm');
+          var input = cont.querySelector('#productParamsJsonInput');
+          var listEl = cont.querySelector('#productParamsJsonList');
+          if (!form || !input || !listEl) return;
+          form.addEventListener('submit', function () {
+            var rows = listEl.querySelectorAll('.product-params-json-item');
+            var arr = [];
+            rows.forEach(function (row) {
+              var t = row.querySelector('.product-params-json-title');
+              var d = row.querySelector('.product-params-json-data');
+              arr.push({ title: (t && t.value ? t.value : '').trim(), data: (d && d.value ? d.value : '').trim() });
+            });
+            input.value = JSON.stringify(arr);
+          });
+        })(container);
+        (function ensureAdvantagesOnSubmit(cont) {
+          if (!cont) return;
+          var form = cont.querySelector('#productEditForm');
+          var input = cont.querySelector('#productAdvantagesInput');
+          var listEl = cont.querySelector('#productAdvantagesList');
+          if (!form || !input || !listEl) return;
+          form.addEventListener('submit', function () {
+            var rows = listEl.querySelectorAll('.product-advantage-item');
+            var arr = [];
+            rows.forEach(function (row) {
+              var t = row.querySelector('.product-advantage-title');
+              var d = row.querySelector('.product-advantage-desc');
+              var ex = row.querySelector('.product-advantage-expanded');
+              var p = row.querySelector('.product-advantage-pic');
+              arr.push({
+                title: (t && t.value ? t.value : '').trim(),
+                description: (d && d.value ? d.value : '').trim(),
+                expandedDescription: (ex && ex.value ? ex.value : '').trim(),
+                picUrl: (p && p.value ? p.value : '').trim()
+              });
+            });
+            input.value = JSON.stringify(arr);
+          });
+        })(container);
+        (function initAdvantagesList(cont) {
+          if (!cont) return;
+          var input = cont.querySelector('#productAdvantagesInput');
+          var listEl = cont.querySelector('#productAdvantagesList');
+          var addBtn = cont.querySelector('#productBtnAddAdvantage');
+          if (!input || !listEl) return;
+          function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+          function getArr() {
+            var val = (input.value || '').trim();
+            if (!val) return [];
+            try {
+              var p = JSON.parse(val);
+              if (!Array.isArray(p)) return [];
+              return p.map(function (x) { return { title: String((x && x.title) != null ? x.title : ''), description: String((x && x.description) != null ? x.description : ''), expandedDescription: String((x && x.expandedDescription) != null ? x.expandedDescription : ''), picUrl: String((x && x.picUrl) != null ? x.picUrl : '') }; });
+            } catch (e) { return []; }
+          }
+          function setArr(arr) {
+            input.value = JSON.stringify(arr);
+            var html = '';
+            arr.forEach(function (item) {
+              var t = esc(item.title);
+              var d = esc(item.description);
+              var ex = esc(item.expandedDescription);
+              var p = esc(item.picUrl);
+              var preview = item.picUrl ? '<img src="' + p + '" alt="">' : '';
+              html += '<div class="product-advantage-item"><div class="product-advantage-row"><label>名称</label><input type="text" class="product-advantage-title" placeholder="优势名称" value="' + t + '"></div><div class="product-advantage-row"><label>描述</label><textarea class="product-advantage-desc" rows="2" placeholder="描述">' + d + '</textarea></div><div class="product-advantage-row"><label>描述展开叙述</label><textarea class="product-advantage-expanded" rows="3" placeholder="可选，较长说明">' + ex + '</textarea></div><div class="product-advantage-row"><label>图片</label><div class="admin-input-row"><input type="text" class="product-advantage-pic" placeholder="可选" value="' + p + '"><button type="button" class="btn product-advantage-pick-pic"><iconify-icon icon="mdi:image-search-outline"></iconify-icon> 选择</button><span class="admin-input-preview product-advantage-pic-preview">' + preview + '</span></div></div><button type="button" class="product-array-remove" aria-label="删除">×</button></div>';
+            });
+            listEl.innerHTML = html;
+            listEl.querySelectorAll('.product-advantage-title, .product-advantage-desc, .product-advantage-expanded, .product-advantage-pic').forEach(function (inp) {
+              inp.oninput = inp.onchange = function () { syncToInput(); };
+            });
+            listEl.querySelectorAll('.product-advantage-item').forEach(function (row) {
+              var picInp = row.querySelector('.product-advantage-pic');
+              var picPreview = row.querySelector('.product-advantage-pic-preview');
+              var pickBtn = row.querySelector('.product-advantage-pick-pic');
+              if (pickBtn && picInp && window.AdminFileManager) pickBtn.onclick = function () {
+                window.AdminFileManager.open({ type: 'image', targetInput: picInp, targetPreview: picPreview, callback: function () { syncToInput(); } });
+              }
+            });
+          }
+          function syncToInput() {
+            var rows = listEl.querySelectorAll('.product-advantage-item');
+            var arr = [];
+            rows.forEach(function (row) {
+              var t = row.querySelector('.product-advantage-title');
+              var d = row.querySelector('.product-advantage-desc');
+              var ex = row.querySelector('.product-advantage-expanded');
+              var p = row.querySelector('.product-advantage-pic');
+              arr.push({
+                title: (t && t.value ? t.value : '').trim(),
+                description: (d && d.value ? d.value : '').trim(),
+                expandedDescription: (ex && ex.value ? ex.value : '').trim(),
+                picUrl: (p && p.value ? p.value : '').trim()
+              });
+            });
+            input.value = JSON.stringify(arr);
+          }
+          listEl.onclick = function (e) {
+            if (!e.target || !e.target.classList.contains('product-array-remove')) return;
+            var row = e.target.closest('.product-advantage-item');
+            if (row) { row.remove(); syncToInput(); }
+          };
+          if (addBtn) addBtn.onclick = function () { var arr = getArr(); arr.push({ title: '', description: '', expandedDescription: '', picUrl: '' }); setArr(arr); };
+          setArr(getArr());
+        })(container);
+        (function initCertifications(cont) {
+          if (!cont) return;
+          var input = cont.querySelector('#productCertificationsInput');
+          var listEl = cont.querySelector('#productCertificationsList');
+          var addBtn = cont.querySelector('#productBtnAddCertification');
+          if (!input || !listEl) return;
+
+          function getArr() {
+            var val = (input.value || '').trim();
+            if (!val) return [];
+            try {
+              var p = JSON.parse(val);
+              return Array.isArray(p) ? p.map(function (s) { return String(s || '').trim(); }).filter(Boolean) : [];
+            } catch (e) {
+              return [];
+            }
+          }
+
+          function setArr(arr) {
+            input.value = JSON.stringify(arr);
+            var html = '';
+            arr.forEach(function (url, i) {
+              var safeUrl = String(url).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+              html += '<div class="product-certification-item" data-index="' + i + '"><img src="' + safeUrl + '" alt=""><button type="button" class="product-certification-remove" aria-label="删除" title="删除">×</button></div>';
+            });
+            listEl.innerHTML = html;
+          }
+
+          listEl.onclick = function (e) {
+            var btn = e.target && e.target.classList && e.target.classList.contains('product-certification-remove') ? e.target : null;
+            if (!btn) return;
+            var item = btn.closest('.product-certification-item');
+            if (!item) return;
+            var idx = parseInt(item.getAttribute('data-index'), 10);
+            var arr = getArr();
+            if (idx >= 0 && idx < arr.length) { arr.splice(idx, 1); setArr(arr); }
+          };
+
+          if (addBtn) addBtn.onclick = function () {
+            if (window.AdminFileManager && window.AdminFileManager.open) {
+              window.AdminFileManager.open({
+                type: 'image',
+                callback: function (url) {
+                  var arr = getArr();
+                  arr.push(url);
+                  setArr(arr);
+                }
+              });
+            }
+          };
+
+          setArr(getArr());
+        })(container);
+      }
+      document.getElementById('adminModalFormClose').onclick = closeFormModal;
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && formOverlay && formOverlay.classList.contains('open')) closeFormModal(); });
+      document.getElementById('btnProductAdd').onclick = function () { openFormModal('新增产品', '/admin/products/edit?modal=1'); };
+      document.querySelectorAll('.product-edit-link').forEach(function (a) {
+        a.onclick = function (e) { e.preventDefault(); var id = a.getAttribute('data-id'); if (id) openFormModal('编辑产品', '/admin/products/edit/' + id + '?modal=1'); };
+      });
+
+      function buildProductListUrl(opts) {
+        var langId = opts && opts.langId !== undefined ? opts.langId : (document.getElementById('productLangId') && document.getElementById('productLangId').value) || '';
+        var categoryId = opts && opts.categoryId !== undefined ? opts.categoryId : (document.getElementById('productCategoryId') && document.getElementById('productCategoryId').value) || '';
+        var page = opts && opts.page !== undefined ? opts.page : null;
+        var pageSize = opts && opts.pageSize !== undefined ? opts.pageSize : ({{#if pagination}}{{pagination.pageSize}}{{else}}15{{/if}});
+        var params = [];
+        if (langId && langId !== 'all') params.push('langId=' + encodeURIComponent(langId));
+        else if (langId === 'all') params.push('langId=all');
+        if (categoryId) params.push('categoryId=' + encodeURIComponent(categoryId));
+        params.push('pageSize=' + encodeURIComponent(String(pageSize)));
+        if (page != null && page > 1) params.push('page=' + encodeURIComponent(String(page)));
+        return '/admin/products' + (params.length ? '?' + params.join('&') : '');
+      }
+      // 初始化产品列表的分类树形选择器
+      (function initProductListCategoryTreeSelect() {
+        var trigger = document.getElementById('productListCategoryTrigger');
+        var dropdown = document.getElementById('productListCategoryDropdown');
+        var content = document.getElementById('productListCategoryContent');
+        var hiddenInput = document.getElementById('productListCategoryId');
+        var searchInput = document.getElementById('productListCategorySearch');
+        
+        if (!trigger || !dropdown || !content || !hiddenInput) return;
+        
+        // 切换下拉菜单
+        trigger.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var isOpen = dropdown.classList.contains('is-visible');
+          document.querySelectorAll('.admin-tree-select__dropdown.is-visible').forEach(function (d) {
+            d.classList.remove('is-visible');
+            d.previousElementSibling.classList.remove('is-open');
+          });
+          if (!isOpen) {
+            dropdown.classList.add('is-visible');
+            trigger.classList.add('is-open');
+          }
+        });
+        
+        // 点击外部关闭
+        document.addEventListener('click', function () {
+          dropdown.classList.remove('is-visible');
+          trigger.classList.remove('is-open');
+        });
+        
+        // 阻止下拉菜单点击冒泡
+        dropdown.addEventListener('click', function (e) { e.stopPropagation(); });
+        
+        // 选择分类
+        content.addEventListener('click', function (e) {
+          var item = e.target.closest('.admin-tree-select__item');
+          if (!item) return;
+          var id = item.getAttribute('data-id');
+          var label = item.querySelector('.admin-tree-select__label').textContent;
+          content.querySelectorAll('.admin-tree-select__item').forEach(function (i) { i.classList.remove('is-selected'); });
+          item.classList.add('is-selected');
+          hiddenInput.value = id;
+          trigger.querySelector('.admin-tree-select__placeholder').textContent = label;
+          trigger.classList.add('has-value');
+          dropdown.classList.remove('is-visible');
+          trigger.classList.remove('is-open');
+          // 改变分类后刷新列表
+          window.location.href = buildProductListUrl({ categoryId: id, page: 1 });
+        });
+        
+        // 搜索功能
+        if (searchInput) {
+          searchInput.addEventListener('input', function () {
+            var keyword = searchInput.value.toLowerCase();
+            content.querySelectorAll('.admin-tree-select__item').forEach(function (item) {
+              var label = item.querySelector('.admin-tree-select__label').textContent.toLowerCase();
+              item.style.display = label.includes(keyword) ? '' : 'none';
+            });
+          });
+        }
+        
+        // 初始化选中状态
+        if (hiddenInput.value) {
+          var selectedItem = content.querySelector('.admin-tree-select__item[data-id="' + hiddenInput.value + '"]');
+          if (selectedItem) {
+            selectedItem.classList.add('is-selected');
+            trigger.querySelector('.admin-tree-select__placeholder').textContent = selectedItem.querySelector('.admin-tree-select__label').textContent;
+            trigger.classList.add('has-value');
+          }
+        } else {
+          trigger.classList.remove('has-value');
+        }
+      })();
+      
+      var langSelect = document.getElementById('productLangId');
+      if (langSelect) langSelect.onchange = function () { window.location.href = buildProductListUrl({ langId: langSelect.value, page: 1 }); };
+      var paginationNav = document.querySelector('.admin-pagination');
+      if (paginationNav) {
+        var baseUrl = paginationNav.getAttribute('data-base-url');
+        var cur = parseInt(paginationNav.getAttribute('data-current'), 10) || 1;
+        var total = parseInt(paginationNav.getAttribute('data-total'), 10) || 1;
+        var pageSize = parseInt(paginationNav.getAttribute('data-page-size'), 10) || 15;
+        var prevBtn = paginationNav.querySelector('.admin-pagination-prev');
+        var nextBtn = paginationNav.querySelector('.admin-pagination-next');
+        
+        // 上一页/下一页
+        if (prevBtn && baseUrl) prevBtn.onclick = function () { if (cur > 1) window.location.href = baseUrl + '&page=' + (cur - 1); };
+        if (nextBtn && baseUrl) nextBtn.onclick = function () { if (cur < total) window.location.href = baseUrl + '&page=' + (cur + 1); };
+        
+        // 数字分页按钮
+        paginationNav.querySelectorAll('.admin-pagination-number').forEach(function (btn) {
+          btn.onclick = function () {
+            var page = parseInt(btn.getAttribute('data-page'), 10);
+            if (page && page !== cur) {
+              window.location.href = baseUrl + '&page=' + page;
+            }
+          };
+        });
+        
+        // 每页大小调整
+        var pageSizeSelect = paginationNav.querySelector('.admin-pagination-pagesize-select');
+        if (pageSizeSelect) {
+          pageSizeSelect.onchange = function () {
+            var newPageSize = parseInt(pageSizeSelect.value, 10);
+            if (newPageSize && newPageSize !== pageSize) {
+              // 构建新的 URL，移除原 pageSize 参数
+              var url = '/admin/products';
+              var params = [];
+              
+              // 从 baseUrl 中提取参数
+              var baseUrlParts = baseUrl.split('?')[1];
+              if (baseUrlParts) {
+                var paramPairs = baseUrlParts.split('&');
+                for (var i = 0; i < paramPairs.length; i++) {
+                  var pair = paramPairs[i].split('=');
+                  var key = decodeURIComponent(pair[0]);
+                  var value = decodeURIComponent(pair[1] || '');
+                  // 跳过 pageSize 和 page 参数
+                  if (key !== 'pageSize' && key !== 'page') {
+                    params.push(key + '=' + value);
+                  }
+                }
+              }
+              
+              // 添加新的 page=1 和新的 pageSize
+              params.push('page=1');
+              params.push('pageSize=' + newPageSize);
+              
+              window.location.href = url + '?' + params.join('&');
+            }
+          };
+        }
+        
+        // 跳转页码
+        var jumpInput = paginationNav.querySelector('.admin-pagination-jump-input');
+        var jumpBtn = paginationNav.querySelector('.admin-pagination-jump-btn');
+        if (jumpInput && jumpBtn && baseUrl) {
+          jumpBtn.onclick = function () {
+            var jumpPage = parseInt(jumpInput.value, 10);
+            if (jumpPage && jumpPage >= 1 && jumpPage <= total && jumpPage !== cur) {
+              window.location.href = baseUrl + '&page=' + jumpPage;
+            } else if (jumpPage && jumpPage > total) {
+              alert('页码不能超过总页数 ' + total);
+            } else if (jumpPage && jumpPage < 1) {
+              alert('页码必须大于 0');
+            }
+          };
+          jumpInput.onkeypress = function (e) {
+            if (e.key === 'Enter') jumpBtn.onclick();
+          };
+        }
+      }
+      var selectAllCb = document.getElementById('productSelectAll');
+      var rowCbs = document.querySelectorAll('.product-row-cb');
+      if (selectAllCb && rowCbs.length) selectAllCb.onchange = function () { rowCbs.forEach(function (cb) { cb.checked = selectAllCb.checked; }); };
+      // 批量删除 / 批量翻译：勾选控制
+      var batchDeleteBtn = document.getElementById('btnProductBatchDelete');
+      var btnBatchTranslate = document.getElementById('btnProductBatchTranslate');
+      function syncBatchButtons() {
+        var checked = document.querySelectorAll('.product-row-cb:checked');
+        if (btnBatchTranslate) btnBatchTranslate.disabled = checked.length === 0;
+      }
+      rowCbs.forEach(function (cb) { cb.addEventListener('change', syncBatchButtons); });
+      if (selectAllCb) selectAllCb.addEventListener('change', syncBatchButtons);
+      syncBatchButtons();
+      var batchDeleteForm = document.getElementById('productBatchDeleteForm');
+      if (batchDeleteBtn && batchDeleteForm) {
+        batchDeleteBtn.onclick = function () {
+          var checked = document.querySelectorAll('.product-row-cb:checked');
+          var ids = []; checked.forEach(function (cb) { ids.push(cb.value); });
+          if (!ids.length) { alert('请先勾选要删除的产品'); return; }
+          var msg = '确定删除所选 ' + ids.length + ' 个产品吗？';
+          var doSubmit = function () {
+            batchDeleteForm.innerHTML = '<input type="hidden" name="_csrf" value="' + (csrfToken || '') + '">';
+            ids.forEach(function (id) {
+              var input = document.createElement('input');
+              input.type = 'hidden';
+              input.name = 'ids';
+              input.value = id;
+              batchDeleteForm.appendChild(input);
+            });
+            batchDeleteForm.submit();
+          };
+          if (window.showConfirmModal) {
+            window.showConfirmModal(msg, doSubmit);
+          } else if (confirm(msg)) {
+            doSubmit();
+          }
+        };
+      }
+      // 批量翻译弹窗
+      var batchTranslateOverlay = document.getElementById('productBatchTranslateModalOverlay');
+      function openBatchTranslateModal() {
+        var ids = Array.prototype.slice.call(document.querySelectorAll('.product-row-cb:checked')).map(function (cb) { return parseInt(cb.value, 10); }).filter(function (n) { return !isNaN(n); });
+        if (!ids.length) { alert('请先勾选要翻译的产品'); return; }
+        if (!batchTranslateOverlay) return;
+        batchTranslateOverlay.classList.add('open');
+        batchTranslateOverlay.setAttribute('aria-hidden', 'false');
+        batchTranslateOverlay.dataset.sourceIds = ids.join(',');
+      }
+      function closeBatchTranslateModal() {
+        if (batchTranslateOverlay) { batchTranslateOverlay.classList.remove('open'); batchTranslateOverlay.setAttribute('aria-hidden', 'true'); }
+      }
+      if (btnBatchTranslate) btnBatchTranslate.onclick = openBatchTranslateModal;
+      document.getElementById('productBatchTranslateModalClose').onclick = closeBatchTranslateModal;
+      document.getElementById('productBatchTranslateModalCancel').onclick = closeBatchTranslateModal;
+      if (batchTranslateOverlay) batchTranslateOverlay.onclick = function (e) { if (e.target === batchTranslateOverlay) closeBatchTranslateModal(); };
+      document.getElementById('productBatchTranslateModalSubmit').onclick = function () {
+        var langCbs = document.querySelectorAll('.product-batch-translate-lang-cb:checked');
+        var targetLangIds = [];
+        langCbs.forEach(function (cb) { targetLangIds.push(parseInt(cb.value, 10)); });
+        if (!targetLangIds.length) { alert('请至少选择一种目标语言'); return; }
+        var sourceIdsStr = batchTranslateOverlay && batchTranslateOverlay.dataset.sourceIds ? batchTranslateOverlay.dataset.sourceIds : '';
+        var sourceIds = sourceIdsStr.split(',').map(function (s) { return parseInt(s.trim(), 10); }).filter(function (n) { return !isNaN(n) && n > 0; });
+        if (!sourceIds.length) { alert('未找到要翻译的产品'); return; }
+        var btn = document.getElementById('productBatchTranslateModalSubmit');
+        var oldText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = '翻译中...';
+        fetch('/admin/api/product/translate-batch', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json', 'csrf-token': csrfToken },
+          body: JSON.stringify({ _csrf: csrfToken, sourceIds: sourceIds, targetLangIds: targetLangIds })
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            btn.disabled = false;
+            btn.textContent = oldText;
+            if (d && d.ok) { alert(d.message || '翻译完成'); closeBatchTranslateModal(); window.location.reload(); }
+            else { alert(d && d.message ? d.message : '翻译失败'); }
+          })
+          .catch(function () { btn.disabled = false; btn.textContent = oldText; alert('请求失败'); });
+      };
+      var translateOverlay = document.getElementById('productTranslateModalOverlay');
+      var translateBody = document.getElementById('productTranslateModalBody');
+      var translateSourceId = 0;
+      function escapeHtml(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;').replace(/'/g, '&#039;'); }
+      function loadTranslateLangs() {
+        if (!translateBody || !translateSourceId) return;
+        var retranslateEl = document.getElementById('productTranslateRetranslateCb');
+        var retranslate = retranslateEl ? retranslateEl.checked : false;
+        translateBody.innerHTML = '<p class="admin-text-muted">加载中...</p>';
+        var url = '/admin/api/product/missing-langs?id=' + encodeURIComponent(translateSourceId);
+        if (retranslate) url += '&retranslate=1';
+        fetch(url, { credentials: 'same-origin' }).then(function (r) { return r.json(); })
+          .then(function (langs) {
+            if (!langs || !langs.length) { translateBody.innerHTML = '<p class="admin-text-muted">' + (retranslate ? '暂无其他语言。' : '暂无缺失语言。') + '</p>'; return; }
+            var html = '<p style="margin-bottom:0.5rem;">选择要翻译成的语言：</p><button type="button" class="btn btn-secondary btn-sm" id="productTranslateSelectAll">一键补充缺失的所有语言</button><div style="margin-top:0.75rem;max-height:200px;overflow:auto;">';
+            langs.forEach(function (l) { html += '<label style="display:block;margin-bottom:0.25rem;"><input type="checkbox" class="product-translate-cb" value="' + escapeHtml(String(l.id)) + '"> ' + escapeHtml(l.name) + ' (' + escapeHtml(l.code) + ')</label>'; });
+            html += '</div>';
+            translateBody.innerHTML = html;
+            var selAll = document.getElementById('productTranslateSelectAll');
+            if (selAll) selAll.onclick = function () { translateBody.querySelectorAll('.product-translate-cb').forEach(function (cb) { cb.checked = true; }); };
+          }).catch(function () { translateBody.innerHTML = '<p style="color:var(--admin-danger);">加载失败</p>'; });
+      }
+      function openTranslateModal(id) {
+        translateSourceId = id;
+        if (!translateOverlay || !translateBody) return;
+        var cb = document.getElementById('productTranslateRetranslateCb');
+        if (cb) cb.checked = false;
+        translateBody.innerHTML = '<p class="admin-text-muted">加载中...</p>';
+        translateOverlay.classList.add('open');
+        translateOverlay.setAttribute('aria-hidden', 'false');
+        loadTranslateLangs();
+      }
+      function closeTranslateModal() { if (translateOverlay) { translateOverlay.classList.remove('open'); translateOverlay.setAttribute('aria-hidden', 'true'); } }
+      document.getElementById('productTranslateModalClose').onclick = closeTranslateModal;
+      document.getElementById('productTranslateModalCancel').onclick = closeTranslateModal;
+      if (translateOverlay) translateOverlay.onclick = function (e) { if (e.target === translateOverlay) closeTranslateModal(); };
+      var retranslateCb = document.getElementById('productTranslateRetranslateCb');
+      if (retranslateCb) retranslateCb.onchange = loadTranslateLangs;
+      document.querySelectorAll('.product-translate-link').forEach(function (a) {
+        a.onclick = function (e) { e.preventDefault(); var id = a.getAttribute('data-id'); if (id) openTranslateModal(parseInt(id, 10)); };
+      });
+      document.getElementById('productTranslateModalSubmit').onclick = function () {
+        var cbs = document.querySelectorAll('#productTranslateModalBody .product-translate-cb:checked');
+        var ids = [];
+        cbs.forEach(function (cb) { ids.push(parseInt(cb.value, 10)); });
+        if (!ids.length) { alert('请至少选择一种语言'); return; }
+        var btn = document.getElementById('productTranslateModalSubmit');
+        var oldText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = '翻译中...';
+        fetch('/admin/api/product/translate', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'csrf-token': csrfToken }, body: JSON.stringify({ _csrf: csrfToken, sourceId: translateSourceId, targetLangIds: ids }) })
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            btn.disabled = false;
+            btn.textContent = oldText;
+            if (d && d.ok) { alert(d.message || '翻译完成'); closeTranslateModal(); window.location.reload(); }
+            else { alert(d && d.message ? d.message : '翻译失败'); }
+          })
+          .catch(function () { btn.disabled = false; btn.textContent = oldText; alert('请求失败'); });
+      };
+
+      // 单个删除功能（AJAX）
+      document.querySelectorAll('.product-delete-btn').forEach(function (btn) {
+        btn.onclick = function () {
+          var id = btn.getAttribute('data-id');
+          var msg = btn.getAttribute('data-popconfirm') || '确定删除吗？';
+          var doDelete = function () {
+            fetch('/admin/products/delete/' + id, {
+              method: 'POST',
+              credentials: 'same-origin',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: '_csrf=' + encodeURIComponent(csrfToken || '')
+            })
+              .then(function (r) {
+                if (r.ok) {
+                  window.location.reload();
+                } else {
+                  alert('删除失败');
+                }
+              })
+              .catch(function () { alert('请求失败'); });
+          };
+          if (window.showConfirmModal) window.showConfirmModal(msg, doDelete);
+          else if (confirm(msg)) doDelete();
+        };
+      });
+
+      // 监听排序输入框变化，实时更新排序
+      function initProductSortInputs() {
+        const inputs = document.querySelectorAll('.product-sort-input');
+        inputs.forEach(function(input) {
+          input.addEventListener('change', function() {
+            const productId = parseInt(input.getAttribute('data-id'), 10);
+            const sortValue = parseInt(input.value, 10) || 0;
+            
+            // 显示加载状态
+            const originalValue = input.value;
+            input.disabled = true;
+            
+            // 发送请求更新排序
+            fetch('/admin/products/update-sort', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+              },
+              credentials: 'same-origin',
+              body: JSON.stringify({ id: productId, sort: sortValue })
+            })
+            .then(function(response) {
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+              return response.json();
+            })
+            .then(function(data) {
+              if (data.success) {
+                // 更新成功，刷新页面以重新排序
+                window.location.reload();
+              } else {
+                // 更新失败，恢复原始值
+                input.value = originalValue;
+                alert('排序更新失败');
+              }
+            })
+            .catch(function(error) {
+              console.error('Error:', error);
+              input.value = originalValue;
+              alert('排序更新失败');
+            })
+            .finally(function() {
+              input.disabled = false;
+            });
+          });
+        });
+      }
+
+      // 初始化排序输入框
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initProductSortInputs);
+      } else {
+        initProductSortInputs();
+      }
+    })();
+  </script>
+</body>
+</html>

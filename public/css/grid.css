@@ -1,0 +1,7 @@
+/* 简单网格 - 自适应 */
+.grid { display: grid; gap: calc(var(--spacing-unit) * 2); }
+@media (min-width: 768px) {
+  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+}

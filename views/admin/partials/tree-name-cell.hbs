@@ -1,0 +1,7 @@
+{{!-- 复用树形表格的“名称”列缩进渲染；依赖 item.depth/item.treeIndent/item.hasChildren --}}
+{{#each item.treeIndent}}
+  {{#if this}}<span class="tree-indent tree-line">│</span>{{else}}<span class="tree-indent">&nbsp;</span>{{/if}}
+{{/each}}
+<span class="tree-indent">{{#if item.hasChildren}}├─{{else}}└─{{/if}}</span>
+{{item.name}}
+

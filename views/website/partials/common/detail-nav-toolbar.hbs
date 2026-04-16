@@ -1,0 +1,229 @@
+{{!--
+  detail-nav-toolbar
+  ──────────────────────────────────────────────────────────────────────
+  通用详情页导航工具栏 + 分享弹窗组件�?
+  放置�?.g-case-detail-layout__inner �?<article> 之后�?
+    �?<aside> 作为 flex item，在桌面端显示在文章右侧
+    �?<nav>   position:fixed，底部悬浮，不影�?flex 布局
+    �?两个弹窗�?position:fixed，DOM 位置无影�?
+
+  调用示例（case-detail.hbs）：
+    {{> website/common/detail-nav-toolbar
+        prevItem=casePrev
+        nextItem=caseNext
+        listUrl=casesListUrl
+    }}
+
+  需从父级上下文继承的变量：
+    locale          当前语言代码（zh-CN / en / ja …）
+    shareTypes      分享类型数组 [{type, label, iconUrl}]
+    shareModalTitle 分享弹窗标题（可为空�?
+--}}
+
+{{!-- ===== 桌面端侧边工具栏 ===== --}}
+<aside
+  class="g-case-detail-toolbar d-none d-lg-flex"
+  aria-label="{{#if (eq locale 'zh-CN')}}操作{{else}}Actions{{/if}}"
+>
+  {{!-- 下一�?--}}
+  {{#if nextItem}}
+  <a
+    href="{{nextItem.url}}"
+    class="g-case-detail-toolbar__btn"
+    title="{{nextItem.title}}"
+    aria-label="{{#if (eq locale 'zh-CN')}}下一条{{else}}Next{{/if}}"
+  >
+    <iconify-icon icon="mdi:chevron-right"></iconify-icon>
+  </a>
+  {{else}}
+  <span
+    class="g-case-detail-toolbar__btn is-disabled"
+    aria-disabled="true"
+    aria-label="{{#if (eq locale 'zh-CN')}}无下一条{{else}}No next{{/if}}"
+  >
+    <iconify-icon icon="mdi:chevron-right"></iconify-icon>
+  </span>
+  {{/if}}
+
+  {{!-- 上一�?--}}
+  {{#if prevItem}}
+  <a
+    href="{{prevItem.url}}"
+    class="g-case-detail-toolbar__btn"
+    title="{{prevItem.title}}"
+    aria-label="{{#if (eq locale 'zh-CN')}}上一条{{else}}Previous{{/if}}"
+  >
+    <iconify-icon icon="mdi:chevron-left"></iconify-icon>
+  </a>
+  {{else}}
+  <span
+    class="g-case-detail-toolbar__btn is-disabled"
+    aria-disabled="true"
+    aria-label="{{#if (eq locale 'zh-CN')}}无上一条{{else}}No previous{{/if}}"
+  >
+    <iconify-icon icon="mdi:chevron-left"></iconify-icon>
+  </span>
+  {{/if}}
+
+  {{!-- 分享 --}}
+  <button
+    type="button"
+    class="g-case-detail-toolbar__btn"
+    data-case-action="native-share"
+    aria-label="{{#if (eq locale 'zh-CN')}}分享{{else}}Share{{/if}}"
+  >
+    <iconify-icon icon="mdi:share-variant"></iconify-icon>
+  </button>
+
+  {{!-- 返回列表 --}}
+  <a
+    href="{{listUrl}}"
+    class="g-case-detail-toolbar__btn"
+    aria-label="{{#if (eq locale 'zh-CN')}}返回列表{{else}}Back to list{{/if}}"
+  >
+    <iconify-icon icon="mdi:undo-variant"></iconify-icon>
+  </a>
+</aside>
+
+{{!-- ===== 移动端底部固定工具栏 ===== --}}
+<nav
+  class="g-case-detail-toolbar-mobile d-lg-none"
+  aria-label="{{#if (eq locale 'zh-CN')}}操作{{else}}Actions{{/if}}"
+>
+  <div class="g-case-detail-toolbar-mobile__inner">
+    {{!-- 下一�?--}}
+    {{#if nextItem}}
+    <a
+      href="{{nextItem.url}}"
+      class="g-case-detail-toolbar__btn"
+      title="{{nextItem.title}}"
+      aria-label="{{#if (eq locale 'zh-CN')}}下一条{{else}}Next{{/if}}"
+    >
+      <iconify-icon icon="mdi:chevron-right"></iconify-icon>
+    </a>
+    {{else}}
+    <span class="g-case-detail-toolbar__btn is-disabled" aria-disabled="true">
+      <iconify-icon icon="mdi:chevron-right"></iconify-icon>
+    </span>
+    {{/if}}
+
+    {{!-- 上一�?--}}
+    {{#if prevItem}}
+    <a
+      href="{{prevItem.url}}"
+      class="g-case-detail-toolbar__btn"
+      title="{{prevItem.title}}"
+      aria-label="{{#if (eq locale 'zh-CN')}}上一条{{else}}Previous{{/if}}"
+    >
+      <iconify-icon icon="mdi:chevron-left"></iconify-icon>
+    </a>
+    {{else}}
+    <span class="g-case-detail-toolbar__btn is-disabled" aria-disabled="true">
+      <iconify-icon icon="mdi:chevron-left"></iconify-icon>
+    </span>
+    {{/if}}
+
+    {{!-- 分享 --}}
+    <button
+      type="button"
+      class="g-case-detail-toolbar__btn"
+      data-case-action="native-share"
+      aria-label="{{#if (eq locale 'zh-CN')}}分享{{else}}Share{{/if}}"
+    >
+      <iconify-icon icon="mdi:share-variant"></iconify-icon>
+    </button>
+
+    {{!-- 返回列表 --}}
+    <a
+      href="{{listUrl}}"
+      class="g-case-detail-toolbar__btn"
+      aria-label="{{#if (eq locale 'zh-CN')}}返回列表{{else}}Back to list{{/if}}"
+    >
+      <iconify-icon icon="mdi:undo-variant"></iconify-icon>
+    </a>
+  </div>
+</nav>
+
+{{!-- ===== 分享平台选择弹窗 ===== --}}
+<div
+  id="g-share-modal"
+  class="g-share-modal"
+  aria-hidden="true"
+  role="dialog"
+  aria-modal="true"
+  aria-label="{{#if shareModalTitle}}{{shareModalTitle}}{{else}}{{#if (eq locale 'zh-CN')}}分享{{else}}Share{{/if}}{{/if}}"
+>
+  <div class="g-share-modal__overlay" data-share-close></div>
+  <div class="g-share-modal__content">
+    <div class="g-share-modal__header">
+      <h3 class="g-share-modal__title">
+        {{#if shareModalTitle}}{{shareModalTitle}}{{else}}{{#if (eq locale 'zh-CN')}}分享{{else}}Share{{/if}}{{/if}}
+      </h3>
+      <button
+        type="button"
+        class="g-share-modal__close"
+        data-share-close
+        aria-label="{{#if (eq locale 'zh-CN')}}关闭{{else}}Close{{/if}}"
+      >
+        <iconify-icon icon="mdi:close"></iconify-icon>
+      </button>
+    </div>
+    <div class="g-share-modal__body">
+      <div class="g-share-modal__items">
+        {{#each shareTypes}}
+        <button
+          type="button"
+          class="g-share-modal__item"
+          data-share-type="{{this.type}}"
+          data-share-label="{{this.label}}"
+        >
+          {{#if this.iconUrl}}
+          <img
+            src="{{this.iconUrl}}"
+            alt="{{this.label}}"
+            class="g-share-modal__icon"
+            loading="lazy"
+          >
+          {{else}}
+          <span class="g-share-modal__icon-fallback">{{this.label}}</span>
+          {{/if}}
+          <span class="g-share-modal__label">{{this.label}}</span>
+        </button>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+</div>
+
+{{!-- ===== 微信二维码弹�?===== --}}
+<div
+  id="g-wechat-qr-modal"
+  class="g-share-modal g-wechat-qr-modal"
+  aria-hidden="true"
+  role="dialog"
+  aria-modal="true"
+  aria-label="{{#if (eq locale 'zh-CN')}}分享到微信{{else}}Share to WeChat{{/if}}"
+>
+  <div class="g-share-modal__overlay" data-wechat-close></div>
+  <div class="g-share-modal__content">
+    <div class="g-share-modal__header">
+      <h3 class="g-share-modal__title">
+        {{#if (eq locale 'zh-CN')}}分享到微信{{else}}Share to WeChat{{/if}}
+      </h3>
+      <button
+        type="button"
+        class="g-share-modal__close"
+        data-wechat-close
+        aria-label="{{#if (eq locale 'zh-CN')}}关闭{{else}}Close{{/if}}"
+      >
+        <iconify-icon icon="mdi:close"></iconify-icon>
+      </button>
+    </div>
+    <div class="g-share-modal__body">
+      <div class="g-wechat-qr-modal__qr" id="g-wechat-qr-container"></div>
+      <p class="g-wechat-qr-modal__tip">
+        {{#if (eq locale 'zh-CN')}}打开微信扫一扫{{else}}Open WeChat and scan{{/if}}
+      </p>
+    </div>
+  </div>
+</div>

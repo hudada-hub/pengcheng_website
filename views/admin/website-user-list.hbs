@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} - 鹏成后台</title>
+  <meta name="csrf-token" content="{{csrfToken}}">
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/admin/admin-theme.css">
+  <script src="/js/iconify-icon.min.js"></script>
+</head>
+<body class="admin-layout">
+  {{> admin/header}}
+  <div class="admin-body">
+    {{> admin/sidebar}}
+    <main class="admin-main">
+      <div class="admin-page-toolbar">
+        <h1 style="margin:0;">{{title}}</h1>
+        <p style="margin:0;font-size:var(--font-size-sm);color:var(--admin-text-muted);">前台注册的官网用户（邮箱登录），与后台管理员账号无关</p>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>邮箱</th>
+              <th>状态</th>
+              <th>注册时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each list}}
+            <tr>
+              <td>{{this.id}}</td>
+              <td>{{this.email}}</td>
+              <td>{{#if (eq this.status 1)}}正常{{else}}隐藏{{/if}}</td>
+              <td>{{this.createdAtFormatted}}</td>
+              <td class="actions">
+                <form method="post" action="/admin/website-users/delete/{{this.id}}" style="display:inline;">
+                  <input type="hidden" name="_csrf" value="{{../csrfToken}}">
+                  <button type="submit" class="btn-link" data-popconfirm="确定删除该用户吗？关联询价记录的 user_id 将遗留为空。">删除</button>
+                </form>
+              </td>
+            </tr>
+            {{else}}
+            <tr><td colspan="5" style="text-align:center;color:var(--admin-text-muted);">暂无数据</td></tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+      {{#if pagination}}
+      <div class="admin-pagination-wrap" style="margin-top:1rem;">
+        {{> admin/pagination currentPage=pagination.currentPage totalPages=pagination.totalPages baseUrl=pagination.baseUrl}}
+      </div>
+      <script>
+        (function () {
+          var paginationNav = document.querySelector('.admin-pagination');
+          if (!paginationNav) return;
+          var baseUrl = paginationNav.getAttribute('data-base-url');
+          var cur = parseInt(paginationNav.getAttribute('data-current'), 10) || 1;
+          var total = parseInt(paginationNav.getAttribute('data-total'), 10) || 1;
+          var prevBtn = paginationNav.querySelector('.admin-pagination-prev');
+          var nextBtn = paginationNav.querySelector('.admin-pagination-next');
+          if (prevBtn && baseUrl) prevBtn.onclick = function () { if (cur > 1) window.location.href = baseUrl + '&page=' + (cur - 1); };
+          if (nextBtn && baseUrl) nextBtn.onclick = function () { if (cur < total) window.location.href = baseUrl + '&page=' + (cur + 1); };
+        })();
+      </script>
+      {{/if}}
+    </main>
+  </div>
+  {{> admin/confirm-modal}}
+</body>
+</html>

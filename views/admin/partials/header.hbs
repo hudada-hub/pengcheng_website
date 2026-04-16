@@ -1,0 +1,27 @@
+<header class="admin-header">
+  <span class="brand">
+    <img src="/images/icon.png" alt="鹏成官网后台管理" class="admin-brand-logo">
+    鹏成官网后台管理
+  </span>
+  <div class="actions">
+    <span class="username">{{username}}</span>
+    <form method="post" action="/admin/logout" style="display:inline;" id="form-logout">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      <button type="submit" class="btn">退出登录</button>
+    </form>
+    <button type="button" class="btn btn-primary" id="btn-clear-cache">
+      <iconify-icon icon="mdi:cached"></iconify-icon>
+      清除缓存
+    </button>
+    <a class="btn" href="/" target="_blank" rel="noopener noreferrer">
+      <iconify-icon icon="mdi:web"></iconify-icon>
+      前台
+    </a>
+  </div>
+</header>
+
+{{!-- 全局：弹窗打开时禁止背景滚动 --}}
+<script src="/js/admin-scroll-lock.js"></script>
+
+{{!-- 全局：带蒙版的确认弹窗（用于删除等 Popconfirm） --}}
+<script src="/js/admin-confirm-modal.js"></script>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} - 官网后台</title>
+  <meta name="csrf-token" content="{{csrfToken}}">
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/admin/admin-theme.css">
+  <script src="/js/iconify-icon.min.js"></script>
+  <script src="/js/admin-file-manager.js"></script>
+</head>
+<body class="admin-layout">
+  {{> admin/header}}
+  <div class="admin-body">
+    {{> admin/sidebar}}
+    <main class="admin-main">
+      <div class="admin-page-toolbar">
+        <h1 style="margin:0;">{{title}}</h1>
+        <button type="button" class="btn btn-primary" id="btnLangAdd"><iconify-icon icon="mdi:plus"></iconify-icon> 新增语言</button>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>名称</th>
+              <th>展示全名</th>
+              <th>编码</th>
+              <th>默认</th>
+              <th>状态</th>
+              <th>图标</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each langs}}
+            <tr>
+              <td>{{this.id}}</td>
+              <td>{{this.name}}</td>
+              <td>{{#if this.langFullName}}{{this.langFullName}}{{else}}<span style="color:var(--admin-text-muted);">—</span>{{/if}}</td>
+              <td>{{this.code}}</td>
+              <td>{{#if (eq this.isDefault 1)}}是{{else}}否{{/if}}</td>
+              <td>
+                {{#if (eq this.status 1)}}<span class="status-normal">正常</span>{{else}}<span class="status-hidden">隐藏</span>{{/if}}
+              </td>
+              <td>
+                {{#if this.langIconUrl}}
+                  <a href="{{this.langIconUrl}}" target="_blank" rel="noopener">
+                    <img src="{{this.langIconUrl}}" alt="{{this.name}} 图标" loading="lazy" style="width:28px;height:28px;object-fit:contain;display:block;">
+                  </a>
+                {{else}}
+                  -
+                {{/if}}
+              </td>
+              <td class="actions">
+                <a href="#" class="lang-edit-link" data-id="{{this.id}}">编辑</a>
+                <button type="button" class="btn-link lang-delete-btn" data-id="{{this.id}}" data-popconfirm="确定删除该语言？">删除</button>
+              </td>
+            </tr>
+            {{else}}
+            <tr><td colspan="8" style="text-align:center;color:var(--admin-text-muted);">暂无语言</td></tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+  {{> admin/modal-form title="语言"}}
+  {{> admin/file-manager-modal}}
+  {{> admin/confirm-modal}}
+  <script>
+    (function () {
+      var csrfMeta = document.querySelector('meta[name="csrf-token"]');
+      var csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : '';
+      var btn = document.getElementById('btn-clear-cache');
+      if (btn) btn.onclick = function () {
+        fetch('/admin/clear-cache', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ _csrf: csrfToken }) })
+          .then(function (r) { return r.json(); }).then(function (d) { alert(d.message || '完成'); }).catch(function () { alert('请求失败'); });
+      };
+
+      var overlay = document.getElementById('adminModalFormOverlay');
+      var modalBody = document.querySelector('.admin-modal-form-body');
+      var modalTitle = document.getElementById('adminModalFormTitle');
+      function openModal(titleText, formUrl) {
+        if (!overlay || !modalBody) return;
+        modalTitle.textContent = titleText;
+        modalBody.innerHTML = '<p style="text-align:center;color:var(--admin-text-muted);">加载中...</p>';
+        overlay.classList.add('open');
+        overlay.setAttribute('aria-hidden', 'false');
+        fetch(formUrl, { credentials: 'same-origin' })
+          .then(function (r) { return r.text(); })
+          .then(function (html) {
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(html, 'text/html');
+            var frag = doc.getElementById('admin-form-fragment');
+            modalBody.innerHTML = frag ? frag.innerHTML : html;
+            var _form = modalBody.querySelector('form');
+            if (_form) { var _inp = document.createElement('input'); _inp.type = 'hidden'; _inp.name = 'returnUrl'; _inp.value = window.location.href; _form.appendChild(_inp); }
+            var cancelBtn = modalBody.querySelector('.admin-modal-form-cancel');
+            if (cancelBtn) cancelBtn.onclick = closeModal;
+            if (window.AdminFileManager) {
+              var pickBtn = modalBody.querySelector('#btnPickLangIcon');
+              if (pickBtn) pickBtn.onclick = function () { AdminFileManager.open({ type: 'image', targetInput: modalBody.querySelector('#langIconUrl'), targetPreview: modalBody.querySelector('#langIconPreview') }); };
+            }
+          })
+          .catch(function () { modalBody.innerHTML = '<p style="color:var(--admin-danger);">加载失败</p>'; });
+      }
+      function closeModal() {
+        if (overlay) { overlay.classList.remove('open'); overlay.setAttribute('aria-hidden', 'true'); }
+      }
+      document.getElementById('adminModalFormClose').onclick = closeModal;
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && overlay && overlay.classList.contains('open')) closeModal(); });
+      document.getElementById('btnLangAdd').onclick = function () { openModal('新增语言', '/admin/lang/edit?modal=1'); };
+      document.querySelectorAll('.lang-edit-link').forEach(function (a) {
+        a.onclick = function (e) {
+          e.preventDefault();
+          var id = a.getAttribute('data-id');
+          if (id) openModal('编辑语言', '/admin/lang/edit/' + id + '?modal=1');
+        };
+      });
+
+      // 单个删除功能（AJAX）
+      document.querySelectorAll('.lang-delete-btn').forEach(function (btn) {
+        btn.onclick = function () {
+          var id = btn.getAttribute('data-id');
+          var msg = btn.getAttribute('data-popconfirm') || '确定删除吗？';
+          var doDelete = function () {
+            fetch('/admin/lang/delete/' + id, {
+              method: 'POST',
+              credentials: 'same-origin',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: '_csrf=' + encodeURIComponent(csrfToken || '')
+            })
+              .then(function (r) {
+                if (r.ok) {
+                  window.location.reload();
+                } else {
+                  alert('删除失败');
+                }
+              })
+              .catch(function () { alert('请求失败'); });
+          };
+          if (window.showConfirmModal) window.showConfirmModal(msg, doDelete);
+          else if (confirm(msg)) doDelete();
+        };
+      });
+    })();
+  </script>
+</body>
+</html>
+

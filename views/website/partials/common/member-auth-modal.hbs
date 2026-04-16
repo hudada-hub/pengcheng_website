@@ -1,0 +1,83 @@
+{{!-- 用户登录/注册：由 member-auth.js 挂载�?document.body；文案来自配�?key login-register（多语言�?--}}
+<link rel="stylesheet" href="/css/global/member-auth-global.css">
+<div class="pc-member-auth__backdrop" id="pcMemberAuthBackdrop" aria-hidden="true"></div>
+<div
+  class="pc-member-auth__dialog"
+  id="pcMemberAuthDialog"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="pcMemberAuthTitle"
+  data-msg-agree="{{#if (eq locale 'zh-CN')}}请勾选并同意用户协议{{else}}Please accept the User Agreement{{/if}}"
+  data-msg-mismatch="{{#if (eq locale 'zh-CN')}}两次输入的密码不一致{{else}}Passwords do not match{{/if}}"
+>
+  <div class="pc-member-auth__head">
+    <h2 class="pc-member-auth__title" id="pcMemberAuthTitle">{{loginRegister.signInTitle}}</h2>
+    <button type="button" class="pc-member-auth__close" id="pcMemberAuthClose" aria-label="{{#if (eq locale 'zh-CN')}}关闭{{else}}Close{{/if}}">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <form id="pcMemberAuthForm" novalidate>
+    <input type="hidden" name="mode" id="pcMemberMode" value="login">
+
+    <div class="pc-member-auth__field">
+      <input
+        type="email"
+        id="pcMemberEmail"
+        name="email"
+        autocomplete="email"
+        required
+        class="pc-member-auth__input"
+        placeholder="{{loginRegister.emailPlaceholder}}"
+        aria-label="{{loginRegister.emailPlaceholder}}"
+      />
+    </div>
+    <div class="pc-member-auth__field">
+      <input
+        type="password"
+        id="pcMemberPassword"
+        name="password"
+        autocomplete="current-password"
+        required
+        class="pc-member-auth__input"
+        placeholder="{{loginRegister.passwordPlaceholder}}"
+        aria-label="{{loginRegister.passwordPlaceholder}}"
+      />
+    </div>
+
+    <div class="pc-member-auth__agree-wrap" id="pcMemberAgreeWrap">
+      <label class="pc-member-auth__agree">
+        <input type="checkbox" id="pcMemberAgree" name="agree" value="1" />
+        <span class="pc-member-auth__agree-text">
+          <span class="pc-member-auth__agree-prefix">{{loginRegister.agreePrefix}}</span>
+          <a href="{{loginRegister.userAgreementUrl}}" class="pc-member-auth__agree-link" target="_blank" rel="noopener noreferrer">{{loginRegister.userAgreementText}}</a>
+        </span>
+      </label>
+    </div>
+
+    <div class="pc-member-auth__field pc-member-auth__field--confirm" id="pcMemberPasswordConfirmWrap" hidden>
+      <input
+        type="password"
+        id="pcMemberPasswordConfirm"
+        name="passwordConfirm"
+        autocomplete="new-password"
+        class="pc-member-auth__input"
+        placeholder="{{loginRegister.confirmPasswordPlaceholder}}"
+        aria-label="{{loginRegister.confirmPasswordPlaceholder}}"
+      />
+    </div>
+
+    <p class="pc-member-auth__err" id="pcMemberAuthErr" aria-live="polite"></p>
+
+    <button type="submit" class="pc-member-auth__submit" id="pcMemberAuthSubmit">{{loginRegister.signInTitle}}</button>
+
+    <p class="pc-member-auth__footer pc-member-auth__footer--login" id="pcMemberFooterLogin">
+      <span class="pc-member-auth__footer-muted">{{loginRegister.noAccount}}</span>
+      <button type="button" class="pc-member-auth__footer-link" id="pcMemberAuthSwitchRegister">{{loginRegister.registerNow}}</button>
+    </p>
+    <p class="pc-member-auth__footer pc-member-auth__footer--register" id="pcMemberFooterRegister" hidden>
+      <button type="button" class="pc-member-auth__footer-link" id="pcMemberAuthSwitchLogin">{{loginRegister.signInTitle}}</button>
+    </p>
+  </form>
+</div>
+<script type="application/json" id="pcMemberAuthL10n">{{{json loginRegister}}}</script>

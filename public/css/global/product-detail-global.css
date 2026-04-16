@@ -1,0 +1,1732 @@
+/* 产品详情页（与 products-global 共用变量与字体；视觉近似 B2B 产品 UI / Figma） */
+.g-product-detail-page {
+  --g-pd-accent: #f89d1b;
+  --g-pd-accent-hover: #e88d0b;
+  --g-pd-text: #2b2b2b;
+  --g-pd-text-secondary: #424558;
+  --g-pd-text-muted: #666;
+  --g-pd-surface: #f7f7f9;
+  --g-pd-border: #e8e8e8;
+  /* 图库缩略图选中（对齐设计稿蓝系） */
+  --g-pd-thumb-active: #1890ff;
+}
+
+.g-product-detail-page .g-product-detail-layout .g-products-layout__inner {
+  align-items: flex-start;
+  max-width: 1332px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  
+}
+
+.g-pd-breadcrumb {
+  padding-top: 16px;
+  padding-bottom: 8px;
+}
+
+.g-pd-main {
+  flex: 1 1 0;
+  min-width: 0;
+  padding-bottom: clamp(48px, 8vw, 30px);
+}
+
+.g-pd-main__row {
+  margin-bottom: clamp(40px, 6vw, 72px);
+  --bs-gutter-x: clamp(20px, 3vw, 36px);
+  --bs-gutter-y: clamp(24px, 4vw, 40px);
+}
+.g-pd-gallery{
+  max-width: 100vw;
+}
+/* Gallery：主图外侧箭头 + Swiper + 缩略图透明度 */
+.g-pd-gallery__row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 2vw, 16px);
+}
+
+.g-pd-gallery__stage {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  background: var(--g-pd-surface);
+  border-radius: 16px;
+  border: 1px solid var(--g-pd-border);
+  aspect-ratio: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.g-pd-gallery__main-swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.g-pd-gallery__main-swiper .swiper-slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+  min-height: 100%;
+}
+
+.g-pd-gallery__zoom-trigger {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  cursor: zoom-in;
+  text-align: center;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.g-pd-gallery__zoom-trigger:focus-visible {
+  outline: 2px solid var(--g-pd-thumb-active);
+  outline-offset: 2px;
+}
+
+.g-pd-gallery__nav {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--g-pd-border);
+  border-radius: 10px;
+  background: #e8eaed;
+  color: #555;
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+  box-shadow: none;
+}
+
+/* 主图外侧箭头：浅灰底 + 白色箭头（对齐参考图） */
+.g-pd-gallery__nav--outer {
+  background: #cfd4db;
+  color: #fff;
+  border-color: transparent;
+}
+
+.g-pd-gallery__nav--outer:hover {
+  background: #c0c6cf;
+  color: #fff;
+}
+
+.g-pd-gallery__nav-icon {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
+
+.g-pd-gallery__img {
+  width: 100%;
+  height: 100%;
+  max-height: min(72vw, 520px);
+  object-fit: contain;
+  object-position: center;
+  padding: clamp(16px, 4vw, 36px);
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.g-pd-gallery__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: #888;
+  font-family: 'Exo', system-ui, sans-serif;
+  font-size: 15px;
+}
+
+.g-pd-gallery--empty .g-pd-gallery__stage {
+  aspect-ratio: 1;
+}
+
+.g-pd-gallery__thumbs-wrap {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+/* width:auto + 外层 flex 居中：少量缩略图时整组水平居中（与灯箱 .g-pd-lightbox__thumbs-swiper 一致） */
+.g-pd-gallery__thumbs-swiper {
+  width: auto;
+  max-width: 100%;
+  min-width: 0;
+  padding: 4px 0;
+}
+
+/* slide 尺寸含缩略图 76px + 左右外边距各 16px */
+.g-pd-gallery__thumbs-swiper .swiper-slide {
+  width: 88px;
+  height: 88px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.g-pd-gallery__thumb {
+  display: block;
+  width: 72px;
+  height: 72px;
+
+
+  padding: 6px;
+  box-sizing: border-box;
+  border: 1px solid #D9D9D9;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  background: #fff;
+  transition: opacity 0.25s ease, border-color 0.2s ease;
+}
+
+.g-pd-gallery__thumbs-swiper .swiper-slide:not(.swiper-slide-thumb-active) .g-pd-gallery__thumb {
+  opacity: 0.3;
+}
+
+.g-pd-gallery__thumbs-swiper .swiper-slide-thumb-active .g-pd-gallery__thumb {
+  opacity: 1;
+}
+
+.g-pd-gallery__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* PC：Figma Group 1346（547:3525）整组 604×508；主图 500×420；箭头 40×40；缩略 72；主图距缩略 16 */
+@media (min-width: 992px) {
+  .g-product-detail-page .g-pd-gallery {
+    width: 604px;
+    max-width: 100%;
+    flex-shrink: 0;
+  }
+
+  .g-product-detail-page .g-pd-gallery__row:has(.g-pd-gallery__nav--outer) {
+    justify-content: flex-start;
+  }
+
+  .g-product-detail-page .g-pd-gallery__row:not(:has(.g-pd-gallery__nav--outer)) {
+    justify-content: center;
+  }
+
+  .g-product-detail-page .g-pd-gallery__row {
+    gap: 12px;
+  }
+
+  .g-product-detail-page .g-pd-gallery__nav--outer {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: #ececec;
+    color: #fff;
+  }
+
+  .g-product-detail-page .g-pd-gallery__nav--outer:hover {
+    background: #e2e2e2;
+    color: #fff;
+  }
+
+  .g-product-detail-page .g-pd-gallery__nav--outer .g-pd-gallery__nav-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .g-product-detail-page .g-pd-gallery__stage {
+    flex: 0 0 auto;
+    width: 500px;
+    max-width: min(500px, calc(100% - 104px));
+    height: 420px;
+    aspect-ratio: unset;
+    border-radius: 12px;
+    background: #f7f7f7;
+  }
+
+  .g-product-detail-page .g-pd-gallery__main-swiper {
+    height: 100%;
+  }
+
+  .g-product-detail-page .g-pd-gallery__main-swiper .swiper-slide {
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .g-product-detail-page .g-pd-gallery__img {
+    max-height: 100%;
+    width: auto;
+    max-width: 100%;
+    padding: clamp(12px, 4vw, 68px);
+  }
+
+  .g-product-detail-page .g-pd-gallery__thumbs-wrap {
+    margin-top: 16px;
+  }
+
+  .g-product-detail-page .g-pd-gallery__row:not(:has(.g-pd-gallery__nav--outer)) .g-pd-gallery__stage {
+    max-width: min(500px, 100%);
+  }
+
+  .g-product-detail-page .g-pd-gallery--empty .g-pd-gallery__stage {
+    aspect-ratio: unset;
+    width: 500px;
+    max-width: min(500px, 100%);
+    height: 420px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .g-product-detail-page .g-pd-gallery--empty .g-pd-gallery__placeholder {
+    min-height: 0;
+    height: 100%;
+  }
+}
+
+/* 全屏灯箱（第二种布局） */
+.g-pd-lightbox[hidden] {
+  display: none !important;
+}
+
+body.g-pd-lightbox-open {
+  overflow: hidden;
+}
+
+.g-pd-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.g-pd-lightbox__backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: #fff;
+  cursor: default;
+}
+
+.g-pd-lightbox__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  max-height: 100vh;
+  padding: clamp(32px, 6vw, 48px) clamp(12px, 4vw, 32px) clamp(16px, 4vw, 24px);
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.g-pd-lightbox__inner > * {
+  pointer-events: auto;
+}
+
+.g-pd-lightbox__close {
+  position: absolute;
+  top: 12px;
+  right: clamp(12px, 3vw, 24px);
+  z-index: 5;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  background: #f0f0f0;
+  color: #333;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.g-pd-lightbox__close:hover {
+  background: #e2e2e2;
+}
+
+.g-pd-lightbox__close-icon {
+  display: block;
+}
+
+.g-pd-lightbox__main-row {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 2vw, 20px);
+  min-height: 0;
+}
+
+.g-pd-lightbox__stage {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.g-pd-lightbox__swiper {
+  width: 100%;
+  max-width: min(96vw, 1200px);
+  max-height: calc(100vh - clamp(120px, 24vw, 200px));
+}
+
+.g-pd-lightbox__swiper .swiper-slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.g-pd-lightbox__img {
+  max-width: 100%;
+  max-height: calc(100vh - clamp(120px, 24vw, 200px));
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.g-pd-lightbox__nav {
+  flex: 0 0 auto;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 10px;
+  background: #e8eaed;
+  color: #333;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.g-pd-lightbox__nav:hover {
+  background: #dde0e5;
+}
+
+.g-pd-lightbox__thumbs-wrap {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: center;
+  padding-top: 16px;
+  max-height: 120px;
+}
+
+.g-pd-lightbox__thumbs-swiper {
+  width: auto;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.g-pd-lightbox__thumbs-swiper .swiper-slide {
+  width: 104px;
+  height: 104px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.g-pd-lightbox__thumb {
+  display: block;
+  width: 72px;
+  height: 72px;
+  margin: 16px;
+  padding: 0;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  cursor: pointer;
+  transition: opacity 0.25s ease, border-color 0.2s ease;
+}
+
+.g-pd-lightbox__thumbs-swiper .swiper-slide:not(.swiper-slide-thumb-active) .g-pd-lightbox__thumb {
+  opacity: 0.3;
+}
+
+.g-pd-lightbox__thumbs-swiper .swiper-slide-thumb-active .g-pd-lightbox__thumb {
+  opacity: 1;
+}
+
+.g-pd-lightbox__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Info column */
+.g-pd-info {
+  padding-top: clamp(0px, 1vw, 8px);
+}
+
+.g-pd-info__sku {
+  font-family: 'Exo', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--g-pd-text-secondary);
+  margin: 0 0 10px;
+}
+
+.g-pd-info__title {
+  font-family: 'Exo', sans-serif;
+  font-weight: 800;
+  font-size: clamp(24px, 3.2vw, 36px);
+  color: var(--g-pd-text);
+  line-height: 1.15;
+  margin: 0 0 10px;
+  letter-spacing: 0.02em;
+}
+
+.g-pd-info__model {
+  font-family: 'Exo', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--g-pd-text-muted);
+  margin: 0 0 20px;
+}
+
+/* 特点：一行文案 + 竖线分割 + 灰色要点区 */
+.g-pd-info__highlights-wrap {
+  margin-bottom: 20px;
+}
+
+.g-pd-info__highlights-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0;
+  margin: 0 0 14px;
+  padding: 0;
+  font-family: 'Exo', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--g-pd-text-secondary);
+}
+
+.g-pd-info__highlights-item {
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  font-size: 16px;
+  color: #686868;
+  font-weight: normal;
+}
+
+.g-pd-info__highlights-sep {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 16px;
+  color: #c8c8c8;
+  user-select: none;
+}
+
+.g-pd-info__panel--below-highlights {
+  margin-top: 0;
+}
+
+.g-pd-info__panel {
+  display: none;
+  padding: 18px 20px;
+  background: #f5f5f5;
+  border-radius: 12px;
+  border: 1px solid var(--g-pd-border);
+}
+
+.g-pd-info__panel.is-active {
+  display: block;
+}
+
+.g-pd-info__panel--solo {
+  margin-top: 0;
+}
+
+.g-pd-info__panel-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: 'Exo', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--g-pd-text-secondary);
+}
+
+.g-pd-info__block--compact {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--g-pd-border);
+}
+
+.g-pd-info__summary-list {
+  margin: 0 0 22px;
+  padding: 0;
+  list-style: none;
+  font-family: 'Exo', sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--g-pd-text-secondary);
+}
+
+.g-pd-info__summary-item {
+  margin-bottom: 0.5em;
+  padding-left: 1.5em;
+  position: relative;
+}
+
+.g-pd-info__summary-item:last-child {
+  margin-bottom: 0;
+}
+
+.g-pd-info__checklist li {
+  position: relative;
+  padding-left: 1.5em;
+  margin-bottom: 0.45em;
+}
+
+.g-pd-info__checklist li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.45em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--g-pd-accent);
+}
+
+.g-pd-info__checklist li:last-child {
+  margin-bottom: 0;
+}
+
+.g-pd-info__block {
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid var(--g-pd-border);
+}
+
+.g-pd-info__block-title {
+  font-family: 'Exo', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--g-pd-text-secondary);
+  margin: 0 0 12px;
+}
+
+.g-pd-info__features {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: 'Exo', sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--g-pd-text-secondary);
+}
+
+.g-pd-info__core {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 0;
+}
+
+.g-pd-info__core-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--g-pd-surface);
+  border-radius: 12px;
+  border: 1px solid var(--g-pd-border);
+}
+
+.g-pd-info__core-row--single {
+  justify-content: flex-start;
+}
+
+.g-pd-info__core-k,
+.g-pd-info__core-v {
+  font-family: 'Exo', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #555;
+}
+
+.g-pd-info__core-v {
+  text-align: right;
+}
+
+.g-pd-info__core-row--single .g-pd-info__core-v {
+  text-align: left;
+}
+
+.g-pd-info__cta-row {
+  margin-top: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 20px;
+}
+
+.g-pd-info__cta-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.g-pd-info__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 160px;
+  padding: 14px 28px;
+  background: var(--g-pd-accent);
+  color: #fff !important;
+  font-family: 'Exo', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  text-decoration: none;
+  border-radius: 10px;
+  border: 2px solid var(--g-pd-accent);
+  transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+.g-pd-info__cta:hover {
+  background: var(--g-pd-accent-hover);
+  border-color: var(--g-pd-accent-hover);
+  transform: translateY(-1px);
+}
+
+.g-pd-info__cta--outline {
+  background: #fff;
+  color: var(--g-pd-text) !important;
+  border-color: #c8c8c8;
+}
+
+.g-pd-info__cta--outline:hover {
+  background: var(--g-pd-surface);
+  border-color: #aaa;
+  transform: translateY(-1px);
+}
+
+.g-pd-info__cart {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  background: #f0f0f0;
+  color: #555;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.g-pd-info__cart:hover {
+  background: #e6e6e6;
+  color: var(--g-pd-text);
+  border-color: #bbb;
+}
+
+.g-pd-info__certs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  padding: 12px 16px;
+  background: var(--g-pd-surface);
+  border: 1px solid var(--g-pd-border);
+  border-radius: 12px;
+  flex: 1 1 200px;
+  min-width: 0;
+  justify-content: center;
+}
+
+.g-pd-info__cert {
+  font-family: 'Exo', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: #666;
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+}
+
+/* Figma Group 1344（node 543:3523）— 产品详情信息区 */
+.g-pd-info--figma .g-pd-info__title {
+  font-weight: 600;
+  font-size: clamp(26px, 2.8vw, 32px);
+  line-height: 1.329;
+  color: #0d0d0d;
+  letter-spacing: 0;
+  margin: 0 0 24px;
+}
+
+.g-pd-info--figma .g-pd-info__highlights-wrap {
+  margin-bottom: 0;
+}
+
+.g-pd-info__feature-tab-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 0 32px;
+  padding: 0;
+}
+
+.g-pd-info__feature-tab {
+  box-sizing: border-box;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px 8px;
+  font-family: 'Exo', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.329;
+  color: #0d0d0d;
+  background: #fff;
+  border: 1px solid #cecfd4;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.g-pd-info__feature-tab:hover {
+  border-color: #f89d1b;
+}
+
+.g-pd-info__feature-tab.is-active {
+  background: #f89d1b;
+  color: #fff;
+  border-color: #f89d1b;
+}
+
+@media (max-width: 767.98px) {
+  .g-pd-info__feature-tab-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 479.98px) {
+  .g-pd-info__feature-tab-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.g-pd-info__panel--figma {
+  padding: 24px 16px 24px 24px;
+  background: #f6f6f7;
+  border-radius: 10px;
+  border: none !important;
+}
+
+.g-pd-info--figma .g-pd-info__panel-list {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 2.25;
+  color: #0d0d0d;
+}
+
+.g-pd-info__checklist--figma li {
+  padding-left: 1.25rem;
+  margin-bottom: 0;
+}
+
+.g-pd-info__checklist--figma li::before {
+  top: 0.7em;
+  width: 5px;
+  height: 5px;
+  background: #0d0d0d;
+}
+
+.g-pd-info__cta-row--figma {
+  margin-top: clamp(40px, 6.5vw, 72px);
+}
+
+.g-pd-info__cta-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.g-pd-info__cta--figma-quote {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 196px;
+  max-width: 100%;
+  height: 48px;
+  min-height: 48px;
+  padding: 0 12px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.329;
+}
+
+.g-pd-info__cta--figma-download {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 196px;
+  max-width: 100%;
+  height: 48px;
+  min-height: 48px;
+  padding: 0 12px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.329;
+  background: #fff !important;
+  color: #424558 !important;
+  border: 2px solid #424558 !important;
+}
+
+.g-pd-info__cta--figma-download:hover {
+  background: #f6f6f7 !important;
+  border-color: #424558 !important;
+  color: #424558 !important;
+}
+
+.g-pd-info__cart--figma {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #f6f6f7 !important;
+  border: none !important;
+  color: #686868;
+}
+
+.g-pd-info__cart--figma:hover {
+  background: #ececee !important;
+  color: #424558;
+}
+
+.g-pd-info__certs--figma-strip {
+  box-sizing: border-box;
+  flex: 1 1 160px;
+  min-width: 0;
+  min-height: 48px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 4px 16px;
+  background: #f6f6f7;
+  border-radius: 12px;
+  border: none !important;
+}
+
+.g-pd-info__cert--figma {
+  border: none !important;
+  background: transparent !important;
+  padding: 4px 6px !important;
+  margin: 0;
+  font-family: 'Exo', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: #424558;
+  text-align: center;
+  line-height: 1.25;
+}
+
+.g-pd-info__certs-figma-divider {
+  flex: 0 0 auto;
+  width: 0;
+  height: 20px;
+  margin: 0 10px;
+  border-left: 1.5px solid #d2d2d2;
+  align-self: center;
+}
+
+@media (max-width: 1199.98px) {
+  .g-pd-info__cta--figma-quote,
+  .g-pd-info__cta--figma-download {
+    width: min(196px, 42vw);
+  }
+}
+
+@media (max-width: 575.98px) {
+  .g-pd-info__cta-strip {
+    gap: 12px;
+    justify-content: flex-start;
+  }
+
+  .g-pd-info__cta--figma-quote,
+  .g-pd-info__cta--figma-download {
+    flex: 1 1 calc(50% - 6px);
+    width: auto;
+    min-width: 140px;
+  }
+
+  .g-pd-info__certs--figma-strip {
+    flex: 1 1 100%;
+    justify-content: flex-start;
+  }
+}
+
+/* Blocks */
+.g-pd-block {
+  margin-top: clamp(16px, 4vw, 36px);
+}
+
+.g-pd-block__title {
+  font-family: 'Exo', sans-serif;
+  font-weight: 700;
+  font-size: clamp(20px, 2.5vw, 26px);
+  color: var(--g-pd-text);
+  margin: 0 0 24px;
+  padding-bottom: 12px;
+  border-bottom: 3px solid var(--g-pd-accent);
+  display: inline-block;
+}
+
+.g-pd-params__grid {
+  margin-top: 0;
+}
+
+.g-pd-params__group {
+  background: #fff;
+  border-radius: 14px;
+  padding: 22px 24px;
+  border: 1px solid var(--g-pd-border);
+  height: 100%;
+}
+
+.g-pd-params__group-title {
+  font-family: 'Exo', sans-serif;
+  font-weight: 600;
+  font-size: 17px;
+  color: #424558;
+  margin: 0 0 12px;
+}
+
+.g-pd-params__group-body {
+  font-family: 'Exo', sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+  color: #555;
+  white-space: pre-wrap;
+}
+
+/* 技术参数：Univer 快照 / 二维数组 → 表格（对齐 B2B 参数表） */
+.g-pd-params-spec__sections {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(28px, 4vw, 44px);
+}
+
+.g-pd-params-spec__section-title {
+  font-family: 'Exo', sans-serif;
+  font-weight: 700;
+  font-size: clamp(18px, 2.2vw, 22px);
+  color: var(--g-pd-text);
+  text-align: center;
+  margin: 0 0 20px;
+  letter-spacing: 0.02em;
+}
+
+/* Figma Group 1345 (544:3524) — 参数 / 优势主标题与副标题 */
+.g-pd-params-spec__section-title.g-pd-params-spec__section-title--figma {
+  font-family: 'Exo', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(28px, 3.5vw, 40px);
+  line-height: 1.329;
+  color: #0d0d0d;
+  text-align: left;
+  letter-spacing: 0;
+  margin: 0 0 clamp(28px, 4vw, 48px);
+}
+
+.g-pd-block__title.g-pd-block__title--figma544 {
+  font-family: 'Exo', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(28px, 3.5vw, 40px);
+  line-height: 1.329;
+  color: #0d0d0d;
+  margin: 0 0 2px;
+  padding-bottom: 0;
+  border-bottom: none;
+  display: block;
+}
+
+.g-pd-adv-head__lead.g-pd-adv-head__lead--figma544 {
+  font-family: 'Exo', system-ui, sans-serif;
+  font-weight: 400;
+  font-size: clamp(18px, 2.4vw, 24px);
+  line-height: 1.329;
+  color: #0d0d0d;
+  max-width: none;
+}
+
+.g-pd-adv-zigzag__head.g-pd-adv-zigzag__head--figma544 {
+  text-align: left;
+  margin-bottom: clamp(32px, 5vw, 56px);
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.g-pd-adv-zigzag__title.g-pd-adv-zigzag__title--figma544 {
+  font-family: 'Exo', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(28px, 3.5vw, 40px);
+  line-height: 1.329;
+  color: #0d0d0d;
+  margin: 0 0 10px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.g-pd-adv-zigzag__subtitle.g-pd-adv-zigzag__subtitle--figma544 {
+  font-family: 'Exo', system-ui, sans-serif;
+  font-weight: 400;
+  font-size: clamp(18px, 2.4vw, 24px);
+  line-height: 1.329;
+  color: #0d0d0d;
+  margin: 0;
+  max-width: none;
+  margin-bottom: 1rem;
+}
+
+.g-pd-params-spec__table-wrap {
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin-bottom: clamp(20px, 3vw, 28px);
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+}
+
+.g-pd-params-spec__section .g-pd-params-spec__table-wrap:last-child {
+  margin-bottom: 0;
+}
+
+.g-pd-params-spec__table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-family: 'Exo', system-ui, sans-serif;
+  font-size: 14px;
+  text-align: center;
+}
+
+.g-pd-params-spec__table thead th {
+  background: #848692;
+  color: #fff;
+  font-weight: 600;
+  padding: 12px 12px;
+  font-size: 18px;
+  border: none;
+  border-right: 1px solid #e6e7e9;
+}
+
+.g-pd-params-spec__table thead th:last-child {
+  border-right: none;
+}
+
+.g-pd-params-spec__table tbody td {
+  padding: 12px 10px;
+  color: var(--g-pd-text);
+  border: none;
+  border-top: 1px solid #e8eaed;
+  border-right: 1px solid #e6e7e9;
+}
+
+.g-pd-params-spec__table tbody td:last-child {
+  border-right: none;
+}
+
+.g-pd-params-spec__table thead tr:first-child th:first-child {
+  border-top-left-radius: 8px;
+}
+
+.g-pd-params-spec__table thead tr:first-child th:last-child {
+  border-top-right-radius: 8px;
+}
+
+.g-pd-params-spec__table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 8px;
+}
+
+.g-pd-params-spec__table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 8px;
+}
+
+.g-pd-params-spec__table tbody tr:nth-child(even) td {
+  background: #ededef;
+}
+
+.g-pd-params-spec__table tbody tr:nth-child(odd) td {
+  background: #f8f8f8;
+}
+
+.g-pd-params-spec__legacy {
+  font-family: 'Exo', sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+  color: #555;
+  white-space: pre-wrap;
+  padding: 16px 20px;
+  background: var(--g-pd-surface);
+  border-radius: 12px;
+  border: 1px solid var(--g-pd-border);
+}
+
+.g-pd-adv-head__lead {
+  font-family: 'Exo', sans-serif;
+  font-size: 17px;
+  line-height: 1.6;
+  color: #555;
+  margin: 0;
+  max-width: 900px;
+}
+
+/* 产品优势：顶栏 + 图文 Zigzag（对齐设计稿） */
+.g-pd-adv-zigzag {
+  margin-top: clamp(36px, 6vw, 56px);
+}
+
+.g-pd-adv-zigzag__head {
+  text-align: center;
+  margin-bottom: clamp(40px, 6vw, 72px);
+  padding: 0 clamp(12px, 4vw, 24px);
+}
+
+.g-pd-adv-zigzag__title {
+  font-family: 'Exo', sans-serif;
+  font-weight: 800;
+  font-size: clamp(22px, 3.5vw, 34px);
+  line-height: 1.2;
+  color: var(--g-pd-text);
+  margin: 0 0 14px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.g-pd-adv-zigzag__subtitle {
+  font-family: 'Exo', sans-serif;
+  font-weight: 400;
+  font-size: clamp(15px, 2vw, 18px);
+  line-height: 1.55;
+  color: var(--g-pd-text-muted);
+  margin: 0 auto;
+  max-width: 720px;
+}
+
+.g-pd-adv-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(24px, 4vw, 48px);
+  margin-bottom: clamp(48px, 8vw, 88px);
+}
+
+.g-pd-adv-zigzag > .g-pd-adv-row:last-of-type {
+  margin-bottom: 0;
+}
+
+/* 第 1、3、5… 行：图左文右（DOM 顺序：图 → 文） */
+.g-pd-adv-zigzag > .g-pd-adv-row:nth-child(2n + 2) {
+  flex-direction: row;
+}
+
+/* 第 2、4… 行：文左图右 */
+.g-pd-adv-zigzag > .g-pd-adv-row:nth-child(2n + 3) {
+  flex-direction: row-reverse;
+}
+
+.g-pd-adv-row__media {
+  flex: 1 1 56%;
+  min-width: min(100%, 300px);
+  max-width: 640px;
+}
+
+.g-pd-adv-row__figure {
+  border-radius: 16px;
+  overflow: hidden;
+  aspect-ratio: 39 / 20;
+  background: var(--g-pd-surface);
+  border: 1px solid var(--g-pd-border);
+}
+
+.g-pd-adv-row__figure img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.g-pd-adv-row__body {
+  flex: 1 1 42%;
+  min-width: min(100%, 280px);
+  max-width: 580px;
+  text-align: left;
+}
+
+.g-pd-adv-row--no-media {
+  justify-content: center;
+}
+
+.g-pd-adv-row--no-media .g-pd-adv-row__body {
+  flex: 1 1 100%;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 8px;
+  border-top: 3px solid var(--g-pd-accent);
+}
+
+.g-pd-adv-row__heading {
+  font-family: 'Exo', sans-serif;
+  font-weight: 700;
+  font-size: clamp(18px, 2.2vw, 42px);
+  color: var(--g-pd-text);
+  margin: 0 0 24px;
+  line-height: 1.3;
+}
+
+.g-pd-adv-row__lead {
+  font-family: 'Exo', sans-serif;
+  font-size: clamp(15px, 1.6vw, 18px);
+  line-height: 1.65;
+  color: var(--g-pd-text-secondary);
+  margin: 0;
+  white-space: pre-line;
+}
+
+.g-pd-adv-row__rule {
+  width: 48px;
+  height: 3px;
+  margin: 32px 0 32px;
+  background: var(--g-pd-accent);
+  border-radius: 2px;
+}
+
+.g-pd-adv-row__sub {
+  font-family: 'Exo', sans-serif;
+  font-size: clamp(14px, 1.4vw, 18px);
+  line-height: 1.6;
+  color: var(--g-pd-text-muted);
+  margin: 0;
+  white-space: pre-line;
+}
+
+@media (max-width: 767.98px) {
+  .g-pd-adv-zigzag > .g-pd-adv-row {
+    flex-direction: column !important;
+  }
+
+  .g-pd-adv-row__media {
+    max-width: none;
+    order: -1;
+  }
+
+  .g-pd-adv-row__body {
+    max-width: none;
+  }
+}
+
+.g-pd-certs__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.g-pd-certs__item {
+  padding: 10px 18px;
+  background: var(--g-pd-text-secondary);
+  color: #fff;
+  font-family: 'Exo', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border-radius: 999px;
+}
+
+/* 404 */
+.g-pd-not-found {
+  padding: clamp(64px, 12vw, 120px) 0;
+  text-align: center;
+}
+
+.g-pd-not-found__title {
+  font-family: 'Exo', sans-serif;
+  font-size: clamp(24px, 4vw, 36px);
+  color: #2b2b2b;
+  margin: 0 0 16px;
+}
+
+.g-pd-not-found__text {
+  font-size: 16px;
+  color: #666;
+  margin: 0 0 28px;
+}
+
+.g-pd-not-found__btn {
+  display: inline-flex;
+  padding: 12px 28px;
+  background: #f89d1b;
+  color: #fff !important;
+  font-family: 'Exo', sans-serif;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 99px;
+}
+
+.g-pd-not-found__btn:hover {
+  background: #e88d0b;
+}
+
+/* --------------------------------------------------------------------------
+ * 产品详情页移动端（<992px）：仅作用 .g-product-detail-page，PC 端不变
+ * -------------------------------------------------------------------------- */
+@media (max-width: 991.98px) {
+  .g-product-detail-page .g-product-detail-layout .g-products-layout__inner {
+    padding-top: clamp(16px, 3.5vw, 28px);
+    padding-bottom: clamp(40px, 10vw, 64px);
+  }
+
+  .g-product-detail-page .g-pd-main {
+    padding-bottom: clamp(32px, 8vw, 72px);
+  }
+
+  .g-product-detail-page .g-pd-main__row {
+    margin-bottom: clamp(28px, 5vw, 48px);
+    --bs-gutter-x: clamp(12px, 3.5vw, 20px);
+    --bs-gutter-y: clamp(18px, 3.5vw, 28px);
+  }
+
+  .g-product-detail-page .g-pd-breadcrumb {
+    padding-top: 12px;
+    padding-bottom: 6px;
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
+
+  .g-product-detail-page .g-pd-gallery__row {
+    gap: 8px;
+    max-width: 100%;
+  }
+
+  .g-product-detail-page .g-pd-gallery__nav {
+    width: 40px;
+    height: 40px;
+  }
+
+  .g-product-detail-page .g-pd-gallery__nav-icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  .g-product-detail-page .g-pd-gallery__stage {
+    max-width: min(520px, 100%);
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 12px;
+  }
+
+  .g-product-detail-page .g-pd-gallery__img {
+    max-height: min(80vw, 480px);
+    padding: clamp(10px, 3vw, 22px);
+  }
+
+  .g-product-detail-page .g-pd-gallery__thumbs-swiper .swiper-slide {
+    width: 80px;
+    height: 80px;
+  }
+
+  .g-product-detail-page .g-pd-gallery__thumb {
+    width: 68px;
+    height: 68px;
+  }
+
+  .g-product-detail-page .g-pd-params-spec__table-wrap {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .g-product-detail-page .g-pd-params-spec__table {
+    font-size: 13px;
+  }
+
+  .g-product-detail-page .g-pd-params-spec__table thead th,
+  .g-product-detail-page .g-pd-params-spec__table tbody td {
+    padding: 10px 8px;
+  }
+
+  .g-product-detail-page .g-pd-params-spec__section-title.g-pd-params-spec__section-title--figma {
+    font-size: clamp(22px, 5.2vw, 32px);
+    margin-bottom: clamp(18px, 3.5vw, 36px);
+  }
+
+  .g-product-detail-page .g-pd-block__title.g-pd-block__title--figma544 {
+    font-size: clamp(22px, 5.2vw, 32px);
+  }
+
+  .g-product-detail-page .g-pd-adv-zigzag__title.g-pd-adv-zigzag__title--figma544 {
+    font-size: clamp(22px, 5.2vw, 32px);
+  }
+
+  .g-product-detail-page .g-pd-adv-zigzag__subtitle.g-pd-adv-zigzag__subtitle--figma544 {
+    font-size: clamp(16px, 3.8vw, 22px);
+  }
+
+  .g-product-detail-page .g-pd-adv-zigzag__head.g-pd-adv-zigzag__head--figma544 {
+    margin-bottom: clamp(24px, 5vw, 48px);
+  }
+
+  .g-product-detail-page .g-pd-lightbox__inner {
+    padding-top: max(12px, env(safe-area-inset-top));
+    padding-right: max(10px, env(safe-area-inset-right));
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+    padding-left: max(10px, env(safe-area-inset-left));
+  }
+
+  .g-product-detail-page .g-pd-lightbox__close {
+    top: max(8px, env(safe-area-inset-top));
+    right: max(8px, env(safe-area-inset-right));
+  }
+
+  .g-product-detail-page .g-pd-lightbox__nav {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+  }
+
+  .g-product-detail-page .g-pd-lightbox__swiper {
+    max-width: 100%;
+  }
+
+  .g-product-detail-page .g-pd-lightbox__img {
+    max-height: calc(100vh - max(160px, 28vw));
+  }
+
+  .g-product-detail-page .g-pd-lightbox__thumbs-swiper .swiper-slide {
+    width: 92px;
+    height: 92px;
+  }
+
+  .g-product-detail-page .g-pd-lightbox__thumb {
+    width: 64px;
+    height: 64px;
+    margin: 10px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .g-product-detail-page .g-products-banner {
+    height: min(256px, 46vw);
+  }
+
+  .g-product-detail-page .g-products-banner__title {
+    font-size: clamp(22px, 6vw, 30px);
+    padding-top: clamp(92px, 26vw, 148px);
+    letter-spacing: 0.03em;
+  }
+
+  .g-product-detail-page .g-products-breadcrumb {
+    padding: 10px 0;
+  }
+
+  .g-product-detail-page .g-products-breadcrumb__item {
+    font-size: 14px;
+  }
+
+  .g-product-detail-page .g-pd-info__cta--figma-quote,
+  .g-product-detail-page .g-pd-info__cta--figma-download {
+    font-size: clamp(15px, 3.8vw, 17px);
+  }
+
+  .g-product-detail-page .g-pd-adv-row {
+    gap: clamp(18px, 4vw, 28px);
+    margin-bottom: clamp(36px, 8vw, 64px);
+  }
+}
+
+@media (max-width: 575.98px) {
+  .g-product-detail-page .g-pd-gallery__stage {
+    max-width: none;
+    width: 100%;
+  }
+
+  .g-product-detail-page .g-pd-gallery__row {
+    gap: 6px;
+  }
+
+  .g-product-detail-page .g-pd-gallery__nav {
+    width: 36px;
+    height: 36px;
+  }
+
+  .g-product-detail-page .g-pd-gallery__nav-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .g-product-detail-page .g-products-layout__inner.container {
+    --bs-gutter-x: 1rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+ * 产品详情主区（product-detail-main）：去除边框与线框分隔
+ * -------------------------------------------------------------------------- */
+.g-product-detail-page .g-pd-main--borderless .g-pd-gallery__stage {
+  border: none;
+}
+
+.g-product-detail-page .g-pd-main--borderless .g-pd-gallery__nav {
+  border: none;
+}
+
+.g-product-detail-page .g-pd-main--borderless .g-pd-info__panel {
+  border: none;
+}
+
+.g-product-detail-page .g-pd-main--borderless .g-pd-info__block--compact,
+.g-product-detail-page .g-pd-main--borderless .g-pd-info__block {
+  border-top: none;
+}
+
+.g-product-detail-page .g-pd-main--borderless .g-pd-info__core-row {
+  border: none;
+}
+
+.g-product-detail-page .g-pd-main--borderless .g-pd-info__cta:not(.g-pd-info__cta--figma-quote):not(.g-pd-info__cta--figma-download) {
+  border: none;
+}
+
+.g-product-detail-page .g-pd-main--borderless .g-pd-info__cta--outline:not(.g-pd-info__cta--figma-download) {
+  border: none;
+  background: var(--g-pd-surface);
+}
+
+.g-product-detail-page .g-pd-main--borderless .g-pd-info__cart:not(.g-pd-info__cart--figma) {
+  border: none;
+}
+
+.g-product-detail-page .g-pd-main--borderless .g-pd-info__certs:not(.g-pd-info__certs--figma-strip) {
+  border: none;
+}
+
+.g-product-detail-page .g-pd-main--borderless .g-pd-info__cert:not(.g-pd-info__cert--figma) {
+  border: none;
+}
+
+.g-product-detail-page .g-pd-main--borderless .g-pd-info--figma .g-pd-info__cta--figma-quote {
+  border: none;
+  background: var(--g-pd-accent);
+  color: #fff !important;
+}
+
+.g-product-detail-page .g-pd-main--borderless .g-pd-info--figma .g-pd-info__cta--figma-download {
+  border: 2px solid #424558 !important;
+  background: #fff !important;
+  color: #424558 !important;
+}
+
+.g-product-detail-page .g-pd-main--borderless .g-pd-block__title {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.g-product-detail-page .g-pd-main--borderless .g-pd-params__group {
+  border: none;
+}
+
+.g-product-detail-page .g-pd-main--borderless .g-pd-params-spec__table-wrap {
+  border: none;
+}
+
+.g-product-detail-page .g-pd-main--borderless .g-pd-params-spec__table tbody td {
+  border-top: none;
+}
+
+.g-product-detail-page .g-pd-main--borderless .g-pd-params-spec__legacy {
+  border: none;
+}
+
+.g-product-detail-page .g-pd-main--borderless .g-pd-adv-row__figure {
+  border: none;
+}
+
+.g-product-detail-page .g-pd-main--borderless .g-pd-adv-row--no-media .g-pd-adv-row__body {
+  border-top: none;
+  padding-top: 0;
+}
+
+/* 全屏宽度横线 */
+.g-pd-main__full-width-line {
+  position: relative;
+  left: 49.5%;
+  transform: translateX(-50%);
+  width: 99vw;
+  height: 1px;
+  background-color: #e8e8e8;
+  margin: 20px 0;
+}
+
+/* 移动端适配 */
+@media (max-width: 991.98px) {
+  .g-pd-main__full-width-line {
+    margin: 16px 0;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .g-pd-main__full-width-line {
+    margin: 12px 0;
+  }
+}

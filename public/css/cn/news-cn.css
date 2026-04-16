@@ -1,0 +1,307 @@
+/* 国外站 — 新闻列表 / 详情 */
+
+.g-news-page .g-main {
+  background: #f3f4f6;
+}
+
+/* Banner：顶栏 fixed 叠在首图上（与 about-us 共用 .g-products-page .pc-nav） */
+.g-news-banner {
+  position: relative;
+  height: 388px;
+  overflow: hidden;
+}
+
+.g-news-banner__inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: inherit;
+  box-sizing: border-box;
+  padding-top: clamp(72px, 12vw, 120px);
+  padding-bottom: clamp(32px, 6vw, 56px);
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.g-news-banner__bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #2f3240 0%, #4a5568 45%, #2d3748 100%);
+}
+
+/* 菜单 banner_url：覆盖默认渐变，叠保留 ::after 遮罩 */
+.g-news-banner__bg.g-news-banner__bg--image {
+  background-color: #2f3240;
+  background-image: var(--g-news-banner-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.g-news-banner__bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    0deg,
+    rgba(15, 23, 42, 0.5),
+    rgba(15, 23, 42, 0.25)
+  );
+}
+
+.g-news-banner__title {
+  font-family: 'Exo', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  letter-spacing: 0.12em;
+  color: #fff;
+  margin: 0;
+  margin-top: 50px;
+  text-align: center;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* 卡片网格 */
+.g-news-layout {
+  padding: 1.5rem 0 3rem;
+}
+
+.g-news-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 991.98px) {
+  .g-news-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 575.98px) {
+  .g-news-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.g-news-card {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  box-shadow: none;
+  text-decoration: none;
+  color: inherit;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    border-color 0.2s ease;
+  height: 100%;
+}
+
+a.g-news-card:hover {
+  border-color: #e5e7eb;
+  box-shadow: 0 4px 4px rgba(15, 23, 42, 0.1);
+  transform: translateY(-2px);
+  color: inherit;
+}
+
+.g-news-card__img-wrap {
+  aspect-ratio: 16 / 10;
+  background: #e5e7eb;
+  overflow: hidden;
+}
+
+.g-news-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.g-news-card__body {
+  padding: 1.25rem 1.25rem 1.35rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 0.65rem;
+}
+
+.g-news-card__date {
+  font-family: 'Exo', system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: #6b6f7c;
+}
+
+.g-news-card__title {
+  font-family: 'Exo', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 1.329;
+  color: #0d0d0d;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.g-news-card__excerpt {
+  font-family: 'Exo', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #555;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+}
+
+/* 胶囊 CTA：主色底、白字、文案与箭头两端对齐（readmore 配置驱动文案） */
+.g-news-card__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.35rem;
+  align-self: flex-start;
+  width: fit-content;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 0.55rem 1.35rem;
+  min-height: 44px;
+  border-radius: 999px;
+  font-family: 'Exo', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: 0.01em;
+  color: #fff;
+  background: var(--g-color-primary, #f89d1b);
+  border: 2px solid transparent;
+  text-decoration: none;
+  transition:
+    background 0.2s ease,
+    filter 0.2s ease;
+}
+
+.g-news-card__cta-text {
+  text-align: left;
+  line-height: 1.2;
+}
+
+.g-news-card__cta-arrow {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+}
+
+.g-news-card__cta-svg {
+  display: block;
+}
+
+a.g-news-card:hover .g-news-card__cta {
+  background: #ea9218;
+  filter: brightness(1.02);
+}
+
+.g-news-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem 1rem;
+  font-family: 'Exo', system-ui, sans-serif;
+  color: #6b7280;
+}
+
+/* 详情 */
+.g-news-detail-page .g-main {
+  background: #f3f4f6;
+}
+
+.g-news-detail {
+  max-width: 1330px;
+  margin: 0 auto;
+  padding: 0 1rem 3.5rem;
+}
+
+.g-news-detail__meta {
+  font-family: 'Exo', system-ui, sans-serif;
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0 0 1.25rem;
+}
+
+.g-news-detail__title {
+  font-family: 'Exo', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  line-height: 1.25;
+  color: #111827;
+  margin: 0 0 1.25rem;
+}
+
+/* 有发布时间时与标题略收紧，间距交给 .g-news-detail__meta 下边距 */
+.g-news-detail__title:has(+ .g-news-detail__meta) {
+  margin-bottom: 0.375rem;
+}
+
+.g-news-detail__thumb {
+  width: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.g-news-detail__content {
+  background: #fff;
+  padding: 1.75rem 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+  font-family: 'Exo', system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: #374151;
+}
+
+.g-news-detail__content pre {
+  white-space: normal;
+}
+.g-news-detail__content img {
+  max-width: 100%;
+  height: auto;
+}
+.g-news-detail-main{
+  padding-top:40px;
+}
+.g-news-detail__back {
+  display: inline-block;
+  margin-top: 2rem;
+  font-family: 'Exo', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--g-color-primary, #f89d1b);
+  text-decoration: none;
+}
+
+.g-news-detail__back:hover {
+  text-decoration: underline;
+}
+
+/* 新闻详情页：与 detail-nav-toolbar partial 配合的布局 */
+@media (min-width: 992px) {
+  .g-case-detail-layout__inner .g-news-detail {
+    width: 100%;
+    min-width: 0;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}

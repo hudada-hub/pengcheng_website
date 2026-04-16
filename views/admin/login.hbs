@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/admin/admin-theme.css">
+  <script src="/js/iconify-icon.min.js"></script>
+</head>
+<body class="admin-login-wrap">
+  <div class="admin-login-card">
+    <div class="admin-login-header">
+      <div class="admin-login-logo">
+        <iconify-icon icon="mdi:shield-account"></iconify-icon>
+      </div>
+      <div class="admin-login-title-wrap">
+        <h1>{{title}}</h1>
+      </div>
+    </div>
+
+    {{#if error}}
+      <div class="error-msg">{{error}}</div>
+    {{/if}}
+
+    <form method="post" action="/admin/login">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      <div class="form-group">
+        <label for="username">用户名</label>
+        <div class="admin-input-with-icon">
+          <span class="admin-input-icon">
+            <iconify-icon icon="mdi:account-outline"></iconify-icon>
+          </span>
+          <input type="text" id="username" name="username" required autocomplete="username" placeholder="请输入用户名">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="password">密码</label>
+        <div class="admin-input-with-icon">
+          <span class="admin-input-icon">
+            <iconify-icon icon="mdi:lock-outline"></iconify-icon>
+          </span>
+          <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="请输入密码">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="captcha">图片验证码</label>
+        <div class="admin-login-captcha-row">
+          <div class="admin-input-with-icon admin-input-captcha">
+            <span class="admin-input-icon">
+              <iconify-icon icon="mdi:shield-key-outline"></iconify-icon>
+            </span>
+            <input type="text" id="captcha" name="captcha" required autocomplete="off" placeholder="请输入验证码（不区分大小写）">
+          </div>
+          <img
+            class="admin-login-captcha-img"
+            id="adminCaptchaImg"
+            src="/admin/captcha?t={{captchaTs}}"
+            alt="验证码"
+            title="点击刷新验证码"
+          >
+        </div>
+        <div class="hint">不区分大小写，看不清？点击图片刷新</div>
+      </div>
+      <button type="submit" class="admin-login-submit">
+        <span>登 录</span>
+        <iconify-icon icon="mdi:arrow-right"></iconify-icon>
+      </button>
+    </form>
+  </div>
+  <script>
+    (function () {
+      var img = document.getElementById('adminCaptchaImg');
+      if (!img) return;
+      function refresh() {
+        img.src = '/admin/captcha?t=' + Date.now();
+      }
+      img.addEventListener('click', refresh);
+      img.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') refresh();
+      });
+    })();
+  </script>
+</body>
+</html>

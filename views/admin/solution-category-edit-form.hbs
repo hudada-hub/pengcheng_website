@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head><body><div id="admin-form-fragment">
+  <div class="admin-card">
+    <form class="admin-form admin-form-modal sc-category-form" method="post" action="/admin/solution-category/save">
+      <div class="admin-modal-form-scroll">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        {{#if category}}<input type="hidden" name="id" value="{{category.id}}">{{/if}}
+        <section class="admin-form-section">
+          <div class="admin-form-section-title">基础信息</div>
+          <div class="admin-form-grid admin-form-grid-2">
+            <div class="form-group admin-col-span-2">
+              <label>标题 <span class="admin-required">*</span></label>
+              <input type="text" name="title" id="scTitle" required value="{{#if category}}{{category.title}}{{/if}}" placeholder="分类标题">
+              <div class="admin-form-help">用于前台分类展示与列表筛选。</div>
+            </div>
+
+            <div class="form-group">
+              <label>语言 <span class="admin-required">*</span></label>
+              <select name="langId" required>
+                {{#each langs}}
+                  <option value="{{this.id}}" {{#if (eq this.id ../defaultLangId)}}selected{{/if}}>{{this.name}} ({{this.code}})</option>
+                {{/each}}
+              </select>
+              <div class="admin-form-help">分类按语言独立维护，翻译建议用“一键翻译”。</div>
+            </div>
+
+            <div class="form-group">
+              <label>排序</label>
+              <input type="number" name="sort" value="{{#if category}}{{category.sort}}{{else}}0{{/if}}" min="0" placeholder="数字越小越靠前">
+              <div class="admin-form-help">数字越小越靠前。</div>
+            </div>
+
+            <div class="form-group">
+              <label>类型</label>
+              <select name="type">
+                <option value="1" {{#if category}}{{#if (eq category.type 1)}}selected{{/if}}{{/if}}>业务板块</option>
+                <option value="2" {{#if category}}{{#if (eq category.type 2)}}selected{{/if}}{{else}}selected{{/if}}>应用场景</option>
+              </select>
+              <div class="admin-form-help">1: 业务板块, 2: 应用场景。</div>
+            </div>
+
+            <div class="form-group">
+              <label>状态</label>
+              <select name="status">
+                <option value="1" {{#if category}}{{#if (eq category.status 1)}}selected{{/if}}{{else}}selected{{/if}}>正常</option>
+                <option value="0" {{#if category}}{{#if (eq category.status 0)}}selected{{/if}}{{/if}}>隐藏</option>
+              </select>
+              <div class="admin-form-help">隐藏后前台不展示，但后台仍可编辑。</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="admin-form-section admin-form-section-last">
+          <div class="admin-form-section-title">SEO（可选）</div>
+          <div class="admin-form-grid admin-form-grid-2">
+            <div class="form-group admin-col-span-2">
+              <label>SEO 标题</label>
+              <input type="text" name="metaTitle" id="scMetaTitle" value="{{#if category}}{{#if category.metaTitle}}{{category.metaTitle}}{{else}}{{category.title}}{{/if}}{{/if}}" placeholder="留空则使用标题">
+              <div class="admin-form-help">留空则默认使用标题。</div>
+            </div>
+            <div class="form-group admin-col-span-2">
+              <label>SEO 关键词</label>
+              <textarea name="metaKeywords" rows="2" placeholder="多个关键词用逗号分隔">{{#if category}}{{category.metaKeywords}}{{/if}}</textarea>
+            </div>
+            <div class="form-group admin-col-span-2">
+              <label>SEO 描述</label>
+              <textarea name="metaDescription" rows="2" placeholder="建议 60-160 字左右">{{#if category}}{{category.metaDescription}}{{/if}}</textarea>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">保存</button>
+        <button type="button" class="btn admin-modal-form-cancel">取消</button>
+      </div>
+    </form>
+  </div>
+</div></body></html>

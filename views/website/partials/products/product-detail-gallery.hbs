@@ -1,0 +1,102 @@
+{{!-- 产品详情左侧：Swiper 主图+缩略图（�?autoplay）、左右按钮在图外侧；缩略图未选中 opacity .3 / 选中 1；点击主图全屏灯箱。依�?mainPics、locale、product --}}
+<div class="col-12 col-lg-6 col-xl-5 g-pd-main__gallery-col">
+  {{#if (length mainPics)}}
+  <div class="g-pd-gallery" id="productDetailGallery">
+    <script type="application/json" id="g-pd-main-pics-json">{{json mainPics}}</script>
+    <div class="g-pd-gallery__row">
+      {{#if (gt (length mainPics) 1)}}
+      <button type="button" class="g-pd-gallery__nav g-pd-gallery__nav--outer g-pd-gallery__nav--prev" id="productDetailGalleryPrev" aria-label="{{#if (eq locale "zh-CN")}}上一张{{else}}Previous image{{/if}}">
+        <svg class="g-pd-gallery__nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+      </button>
+      {{/if}}
+      <div class="g-pd-gallery__stage">
+        <div class="swiper g-pd-gallery__main-swiper" id="productDetailMainSwiper">
+          <div class="swiper-wrapper">
+            {{#each mainPics}}
+            <div class="swiper-slide">
+              <button type="button" class="g-pd-gallery__zoom-trigger" aria-label="{{#if (eq @root.locale "zh-CN")}}放大查看{{else}}View larger{{/if}}">
+                <img src="{{this}}" alt="{{#if @root.product.detailTitle}}{{@root.product.detailTitle}}{{else}}{{@root.product.name}}{{/if}}" class="g-pd-gallery__img" {{#if @first}}loading="eager"{{else}}loading="lazy"{{/if}} />
+              </button>
+            </div>
+            {{/each}}
+          </div>
+        </div>
+      </div>
+      {{#if (gt (length mainPics) 1)}}
+      <button type="button" class="g-pd-gallery__nav g-pd-gallery__nav--outer g-pd-gallery__nav--next" id="productDetailGalleryNext" aria-label="{{#if (eq locale "zh-CN")}}下一张{{else}}Next image{{/if}}">
+        <svg class="g-pd-gallery__nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+      </button>
+      {{/if}}
+    </div>
+    {{#if (gt (length mainPics) 1)}}
+    <div class="g-pd-gallery__thumbs-wrap">
+      <div class="swiper g-pd-gallery__thumbs-swiper" id="productDetailThumbsSwiper">
+        <div class="swiper-wrapper">
+          {{#each mainPics}}
+          <div class="swiper-slide">
+            <button type="button" class="g-pd-gallery__thumb" aria-label="{{#if (eq @root.locale "zh-CN")}}图片 {{@index}}{{else}}Image {{@index}}{{/if}}">
+              <img src="{{this}}" alt="" loading="lazy" />
+            </button>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+    {{/if}}
+  </div>
+  <div class="g-pd-lightbox" id="productDetailLightbox" role="dialog" aria-modal="true" aria-label="{{#if (eq locale "zh-CN")}}图片全屏预览{{else}}Fullscreen preview{{/if}}" hidden tabindex="-1">
+    <button type="button" class="g-pd-lightbox__backdrop" id="productDetailLightboxBackdrop" aria-label="{{#if (eq locale "zh-CN")}}关闭{{else}}Close{{/if}}"></button>
+    <div class="g-pd-lightbox__inner">
+      <button type="button" class="g-pd-lightbox__close" id="productDetailLightboxClose" aria-label="{{#if (eq locale "zh-CN")}}关闭{{else}}Close{{/if}}">
+        <svg class="g-pd-lightbox__close-icon" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+      <div class="g-pd-lightbox__main-row">
+        {{#if (gt (length mainPics) 1)}}
+        <button type="button" class="g-pd-lightbox__nav g-pd-lightbox__nav--prev" id="productDetailLightboxPrev" aria-label="{{#if (eq locale "zh-CN")}}上一张{{else}}Previous{{/if}}">
+          <svg class="g-pd-gallery__nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+        {{/if}}
+        <div class="g-pd-lightbox__stage">
+          <div class="swiper g-pd-lightbox__swiper" id="productDetailLightboxSwiper">
+            <div class="swiper-wrapper">
+              {{#each mainPics}}
+              <div class="swiper-slide">
+                <img src="{{this}}" alt="{{#if @root.product.detailTitle}}{{@root.product.detailTitle}}{{else}}{{@root.product.name}}{{/if}}" class="g-pd-lightbox__img" loading="lazy" />
+              </div>
+              {{/each}}
+            </div>
+          </div>
+        </div>
+        {{#if (gt (length mainPics) 1)}}
+        <button type="button" class="g-pd-lightbox__nav g-pd-lightbox__nav--next" id="productDetailLightboxNext" aria-label="{{#if (eq locale "zh-CN")}}下一张{{else}}Next{{/if}}">
+          <svg class="g-pd-gallery__nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button>
+        {{/if}}
+      </div>
+      {{#if (gt (length mainPics) 1)}}
+      <div class="g-pd-lightbox__thumbs-wrap">
+        <div class="swiper g-pd-lightbox__thumbs-swiper" id="productDetailLightboxThumbsSwiper">
+          <div class="swiper-wrapper">
+            {{#each mainPics}}
+            <div class="swiper-slide">
+              <button type="button" class="g-pd-lightbox__thumb" aria-label="{{#if (eq @root.locale "zh-CN")}}图片 {{@index}}{{else}}Image {{@index}}{{/if}}">
+                <img src="{{this}}" alt="" loading="lazy" />
+              </button>
+            </div>
+            {{/each}}
+          </div>
+        </div>
+      </div>
+      {{/if}}
+    </div>
+  </div>
+  {{else}}
+  <div class="g-pd-gallery g-pd-gallery--empty" id="productDetailGallery">
+    <div class="g-pd-gallery__row">
+      <div class="g-pd-gallery__stage">
+        <div class="g-pd-gallery__placeholder">{{#if (eq locale "zh-CN")}}暂无图片{{else}}No image{{/if}}</div>
+      </div>
+    </div>
+  </div>
+  {{/if}}
+</div>

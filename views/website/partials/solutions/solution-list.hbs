@@ -1,0 +1,28 @@
+<section class="g-solutions-list">
+  <div class="g-solutions-list__items">
+    {{#each solutions}}
+    <article class="g-solution-card">
+      <div class="g-solution-card__media">
+        <div class="g-solution-card__image-wrap">
+          <a href="{{this.url}}" class="g-solution-card__image-link">
+            <img src="{{this.picUrl}}" alt="{{this.title}}" class="g-solution-card__image" loading="lazy" />
+          </a>
+        </div>
+        <div class="g-solution-card__body">
+          <h3 class="g-solution-card__title">
+            <a href="{{this.url}}">{{this.title}}</a>
+          </h3>
+          <a href="{{this.url}}" class="g-solution-card__btn">
+            {{../solutionsReadMoreLabel}} →
+          </a>
+        </div>
+      </div>
+    </article>
+    {{/each}}
+  </div>
+  {{#if pagination}}
+  <div class="g-solutions-list__pagination">
+    {{> website/common/list-pagination pagination locale=locale}}
+  </div>
+  {{/if}}
+</section>

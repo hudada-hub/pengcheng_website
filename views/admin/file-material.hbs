@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} - 鹏成后台</title>
+  <meta name="csrf-token" content="{{csrfToken}}">
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/admin/admin-theme.css">
+  <script src="/js/iconify-icon.min.js"></script>
+</head>
+<body class="admin-layout">
+  {{> admin/header}}
+  <div class="admin-body">
+    {{> admin/sidebar}}
+    <main class="admin-main">
+      <div class="admin-page-toolbar">
+        <h1 style="margin:0;">{{title}}</h1>
+      </div>
+
+      <div class="admin-card">
+        <form class="admin-form" id="uploadForm" onsubmit="return false;">
+          <div class="form-group">
+            <label>分类</label>
+            <select id="categoryId">
+              <option value="">未分类</option>
+              {{#each categories}}
+                <option value="{{this.id}}">{{this.name}}</option>
+              {{/each}}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>选择文件</label>
+            <input type="file" id="fileInput" />
+            <div style="font-size:var(--font-size-sm);color:var(--admin-text-muted);margin-top:0.25rem;">
+              支持本地上传（最大 200MB）。上传后文件可通过静态路径访问。
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-primary" id="btnUpload">上传</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>文件名</th>
+              <th>分类</th>
+              <th>类型</th>
+              <th>大小</th>
+              <th>下载次数</th>
+              <th>路径</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each files}}
+            <tr>
+              <td>{{this.id}}</td>
+              <td>{{this.fileName}}</td>
+              <td>{{#if this.category}}{{this.category.name}}{{else}}-{{/if}}</td>
+              <td>{{#if this.fileType}}{{this.fileType}}{{else}}-{{/if}}</td>
+              <td>{{this.fileSize}}</td>
+              <td>{{this.downloadCount}}</td>
+              <td><a href="{{this.filePath}}" target="_blank" rel="noopener">{{this.filePath}}</a></td>
+            </tr>
+            {{else}}
+            <tr><td colspan="7" style="text-align:center;color:var(--admin-text-muted);">暂无文件</td></tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+  <script>
+    (function () {
+      var csrfMeta = document.querySelector('meta[name="csrf-token"]');
+      var csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : '';
+      var btn = document.getElementById('btn-clear-cache');
+      if (btn) btn.onclick = function () {
+        fetch('/admin/clear-cache', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ _csrf: csrfToken }) })
+          .then(function (r) { return r.json(); }).then(function (d) { alert(d.message || '完成'); }).catch(function () { alert('请求失败'); });
+      };
+
+      var btnUpload = document.getElementById('btnUpload');
+      btnUpload.onclick = function () {
+        var fileEl = document.getElementById('fileInput');
+        var catEl = document.getElementById('categoryId');
+        var file = fileEl.files && fileEl.files[0];
+        if (!file) { alert('请选择文件'); return; }
+        var fd = new FormData();
+        fd.append('file', file);
+        if (catEl.value) fd.append('categoryId', catEl.value);
+        fetch('/admin/api/file-material/upload', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'csrf-token': csrfToken },
+          body: fd
+        }).then(function (r) { return r.json(); })
+          .then(function (d) {
+            if (!d || d.ok !== true) { alert((d && d.message) || '上传失败'); return; }
+            alert('上传成功');
+            location.reload();
+          })
+          .catch(function () { alert('上传失败'); });
+      };
+    })();
+  </script>
+</body>
+</html>
+

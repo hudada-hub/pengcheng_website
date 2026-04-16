@@ -1,0 +1,80 @@
+<div class="g-solution-detail-stack">
+  <div class="g-solution-detail-card">
+    {{#if kehuBannerUrl}}
+    <div class="g-solution-detail-card__media">
+      <img src="{{kehuBannerUrl}}" alt="" class="g-solution-detail-card__img" loading="lazy" />
+    </div>
+    {{/if}}
+    {{#if kehuRows}}
+    <div class="g-solution-detail-card__kehu">
+      <div class="row g-4">
+        {{#each kehuRows}}
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="g-solution-kehu-col">
+            <h3 class="g-solution-kehu-col__title">{{this.title}}</h3>
+            <div class="g-solution-kehu-col__accent" aria-hidden="true"></div>
+            {{#if this.content}}
+            <p class="g-solution-kehu-col__text">{{this.content}}</p>
+            {{/if}}
+          </div>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+  </div>
+
+  {{#if showSolutionCasesSection}}
+  <section class="g-solution-cases-section" aria-labelledby="g-solution-cases-heading">
+    <div class="g-solution-cases-section__head">
+      <h2 id="g-solution-cases-heading" class="g-solution-cases-section__title">
+        {{applicationCasesSectionTitle}}
+      </h2>
+      <p class="g-solution-cases-section__subtitle">
+        {{applicationCasesSectionSubtitle}}
+      </p>
+    </div>
+    <div class="row g-4 g-solution-cases-section__grid">
+      {{#each solutionCases}}
+      <div class="col-12 col-md-6 col-lg-4">
+        <article class="g-solution-case-card">
+          <a href="{{this.detailUrl}}" class="g-solution-case-card__media-link">
+            <div class="g-solution-case-card__media">
+              <img src="{{#if this.thumbnail}}{{this.thumbnail}}{{else}}/images/products/placeholder.jpg{{/if}}" alt="" class="g-solution-case-card__img" loading="lazy" />
+            </div>
+          </a>
+          <div class="g-solution-case-card__body">
+            <h3 class="g-solution-case-card__title">
+              <a href="{{this.detailUrl}}">{{this.title}}</a>
+            </h3>
+            <div class="g-solution-case-card__footer">
+              <div class="g-solution-case-card__spec">
+                <span class="g-solution-case-card__spec-icon" aria-hidden="true">
+                  <iconify-icon icon="mdi:hexagon-outline"></iconify-icon>
+                  <iconify-icon icon="mdi:lightning-bolt" class="g-solution-case-card__bolt"></iconify-icon>
+                </span>
+                {{#if this.specLine}}
+                <span class="g-solution-case-card__spec-text">{{this.specLine}}</span>
+                {{else}}
+                <span class="g-solution-case-card__spec-text g-solution-case-card__spec-text--muted">â€?/span>
+                {{/if}}
+              </div>
+              <a href="{{this.detailUrl}}" class="g-solution-case-card__cta">
+                {{../applicationCaseViewDetailsLabel}}
+                <iconify-icon icon="mdi:arrow-right"></iconify-icon>
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
+      {{/each}}
+    </div>
+    <div class="g-solution-cases-section__more-wrap">
+      <a href="{{casesListUrl}}" class="g-solution-cases-section__more">
+        {{applicationCasesMoreLabel}}
+        <iconify-icon icon="mdi:arrow-right"></iconify-icon>
+      </a>
+    </div>
+  </section>
+  {{/if}}
+</div>

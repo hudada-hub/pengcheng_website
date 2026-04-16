@@ -1,0 +1,161 @@
+{{!-- 产品详情主体：图库 + 信息 + 参数 + 优势 + 认证（视觉对照 B2B 产品 UI）--}}
+<section class="g-pd-main g-pd-main--borderless">
+  <div class="row g-pd-main__row align-items-start">
+    {{!-- 左侧图库：见 product-detail-gallery.hbs，Swiper 主图+缩略图联动、左右按钮在图外侧、无 autoplay；未选中缩略图 opacity .3，选中 1 --}}
+    {{> website/products/product-detail-gallery}}
+    <div class="col-12 col-lg-6 col-xl-7 g-pd-main__info-col">
+      <div class="g-pd-info g-pd-info--figma" id="productDetailInfo">
+        <h1 class="g-pd-info__title">{{product.name}}</h1>
+
+        {{#if (gt (length featureTabPanels) 0)}}
+        <div class="g-pd-info__highlights-wrap">
+          <div class="g-pd-info__feature-tab-grid" role="list" aria-label="{{#if (eq locale "zh-CN")}}产品特点{{else}}Highlights{{/if}}">
+            {{#each featureTabPanels}}
+            <div class="g-pd-info__feature-tab" role="listitem" data-tab-index="{{@index}}">{{this.label}}</div>
+            {{/each}}
+          </div>
+          {{#each featureTabPanels}}
+          <div class="g-pd-info__panel g-pd-info__panel--below-highlights g-pd-info__panel--figma{{#if (eq @index 0)}} is-active{{/if}}" data-panel-index="{{@index}}">
+            <ul class="g-pd-info__panel-list g-pd-info__checklist g-pd-info__checklist--figma">
+              {{#each this.bullets}}
+              <li>{{this}}</li>
+              {{/each}}
+            </ul>
+          </div>
+          {{/each}}
+        </div>
+        {{else}}
+          {{#if (gt (length product.summary) 0)}}
+          <div class="g-pd-info__panel g-pd-info__panel--solo g-pd-info__panel--figma is-active">
+            <ul class="g-pd-info__panel-list g-pd-info__checklist g-pd-info__checklist--figma">
+              {{#each product.summary}}
+              <li>{{this}}</li>
+              {{/each}}
+            </ul>
+          </div>
+          {{/if}}
+        {{/if}}
+
+        <div class="g-pd-info__cta-row g-pd-info__cta-row--figma">
+          <div class="g-pd-info__cta-strip">
+            <button type="button" class="g-pd-info__cta g-pd-info__cta--figma-quote" data-pc-quick-quote data-product-id="{{product.id}}" data-product-title="{{product.name}}" data-product-pic="{{#if mainPics.0.url}}{{mainPics.0.url}}{{else}}{{product.thumbUrl}}{{/if}}" data-product-params="{{json coreParamsRows}}">
+              {{getAQuoteLabel}}
+            </button>
+            <a href="{{#if basePath}}{{basePath}}{{else}}{{/if}}/download" class="g-pd-info__cta g-pd-info__cta--outline g-pd-info__cta--figma-download">
+              {{#if (eq locale "zh-CN")}}资料下载{{else}}Download{{/if}}
+            </a>
+            <a href="{{#if basePath}}{{basePath}}{{else}}{{/if}}/contact" class="g-pd-info__cart g-pd-info__cart--figma" data-action="add-cart" title="{{#if (eq locale "zh-CN")}}询价{{else}}Inquiry{{/if}}" aria-label="{{#if (eq locale "zh-CN")}}询价{{else}}Inquiry{{/if}}">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true"><path d="M6 6h15l-1.5 9h-12L6 6z" stroke="#686868" stroke-width="2" stroke-linejoin="round"/><circle cx="9" cy="20" r="1.25" fill="#686868"/><circle cx="18" cy="20" r="1.25" fill="#686868"/><path d="M6 6L4 3H2" stroke="#686868" stroke-width="2" stroke-linecap="round"/></svg>
+            </a>
+            {{#if (length certifications)}}
+            <div class="g-pd-info__certs g-pd-info__certs--figma-strip" aria-label="{{#if (eq locale "zh-CN")}}认证{{else}}Certifications{{/if}}">
+              {{#each certifications}}
+              <span class="g-pd-info__cert g-pd-info__cert--figma">
+                <img src="{{this}}" alt="{{this}}" style="height: 24px; width: auto;">
+              </span>{{#unless @last}}<span class="g-pd-info__certs-figma-divider" aria-hidden="true"></span>{{/unless}}
+              {{/each}}
+            </div>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 全屏宽度横线 -->
+  <div class="g-pd-main__full-width-line"></div>
+
+  {{#if (gt (length productParamsBlocks) 0)}}
+  <section class="g-pd-block g-pd-params-spec wow animate__animated animate__fadeInUp">
+    {{#if product.paramsTitle}}
+    <h2 class="g-pd-block__title g-pd-block__title--figma544">{{product.paramsTitle}}</h2>
+    {{/if}}
+    <div class="g-pd-params-spec__sections">
+      {{#each productParamsBlocks}}
+      <div class="g-pd-params-spec__section">
+        {{#if this.title}}
+        <h3 class="g-pd-adv-zigzag__subtitle g-pd-adv-zigzag__subtitle--figma544">{{this.title}}</h3>
+        {{/if}}
+        {{#if this.legacyText}}
+        <div class="g-pd-params-spec__legacy">{{this.legacyText}}</div>
+        {{else}}
+          {{#each this.tables}}
+          <div class="g-pd-params-spec__table-wrap">
+            <table class="g-pd-params-spec__table">
+              <thead>
+                <tr>
+                  {{#each this.head}}
+                  <th scope="col">{{this}}</th>
+                  {{/each}}
+                </tr>
+              </thead>
+              <tbody>
+                {{#each this.rows}}
+                <tr>
+                  {{#each this}}
+                  <td>{{this}}</td>
+                  {{/each}}
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+          {{/each}}
+        {{/if}}
+      </div>
+      {{/each}}
+    </div>
+  </section>
+  {{/if}}
+
+  {{!-- 仅有概述、无具体优势条目时保留简单块 --}}
+  {{#if product.advantageSummary}}
+  {{#unless product.advantages}}
+  <section class="g-pd-block g-pd-adv-head wow animate__animated animate__fadeInUp">
+    <h2 class="g-pd-block__title g-pd-block__title--figma544">{{#if (eq locale "zh-CN")}}产品优势{{else}}Advantages{{/if}}</h2>
+    <p class="g-pd-adv-head__lead g-pd-adv-head__lead--figma544">{{product.advantageSummary}}</p>
+  </section>
+  {{/unless}}
+  {{/if}}
+
+  {{!-- 具体优势：参考设计图 �?顶栏大标�?+ 副标�?+ 图文左右交替；正文顺序：expandedDescription �?橙线 �?description --}}
+  {{#if product.advantages}}
+  <section class="g-pd-adv-zigzag g-pd-block wow animate__animated animate__fadeInUp">
+    <header class="g-pd-adv-zigzag__head g-pd-adv-zigzag__head--figma544">
+      <h2 class="g-pd-adv-zigzag__title g-pd-adv-zigzag__title--figma544">{{#if product.detailTitle}}{{product.detailTitle}}{{else}}{{product.name}}{{/if}}</h2>
+      {{#if product.advantageSummary}}
+      <p class="g-pd-adv-zigzag__subtitle g-pd-adv-zigzag__subtitle--figma544">{{product.advantageSummary}}</p>
+      {{/if}}
+    </header>
+    {{#each product.advantages}}
+    <div class="g-pd-adv-row wow animate__animated animate__fadeInUp{{#unless this.picUrl}} g-pd-adv-row--no-media{{/unless}}">
+      {{#if this.picUrl}}
+      <div class="g-pd-adv-row__media">
+        <div class="g-pd-adv-row__figure">
+          <img src="{{this.picUrl}}" alt="" loading="lazy" />
+        </div>
+      </div>
+      {{/if}}
+      <div class="g-pd-adv-row__body">
+        {{#if this.title}}
+        <h3 class="g-pd-adv-row__heading">{{this.title}}</h3>
+        {{/if}}
+        {{#if this.expandedDescription}}
+        <div class="g-pd-adv-row__lead">{{this.expandedDescription}}</div>
+        {{/if}}
+        {{#if this.description}}
+          {{#if this.expandedDescription}}
+          <div class="g-pd-adv-row__rule" aria-hidden="true"></div>
+          <p class="g-pd-adv-row__sub">{{this.description}}</p>
+          {{else}}
+          <div class="g-pd-adv-row__lead">{{this.description}}</div>
+          {{/if}}
+        {{/if}}
+      </div>
+    </div>
+    {{/each}}
+  </section>
+  {{/if}}
+
+ 
+</section>

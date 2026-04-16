@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} - 鹏成后台</title>
+  <meta name="csrf-token" content="{{csrfToken}}">
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/admin/admin-theme.css">
+  <script src="/js/iconify-icon.min.js"></script>
+  <style>
+    .admin-responsive-preview-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px 16px;
+      margin-bottom: 16px;
+    }
+    .admin-responsive-preview-toolbar label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: var(--font-size-sm);
+      color: var(--admin-text-secondary);
+    }
+    .admin-responsive-preview-toolbar input[type="text"] {
+      width: min(420px, 52vw);
+      padding: 6px 10px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--admin-radius-sm);
+      font-size: var(--font-size-sm);
+    }
+    .admin-responsive-preview-hint {
+      margin: 0 0 8px;
+      font-size: var(--font-size-sm);
+      color: var(--admin-text-muted);
+    }
+    .admin-responsive-preview-devices {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      align-items: flex-start;
+    }
+    .admin-responsive-preview-device {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .admin-responsive-preview-device__label {
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: var(--admin-text-secondary);
+    }
+    .admin-responsive-preview-device__frame {
+      margin: 0;
+      border: 1px solid var(--admin-border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #1a1a1a;
+      box-shadow: var(--admin-shadow-1, 0 2px 8px rgba(0,0,0,.08));
+    }
+    .admin-responsive-preview-device__frame iframe {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #fff;
+    }
+    .admin-responsive-preview-device--mobile .admin-responsive-preview-device__frame {
+      width: 390px;
+      height: 844px;
+    }
+    .admin-responsive-preview-device--tablet .admin-responsive-preview-device__frame {
+      width: 820px;
+      height: 1180px;
+    }
+    .admin-responsive-preview-device--desktop .admin-responsive-preview-device__frame {
+      width: 1280px;
+      height: 800px;
+    }
+    @media (max-width: 1400px) {
+      .admin-responsive-preview-device--tablet .admin-responsive-preview-device__frame {
+        width: min(820px, 85vw);
+        height: min(1180px, 120vw);
+      }
+      .admin-responsive-preview-device--desktop .admin-responsive-preview-device__frame {
+        width: min(1280px, 95vw);
+        height: min(800px, 70vw);
+      }
+    }
+  </style>
+</head>
+<body class="admin-layout">
+  {{> admin/header}}
+  <div class="admin-body">
+    {{> admin/sidebar}}
+    <main class="admin-main">
+      <div class="admin-page-toolbar">
+        <h1 style="margin:0;">{{title}}</h1>
+      </div>
+      <p class="admin-responsive-preview-hint">使用 iframe 模拟常见视口宽度（手机 / 平板 / 电脑）。仅允许站内路径（以 <code>/</code> 开头）。</p>
+
+      <div class="admin-responsive-preview-toolbar">
+        <label>
+          预览路径
+          <input type="text" id="responsivePreviewPath" value="{{previewPath}}" placeholder="/ 或 /cn/about-us 等" autocomplete="off" />
+        </label>
+        <button type="button" class="btn btn-primary" id="responsivePreviewApply"><iconify-icon icon="mdi:refresh"></iconify-icon> 应用</button>
+      
+      </div>
+
+      <div class="admin-responsive-preview-devices" id="responsivePreviewDevices">
+        <div class="admin-responsive-preview-device admin-responsive-preview-device--mobile">
+          <span class="admin-responsive-preview-device__label">手机（约 390×844）</span>
+          <div class="admin-responsive-preview-device__frame">
+            <iframe title="手机预览" class="js-responsive-preview-iframe" data-label="mobile"></iframe>
+          </div>
+        </div>
+        <div class="admin-responsive-preview-device admin-responsive-preview-device--tablet">
+          <span class="admin-responsive-preview-device__label">平板（约 820×1180）</span>
+          <div class="admin-responsive-preview-device__frame">
+            <iframe title="平板预览" class="js-responsive-preview-iframe" data-label="tablet"></iframe>
+          </div>
+        </div>
+        <div class="admin-responsive-preview-device admin-responsive-preview-device--desktop">
+          <span class="admin-responsive-preview-device__label">电脑（约 1280×800）</span>
+          <div class="admin-responsive-preview-device__frame">
+            <iframe title="电脑预览" class="js-responsive-preview-iframe" data-label="desktop"></iframe>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script>
+    (function () {
+      var input = document.getElementById('responsivePreviewPath');
+      var btnApply = document.getElementById('responsivePreviewApply');
+      var btnOpen = document.getElementById('responsivePreviewOpen');
+      var iframes = document.querySelectorAll('.js-responsive-preview-iframe');
+      if (!input || !iframes.length) return;
+
+      function sanitizePath(p) {
+        p = (p || '').trim();
+        if (!p.startsWith('/') || p.startsWith('//')) return '/';
+        if (p.length > 512) return '/';
+        return p;
+      }
+
+      function applySrc() {
+        var path = sanitizePath(input.value);
+        input.value = path;
+        var u = path;
+        iframes.forEach(function (f) {
+          f.setAttribute('src', u);
+        });
+        try {
+          var qs = new URLSearchParams(window.location.search);
+          qs.set('path', path);
+          var next = window.location.pathname + '?' + qs.toString();
+          window.history.replaceState(null, '', next);
+        } catch (e) {}
+      }
+
+      if (btnApply) btnApply.addEventListener('click', applySrc);
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') applySrc();
+      });
+      if (btnOpen) btnOpen.addEventListener('click', function () {
+        window.open(sanitizePath(input.value), '_blank', 'noopener,noreferrer');
+      });
+      applySrc();
+    })();
+  </script>
+</body>
+</html>

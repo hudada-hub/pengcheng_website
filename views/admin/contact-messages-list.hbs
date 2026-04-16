@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} - 鹏成后台</title>
+  <meta name="csrf-token" content="{{csrfToken}}">
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/admin/admin-theme.css">
+  <script src="/js/iconify-icon.min.js"></script>
+  <script src="/js/admin-pagination.js"></script>
+</head>
+<body class="admin-layout">
+  {{> admin/header}}
+  <div class="admin-body">
+    {{> admin/sidebar}}
+    <main class="admin-main">
+      <div class="admin-page-toolbar">
+        <h1 style="margin:0;">{{title}}</h1>
+        <p style="margin:0;font-size:var(--font-size-sm);color:var(--admin-text-muted);">前台用户提交的留言列表</p>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>姓名</th>
+              <th>邮箱</th>
+              <th>国家/地区</th>
+              <th>所在城市</th>
+              <th>电话</th>
+              <th>来源页面</th>
+              <th>提交时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each list}}
+            <tr>
+              <td>{{this.id}}</td>
+              <td>{{this.fullName}}{{#unless this.fullName}}-{{/unless}}</td>
+              <td>{{this.email}}{{#unless this.email}}-{{/unless}}</td>
+              <td>{{this.nation}}{{#unless this.nation}}-{{/unless}}</td>
+              <td>{{this.locationCity}}{{#unless this.locationCity}}-{{/unless}}</td>
+              <td>{{this.phoneNumber}}{{#unless this.phoneNumber}}-{{/unless}}</td>
+              <td>{{#if this.sourceUrl}}<a href="{{this.sourceUrl}}" target="_blank" class="source-url" title="{{this.sourceUrl}}">{{this.sourceUrl}}</a>{{else}}-{{/if}}</td>
+              <td>{{this.createdAtFormatted}}</td>
+              <td>
+                <button type="button" class="btn-link contact-delete-btn" data-id="{{this.id}}" data-popconfirm="确定删除该留言吗？">删除</button>
+              </td>
+            </tr>
+            <tr class="contact-message-detail-row">
+              <td colspan="8">
+                {{#if this.message}}
+                <span class="contact-message-detail-label">需求说明</span>
+                <span class="contact-message-detail-body">{{this.message}}</span>
+                {{/if}}
+              </td>
+            </tr>
+            {{else}}
+            <tr><td colspan="8" style="text-align:center;color:var(--admin-text-muted);">暂无数据</td></tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+      {{#if pagination}}
+      <div class="admin-pagination-wrap" style="margin-top:1rem;">
+        {{> admin/pagination currentPage=pagination.currentPage totalPages=pagination.totalPages pageSize=pagination.pageSize baseUrl=pagination.baseUrl}}
+      </div>
+      {{/if}}
+    </main>
+  </div>
+  {{> admin/confirm-modal}}
+  <script>
+    (function() {
+      document.querySelectorAll('.contact-delete-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          var id = btn.getAttribute('data-id');
+          var msg = btn.getAttribute('data-popconfirm') || '确定删除该留言吗？';
+          showConfirmModal(msg, function() {
+            var csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            fetch('/admin/contact-messages/' + id, {
+              method: 'DELETE',
+              headers: {
+                'x-csrf-token': csrf
+              },
+              credentials: 'same-origin'
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(d) {
+              if (d && d.ok) {
+                alert(d.message || '删除成功');
+                location.reload();
+              } else {
+                alert(d && d.message ? d.message : '删除失败');
+              }
+            })
+            .catch(function() { alert('删除失败'); });
+          });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

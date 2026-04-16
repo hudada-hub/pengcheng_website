@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} - 鹏成后台</title>
+  <meta name="csrf-token" content="{{csrfToken}}">
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/admin/admin-theme.css">
+  <script src="/js/iconify-icon.min.js"></script>
+</head>
+<body class="admin-layout">
+  {{> admin/header}}
+  <div class="admin-body">
+    {{> admin/sidebar}}
+    <main class="admin-main">
+      <div class="admin-page-toolbar">
+        <h1 style="margin:0;">{{title}}</h1>
+        <a href="/admin/config-category" class="btn">返回列表</a>
+      </div>
+      <div class="admin-card admin-card-editor">
+        <form class="admin-form" method="post" action="/admin/config-category/save">
+          <input type="hidden" name="_csrf" value="{{csrfToken}}">
+          {{#if category}}<input type="hidden" name="id" value="{{category.id}}">{{/if}}
+          <div class="form-group">
+            <label>名称 <span style="color:var(--admin-danger);">*</span></label>
+            <input type="text" name="name" required value="{{#if category}}{{category.name}}{{/if}}" placeholder="如：首页、关于页、底部">
+          </div>
+          <div class="form-group">
+            <label>状态</label>
+            <select name="status">
+              <option value="1" {{#if category}}{{#if (eq category.status 1)}}selected{{/if}}{{else}}selected{{/if}}>正常</option>
+              <option value="0" {{#if category}}{{#if (eq category.status 0)}}selected{{/if}}{{/if}}>隐藏</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">保存</button>
+            <a href="/admin/config-category" class="btn">取消</a>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

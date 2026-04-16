@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="{{locale}}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  {{#if description}}<meta name="description" content="{{description}}">{{/if}}
+  {{#if keywords}}<meta name="keywords" content="{{keywords}}">{{/if}}
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/bootstrap-grid.css">
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/grid.css">
+  <link rel="stylesheet" href="/css/global/common-global.css">
+  <link rel="stylesheet" href="/css/global/products-global.css">
+  <link rel="stylesheet" href="/css/global/news-global.css">
+  <link rel="stylesheet" href="/css/other/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/exo.css">
+</head>
+<body class="g-news-page g-products-page">
+  {{> website/common/nav-drawer}}
+  {{> website/common/header}}
+
+  <main class="g-main">
+    <section class="g-news-banner" aria-label="{{#if newsBannerTitle}}{{newsBannerTitle}}{{else}}{{labels.newsHeading}}{{/if}}">
+      <div
+        class="g-news-banner__bg{{#if newsBannerUrl}} g-news-banner__bg--image{{/if}}"
+        {{#if newsBannerUrl}}style="--g-news-banner-image: url('{{{newsBannerUrl}}}');"{{/if}}
+        aria-hidden="true"
+      ></div>
+      <div class="g-news-banner__inner">
+        <h1 class="g-news-banner__title">{{#if newsBannerTitle}}{{newsBannerTitle}}{{else}}{{labels.newsHeading}}{{/if}}</h1>
+      </div>
+    </section>
+
+    <div class="g-news-layout">
+      <div class="container g-news-layout__inner">
+        <div class="row g-news-layout__row">
+          <aside class="col-lg-2 mb-4 mb-lg-0 g-news-layout__aside">
+            {{> website/common/list-filter-year-month allListUrl=allNewsUrl idPrefix="gNews"}}
+          </aside>
+          <div class="col-lg-10 g-news-layout__main">
+        <div class="g-news-grid">
+          {{#each cardItems}}
+          {{> website/news/news-card}}
+          {{else}}
+          <p class="g-news-empty">{{@root.labels.empty}}</p>
+          {{/each}}
+        </div>
+
+        {{#if pagination}}{{> website/common/list-pagination pagination locale=locale ariaLabel="Pagination"}}{{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{> website/common/footer}}
+  </main>
+
+  <script>
+    (function () {
+      function initListYearMonthFilter(prefix) {
+        var yearT = document.getElementById(prefix + 'YearTrigger');
+        var yearM = document.getElementById(prefix + 'YearMenu');
+        var monthT = document.getElementById(prefix + 'MonthTrigger');
+        var monthM = document.getElementById(prefix + 'MonthMenu');
+        function closeAll() {
+          if (yearM) yearM.hidden = true;
+          if (monthM) monthM.hidden = true;
+          if (yearT) {
+            yearT.setAttribute('aria-expanded', 'false');
+            yearT.classList.remove('is-open');
+          }
+          if (monthT) {
+            monthT.setAttribute('aria-expanded', 'false');
+            monthT.classList.remove('is-open');
+          }
+        }
+        function wire(btn, menu) {
+          if (!btn || !menu) return;
+          btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var willOpen = menu.hidden;
+            closeAll();
+            if (willOpen) {
+              menu.hidden = false;
+              btn.setAttribute('aria-expanded', 'true');
+              btn.classList.add('is-open');
+            }
+          });
+        }
+        wire(yearT, yearM);
+        wire(monthT, monthM);
+        document.addEventListener('click', closeAll);
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape') closeAll();
+        });
+      }
+      initListYearMonthFilter('gNews');
+    })();
+  </script>
+  <script>
+    (function () {
+      var nav = document.querySelector('.g-news-page .pc-nav');
+      if (!nav) return;
+      function onScroll() {
+        nav.classList.toggle('nav-scrolled', window.scrollY > 10);
+      }
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    })();
+  </script>
+</body>
+</html>

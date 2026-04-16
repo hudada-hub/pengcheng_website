@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="{{locale}}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} </title>
+  <meta name="description" content="{{description}}">
+  <meta name="keywords" content="{{keywords}}">
+    <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/global/reset.css">
+  <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/bootstrap-grid.css">
+  <link rel="stylesheet" href="/css/global/common-global.css">
+  <link rel="stylesheet" href="/css/global/website-layout.css">
+  <link rel="stylesheet" href="/css/global/toast.css">
+  <link rel="stylesheet" href="/css/global/join-us-global.css">
+  
+  <link rel="stylesheet" href="/css/exo.css">
+</head>
+<body class="join-us-page-wrapper">
+  {{> website/common/nav-drawer}}
+  {{> website/common/header}}
+
+  <main class="join-us-page">
+    <!-- Banner Section -->
+    <section class="join-us-banner" aria-label="{{bannerTitle}}">
+      <div class="join-us-banner__bg">
+        {{#if bannerImageUrl}}
+          <img src="{{bannerImageUrl}}" alt="" class="join-us-banner__image" loading="eager" />
+        {{else}}
+          <div class="join-us-banner__placeholder"></div>
+        {{/if}}
+      </div>
+      <div class="join-us-banner__overlay"></div>
+      <div class="join-us-banner__content">
+        <h1 class="join-us-banner__title">{{bannerTitle}}</h1>
+      </div>
+    </section>
+
+    <!-- Form Section -->
+    <section class="join-us-form-section">
+      <div class="join-us-form-section__container">
+        <form id="joinUsForm" class="join-us-form" method="POST" action="{{basePath}}/join-us">
+          <input type="hidden" name="_csrf" value="{{csrfToken}}">
+
+          <!-- Company -->
+          <div class="join-us-form__field">
+            <label for="companyName" class="join-us-form__label">{{texts.text_1}}</label>
+            <input
+              type="text"
+              id="companyName"
+              name="companyName"
+              class="join-us-form__input"
+              required
+              placeholder=""
+            >
+          </div>
+
+          <!-- Location/City -->
+          <div class="join-us-form__field">
+            <label for="city" class="join-us-form__label">{{texts.text_2}}</label>
+            <input
+              type="text"
+              id="city"
+              name="city"
+              class="join-us-form__input"
+              required
+              placeholder=""
+            >
+          </div>
+
+          <!-- Email -->
+          <div class="join-us-form__field">
+            <label for="email" class="join-us-form__label">{{texts.text_3}}</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="join-us-form__input"
+              required
+              placeholder=""
+            >
+          </div>
+
+          <!-- Phone Number -->
+          <div class="join-us-form__field">
+            <label for="phone" class="join-us-form__label">{{texts.text_4}}</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              class="join-us-form__input"
+              required
+              placeholder=""
+            >
+          </div>
+
+          <!-- Leave Message -->
+          <div class="join-us-form__field">
+            <label for="message" class="join-us-form__label">{{texts.text_5}}</label>
+            <textarea
+              id="message"
+              name="message"
+              class="join-us-form__textarea"
+              rows="4"
+              required
+              placeholder=""
+            ></textarea>
+          </div>
+
+          <!-- Company Product Qualifications -->
+          <div class="join-us-form__field">
+            <label class="join-us-form__label">{{texts.text_6}}</label>
+            <div class="join-us-form__file-upload" id="fileUploadContainer">
+              <input
+                type="file"
+                id="qualificationFiles"
+                name="qualificationFiles"
+                class="join-us-form__file-input"
+                multiple
+                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+              >
+              <label for="qualificationFiles" class="join-us-form__file-add" title="Add file">
+                <svg class="join-us-form__file-add-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </label>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="join-us-form__actions">
+            <button type="submit" class="join-us-form__submit">
+              <span class="join-us-form__submit-text">{{texts.text_7}}</span>
+              <span class="join-us-form__submit-loading" style="display: none;">
+                <svg class="join-us-form__spinner" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="31.416" stroke-dashoffset="10"></circle>
+                </svg>
+              </span>
+            </button>
+          </div>
+        </form>
+
+        <!-- Success Message (hidden by default) -->
+        <div id="successMessage" class="join-us-success" style="display: none;">
+          <div class="join-us-success__icon">
+            <img src="/images/global/tick-circle.png" alt="Success" />
+          </div>
+          <h2 class="join-us-success__title">{{texts.text_8}}</h2>
+          <p class="join-us-success__desc">{{texts.text_9}}</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  {{> website/common/footer}}
+  {{> website/common/floating-actions}}
+  {{> website/common/inquiry-form-modal}}
+  {{> website/common/member-auth-modal}}
+  {{> website/common/cart-drawer}}
+  {{> website/common/contactus-modal}}
+
+  <script src="/js/join-us.js"></script>
+</body>
+</html>

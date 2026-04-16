@@ -1,0 +1,23 @@
+{{!-- 共用一键翻译弹窗，传入 idPrefix 如：industryCaseTranslate / newsCategoryTranslate / menuTranslate 等 --}}
+<div id="{{idPrefix}}ModalOverlay" class="admin-modal-overlay admin-translate-modal-overlay" aria-hidden="true">
+  <div class="admin-modal-dialog admin-translate-modal" role="dialog" aria-modal="true" aria-labelledby="{{idPrefix}}ModalTitle">
+    <div class="admin-translate-modal-header">
+      <h2 class="admin-translate-modal-title" id="{{idPrefix}}ModalTitle">一键翻译多语言</h2>
+      <button type="button" class="admin-translate-modal-close" id="{{idPrefix}}ModalClose" aria-label="关闭">
+        <iconify-icon icon="mdi:close"></iconify-icon>
+      </button>
+    </div>
+    <div class="admin-translate-modal-body" id="{{idPrefix}}ModalBody">
+      <p class="admin-translate-modal-loading">加载中...</p>
+    </div>
+    <div class="admin-translate-modal-footer">
+      <label class="admin-translate-modal-retranslate">
+        <input type="checkbox" id="{{idPrefix}}RetranslateCb"> 重新翻译
+      </label>
+      <div class="admin-translate-modal-actions">
+        <button type="button" class="btn btn-secondary" id="{{idPrefix}}ModalCancel">取消</button>
+        <button type="button" class="btn btn-primary" id="{{idPrefix}}ModalSubmit">开始翻译</button>
+      </div>
+    </div>
+  </div>
+</div>

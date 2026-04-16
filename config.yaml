@@ -1,0 +1,7 @@
+# config.yaml 示例
+server:
+  host: "154.193.246.133"
+  port: 22
+  user: "root"
+  # 使用密码或密钥认证
+  password: "3AQ4MVXL8fw9"  # 或 private_key: "/path/to/key"

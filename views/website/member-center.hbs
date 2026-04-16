@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="{{locale}}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  {{#if description}}<meta name="description" content="{{description}}">{{/if}}
+  {{#if keywords}}<meta name="keywords" content="{{keywords}}">{{/if}}
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/bootstrap-grid.css">
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/grid.css">
+  <link rel="stylesheet" href="/css/global/common-global.css">
+  
+  <link rel="stylesheet" href="/css/exo.css">
+</head>
+<body class="g-member-page" data-base-path="{{basePath}}">
+  {{> website/common/nav-drawer}}
+  {{> website/common/header}}
+
+  <main class="g-main g-member-main">
+    <div class="container g-member-layout">
+      <header class="g-member-page-head">
+        <div class="g-member-page-head-row">
+          <div>
+            <h1 class="g-member-title">{{title}}</h1>
+            {{#if memberEmail}}
+            <p class="g-member-sub">{{memberEmail}}</p>
+            {{/if}}
+          </div>
+          <button type="button" class="g-member-logout" id="pcMemberLogoutBtn">{{#if (eq locale "zh-CN")}}退出登录{{else}}Log out{{/if}}</button>
+        </div>
+      </header>
+
+      <section class="g-member-section" aria-labelledby="member-cart-heading">
+        <h2 id="member-cart-heading" class="g-member-section-title">{{#if (eq locale "zh-CN")}}购物�?/ 询价记录{{else}}Inquiry cart{{/if}}</h2>
+        {{#if cartList.length}}
+        <div class="table-responsive g-member-table-wrap">
+          <table class="g-member-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>{{#if (eq locale "zh-CN")}}产品{{else}}Products{{/if}}</th>
+                <th>E-mail</th>
+                <th>{{#if (eq locale "zh-CN")}}电话{{else}}Phone{{/if}}</th>
+                <th>{{#if (eq locale "zh-CN")}}国家{{else}}Country{{/if}}</th>
+                <th>{{#if (eq locale "zh-CN")}}时间{{else}}Submitted{{/if}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each cartList}}
+              <tr>
+                <td>{{this.id}}</td>
+                <td>{{this.productIds}}{{#unless this.productIds}}—{{/unless}}</td>
+                <td>{{this.email}}{{#unless this.email}}—{{/unless}}</td>
+                <td>{{this.phone}}{{#unless this.phone}}—{{/unless}}</td>
+                <td>{{this.country}}{{#unless this.country}}—{{/unless}}</td>
+                <td>{{this.createdAtLabel}}</td>
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+        {{else}}
+        <p class="g-member-empty">{{#if (eq locale "zh-CN")}}暂无记录。您可以在产品页提交询价后在此查看。{{else}}No inquiry records yet.{{/if}}</p>
+        {{/if}}
+      </section>
+
+      <section class="g-member-section" aria-labelledby="member-msg-heading">
+        <h2 id="member-msg-heading" class="g-member-section-title">{{#if (eq locale "zh-CN")}}留言与回复{{else}}Messages &amp; replies{{/if}}</h2>
+        {{#if messageList.length}}
+        <ul class="g-member-msg-list">
+          {{#each messageList}}
+          <li class="g-member-msg-card">
+            <div class="g-member-msg-meta">{{this.createdAtLabel}}</div>
+            <div class="g-member-msg-body">{{this.message}}{{#unless this.message}}—{{/unless}}</div>
+            {{#if this.adminReply}}
+            <div class="g-member-msg-reply">
+              <span class="g-member-msg-reply-label">{{#if (eq ../locale "zh-CN")}}官方回复{{else}}Reply{{/if}}</span>
+              <p class="g-member-msg-reply-text">{{this.adminReply}}</p>
+              {{#if this.repliedAtLabel}}
+              <div class="g-member-msg-reply-meta">{{this.repliedAtLabel}}</div>
+              {{/if}}
+            </div>
+            {{/if}}
+          </li>
+          {{/each}}
+        </ul>
+        {{else}}
+        <p class="g-member-empty">{{#if (eq locale "zh-CN")}}暂无留言。登录后在首页提交联系我们表单，将显示在此处。{{else}}No messages yet.{{/if}}</p>
+        {{/if}}
+      </section>
+    </div>
+    {{> website/common/footer}}
+  </main>
+
+  <script>
+    (function () {
+      var nav = document.querySelector('.g-member-page .pc-nav');
+      if (!nav) return;
+      function onScroll() {
+        nav.classList.toggle('nav-scrolled', window.scrollY > 10);
+      }
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    })();
+  </script>
+</body>
+</html>

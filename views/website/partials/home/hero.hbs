@@ -1,0 +1,62 @@
+{{!-- Hero section with Swiper carousel - Global homepage --}}
+{{#if carouselItems.length}}
+<section class="g-hero" aria-label="Hero">
+  <div class="g-hero__swiper swiper">
+    <div class="swiper-wrapper">
+      {{#each carouselItems}}
+      <div class="g-hero__slide swiper-slide">
+        <div class="g-hero__bg" style="background-image: url('{{picUrl}}');"></div>
+      
+        <div class="g-hero__content">
+          {{#if title}}<h1 class="g-hero__title">{{title}}</h1>{{/if}}
+          {{#if description}}<p class="g-hero__subtitle">{{description}}</p>{{/if}}
+          {{#if url}}<a href="{{url}}" class="g-hero__btn">{{@root.heroLearnMoreLabel}}</a>{{/if}}
+        </div>
+      </div>
+      {{/each}}
+    </div>
+    <div class="g-hero__pagination swiper-pagination"></div>
+    <div class="g-hero__button-next swiper-button-next"></div>
+    <div class="g-hero__button-prev swiper-button-prev"></div>
+  </div>
+</section>
+
+{{/if}}
+
+
+<script>
+(function() {
+  var swiperEl = document.querySelector('.g-hero__swiper');
+  if (!swiperEl || typeof Swiper === 'undefined') {
+    return;
+  }
+
+  var paginationEl = swiperEl.querySelector('.g-hero__pagination');
+
+
+  var swiper = new Swiper(swiperEl, {
+    loop: true,
+    speed: 600,
+    autoplay: {
+      delay: 5000,
+      disableOnInteraction: false,
+      pauseOnMouseEnter: true,
+    },
+    effect: 'fade',
+    fadeEffect: {
+      crossFade: true,
+    },
+    pagination: {
+      el: '.g-hero__pagination',
+      clickable: true,
+      bulletClass: 'swiper-pagination-bullet',
+      bulletActiveClass: 'swiper-pagination-bullet-active',
+    },
+    navigation: {
+      nextEl: '.g-hero__button-next',
+      prevEl: '.g-hero__button-prev',
+    },
+  });
+
+})();
+</script>

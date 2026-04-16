@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head><body><div id="admin-form-fragment">
+  <div class="admin-card">
+    <form class="admin-form admin-form-modal" method="post" action="/admin/admins/save">
+      <div class="admin-modal-form-scroll">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        {{#if admin}}<input type="hidden" name="id" value="{{admin.id}}">{{/if}}
+
+        <section class="admin-form-section">
+          <div class="admin-form-section-title">基础信息</div>
+          <div class="admin-form-grid admin-form-grid-2">
+            <div class="form-group admin-col-span-2">
+              <label>用户名 <span class="admin-required">*</span></label>
+              {{#if admin}}
+              <input type="text" value="{{admin.username}}" disabled style="background:var(--admin-bg);cursor:not-allowed;">
+              {{else}}
+              <input type="text" name="username" required placeholder="管理员登录用户名">
+              {{/if}}
+            </div>
+            <div class="form-group admin-col-span-2">
+              <label>密码 {{#unless admin}}<span class="admin-required">*</span>{{/unless}}</label>
+              <input type="password" name="password" placeholder="{{#if admin}}留空则不修改密码{{else}}设置初始登录密码{{/if}}">
+              <p class="admin-form-help">{{#if admin}}如不修改，请留空；{{/if}}建议使用至少 8 位，包含大小写字母和数字。</p>
+            </div>
+            <div class="form-group">
+              <label>状态</label>
+              <select name="status">
+                <option value="1" {{#if admin}}{{#if (eq admin.status 1)}}selected{{/if}}{{else}}selected{{/if}}>正常</option>
+                <option value="0" {{#if admin}}{{#if (eq admin.status 0)}}selected{{/if}}{{/if}}>禁用</option>
+              </select>
+            </div>
+            {{#if admin}}
+            <div class="form-group">
+              <label>类型</label>
+              <input type="text" value="{{#if (eq admin.isSystem 1)}}系统默认（不可删除）{{else}}普通管理员{{/if}}" disabled style="background:var(--admin-bg);cursor:not-allowed;">
+            </div>
+            {{/if}}
+          </div>
+        </section>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">保存</button>
+        <button type="button" class="btn admin-modal-form-cancel">取消</button>
+      </div>
+    </form>
+  </div>
+</div></body></html>
+

@@ -1,0 +1,593 @@
+<header class="pc-nav">
+  <div class="container-fluid pc-nav__inner">
+    <div class="pc-nav__left">
+      <a class="pc-brand" href="{{#if basePath}}{{basePath}}{{else}}/{{/if}}">
+        {{#if logoUrl}}
+          <img class="pc-logo" src="{{logoUrl}}" alt="{{title}}" />
+        {{/if}}
+      </a>
+
+      <nav class="pc-menu" aria-label="Primary">
+        {{#each navItems}}
+          {{#if children}}
+            <div class="pc-navitem pc-navitem--mega" data-mega-index="{{@index}}">
+              <a class="pc-navlink" href="{{url}}">{{title}}</a>
+            </div>
+          {{else}}
+            <a class="pc-navlink" href="{{url}}">{{title}}</a>
+          {{/if}}
+        {{/each}}
+      </nav>
+    </div>
+
+    <div class="pc-nav__right">
+      <form class="pc-nav-search" id="pcNavSearchForm" action="{{#if basePath}}{{basePath}}/search{{else}}/search{{/if}}" method="get" role="search">
+        <input type="search" name="q" class="pc-nav-search__input" id="pcNavSearchInput" placeholder="{{#if searchPageTexts.heroSearchPlaceholder}}{{searchPageTexts.heroSearchPlaceholder}}{{else}}Search products...{{/if}}" aria-label="{{#if searchPageTexts.heroSearchPlaceholder}}{{searchPageTexts.heroSearchPlaceholder}}{{else}}Search products{{/if}}" autocomplete="off">
+        <button type="button" class="pc-nav-search__btn" id="pcNavSearchTrigger" aria-label="{{#if (eq locale 'zh-CN')}}展开搜索{{else}}Expand search{{/if}}">
+          <img src="/images/head/search-normal.png" alt="Search" class="pc-nav-icon" width="24" height="24">
+        </button>
+      </form>
+      <div class="pc-nav-icons">
+        <a type="button" class="pc-nav-icons__item" id="pcNavContactTrigger" aria-label="{{#if (eq locale 'zh-CN')}}联系我们{{else}}Contact{{/if}}">
+          <img src="/images/head/sms.png" alt="Contact" class="pc-nav-icon" width="24" height="24">
+        </a>
+        <div class="pc-nav-icons__item pc-nav-lang-wrap" id="pcNavLangWrap" data-path-locale="{{pathLocale}}">
+          {{#if navLangs}}
+          {{#if navLangs.length}}
+          <button type="button" class="pc-nav-lang-trigger" id="pcNavLangTrigger" aria-expanded="false" aria-haspopup="menu" aria-controls="pcNavLangPopover" aria-label="{{#if (eq locale 'zh-CN')}}语言切换{{else}}Language{{/if}}">
+            <img src="/images/head/global.png" alt="Language" class="pc-nav-icon" width="24" height="24">
+          </button>
+          <div class="pc-nav-lang-popover" id="pcNavLangPopover" role="presentation" aria-hidden="true">
+            <p class="pc-nav-lang-popover__title" id="pcNavLangPopoverTitle">{{#if (eq locale 'zh-CN')}}语言{{else}}Language{{/if}}</p>
+            <div class="pc-nav-lang-popover__stage">
+              {{#with (langNavCurrent navLangs pathLocale)}}
+              <button type="button" class="pc-nav-lang-current-row" id="pcNavLangInnerTrigger" aria-expanded="false" aria-haspopup="listbox" aria-labelledby="pcNavLangPopoverTitle" aria-controls="pcNavLangListPanel">
+                {{#if this.langIconUrl}}
+                <img class="pc-nav-lang-flag" src="{{this.langIconUrl}}" alt="" width="24" height="18" loading="lazy" decoding="async" />
+                {{else}}
+                <span class="pc-nav-lang-flag pc-nav-lang-flag--ph" aria-hidden="true"></span>
+                {{/if}}
+                <span class="pc-nav-lang-current-row__text">{{this.langFullName}}</span>
+                <img src="/images/global/arrow-right-black.png" alt="" class="pc-nav-lang-current-row__caret" aria-hidden="true" />
+              </button>
+              {{/with}}
+              <div class="pc-nav-lang-popover__dropdown" id="pcNavLangListPanel" role="listbox" aria-label="{{#if (eq locale 'zh-CN')}}选择语言{{else}}Choose language{{/if}}">
+                <div class="pc-nav-lang-popover__list">
+                  {{#each navLangs}}
+                  <button type="button" class="pc-nav-lang-option {{#if (langSwitchActive ../pathLocale this.code)}}is-active{{/if}}" data-lang="{{this.code}}" role="option" lang="{{this.code}}">
+                    {{#if this.langIconUrl}}
+                    <img class="pc-nav-lang-flag" src="{{this.langIconUrl}}" alt="" width="24" height="18" loading="lazy" decoding="async" />
+                    {{else}}
+                    <span class="pc-nav-lang-flag pc-nav-lang-flag--ph" aria-hidden="true"></span>
+                    {{/if}}
+                    <span class="pc-nav-lang-option__label">{{this.langFullName}}</span>
+                  </button>
+                  {{/each}}
+                </div>
+              </div>
+            </div>
+          </div>
+          {{else}}
+          <img src="/images/head/global.png" alt="Language" class="pc-nav-icon" width="24" height="24">
+          {{/if}}
+          {{else}}
+          <img src="/images/head/global.png" alt="Language" class="pc-nav-icon" width="24" height="24">
+          {{/if}}
+        </div>
+        <button type="button" class="pc-nav-icons__item" id="pcNavCartTrigger" aria-label="Shopping cart" aria-expanded="false" aria-controls="pcCartDrawerPanel">
+          <img src="/images/head/shopping-cart.png" alt="Shopping cart" class="pc-nav-icon" width="24" height="24">
+          <span class="pc-nav-cart-badge" id="pcNavCartBadge" style="display: none;">0</span>
+        </button>
+        <a href="#" class="pc-nav-icons__item pc-member-auth" id="pcMemberEntry" data-member-base="{{#if basePath}}{{basePath}}/member{{else}}/member{{/if}}" data-logged-in="0" aria-label="Login / Register">
+          <img src="/images/head/user.png" alt="Login / Register" class="pc-nav-icon pc-member-auth__icon" width="24" height="24">
+        </a>
+      </div>
+      <button type="button" class="pc-nav__menu-btn" id="pcNavMenuBtn" aria-label="打开菜单" aria-expanded="false" aria-controls="pcNavDrawerPanel">
+        <img src="/images/head/menu.png" alt="Menu" class="pc-nav-icon" width="24" height="24">
+      </button>
+    </div>
+  </div>
+
+  {{!-- 子级菜单与顶级菜单 DOM 同级，便于宽度 100% 不受父级限制 --}}
+  {{#each navItems}}
+    {{#if children}}
+      <div class="pc-mega{{#if (gt @index 2)}} pc-mega--subimg-50{{/if}}" data-mega-index="{{@index}}" role="menu" aria-hidden="true">
+        <div class="pc-mega__backdrop"></div>
+        
+        {{!-- 二级菜单容器 --}}
+        <div class="pc-mega__inner">
+          <div class="pc-mega__content" aria-label="menu-content">
+            {{#each children}}
+              {{!-- 二级菜单项容器 --}}
+              <div class="pc-mega__l2item{{#if children}} pc-mega__l2item--has-l3{{/if}}" data-l2-index="{{@index}}">
+                {{!-- 二级菜单卡片 --}}
+                <div class="pc-mega__l2card">
+                  {{!-- 菜单图：使用数据库 menu_pic_url，后端已映射为 picUrl；有值则显示图片，无则占位 --}}
+                  {{#if picUrl}}
+                    <img class="pc-mega__img" src="{{picUrl}}" alt="{{title}}" loading="lazy" />
+                  {{else}}
+                    <div class="pc-mega__img pc-mega__img--ph" aria-hidden="true" title="placeholder"></div>
+                  {{/if}}
+                  <div class="pc-mega__name-row">
+                    {{#if children}}
+                      {{!-- 有三级菜单时，标题链接进入产品列表，箭头展开三级菜单 --}}
+                      <a class="pc-mega__name" href="{{url}}">{{title}}</a>
+                      <button type="button" class="pc-mega__arrow-btn" aria-label="展开子分类" aria-expanded="false" data-action="expand-l3">
+                        <img class="pc-mega__arrow" src="/images/global/arrow-right-black.png" alt="" aria-hidden="true" />
+                      </button>
+                    {{else}}
+                      {{!-- 无三级菜单时，整个卡片点击进入产品列表 --}}
+                      <a class="pc-mega__name" href="{{url}}">{{title}}</a>
+                    {{/if}}
+                  </div>
+                </div>
+              </div>
+            {{/each}}
+          </div>
+        </div>
+
+        {{!-- 三级菜单容器：与.pc-mega__inner 同级 --}}
+        <div class="pc-mega__three">
+          {{#each children}}
+            {{#if children}}
+              {{!-- 每个二级菜单对应一个三级菜单 panel --}}
+              <div class="pc-mega__three-panel pc-mega__three-panel--hidden" data-l2-index="{{@index}}">
+             
+                {{!-- 三级菜单项 --}}
+                <div class="pc-mega__content">
+                  {{#each children}}
+                    <div class="pc-mega__l3item">
+                      <a class="pc-mega__l3card" href="{{url}}">
+                        {{#if picUrl}}
+                          <img class="pc-mega__img pc-mega__img--l3" src="{{picUrl}}" alt="{{title}}" loading="lazy" />
+                        {{else}}
+                          <div class="pc-mega__img pc-mega__img--ph pc-mega__img--l3" aria-hidden="true"></div>
+                        {{/if}}
+                        <div class="pc-mega__name-row">
+                          <span class="pc-mega__name">{{title}}</span>
+                        </div>
+                      </a>
+                    </div>
+                  {{/each}}
+                </div>
+              </div>
+            {{/if}}
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
+  {{/each}}
+
+  <script>
+    (function () {
+      // 计算滚动条宽度并设置为 CSS 变量，防止页面抖动
+      (function () {
+        var scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+        document.documentElement.style.setProperty('--scrollbar-width', scrollbarWidth + 'px');
+      })();
+
+      // 顶部一级菜单 + 页脚导航：渐变下划线跟随鼠标（footer 在 header 之后渲染，需 DOM 就绪后再绑定）
+      (function () {
+        function clamp(value, min, max) {
+          return Math.min(Math.max(value, min), max);
+        }
+        function bindGradientLine(link) {
+          if (!link) return;
+          function updatePos(e) {
+            var rect = link.getBoundingClientRect();
+            if (!rect.width || !rect.height) return;
+            var x = ((e.clientX - rect.left) / rect.width) * 100;
+            var y = ((e.clientY - rect.top) / rect.height) * 100;
+            link.style.setProperty('--nav-line-x', clamp(x, 0, 100) + '%');
+            link.style.setProperty('--nav-line-y', clamp(y, 0, 100) + '%');
+          }
+          link.addEventListener('mouseenter', function (e) {
+            link.style.setProperty('--nav-line-opacity', '1');
+            updatePos(e);
+          });
+          link.addEventListener('mousemove', updatePos);
+          link.addEventListener('mouseleave', function () {
+            link.style.setProperty('--nav-line-opacity', '0');
+          });
+        }
+        function initGradientUnderlineLinks() {
+          document.querySelectorAll('.pc-navlink, .g-footer__navlink').forEach(bindGradientLine);
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initGradientUnderlineLinks);
+        } else {
+          initGradientUnderlineLinks();
+        }
+      })();
+
+      var sel = document.getElementById('langSwitch');
+      if (sel) {
+        sel.addEventListener('change', function () {
+          var v = (sel.value || '').trim().replace(/^\/+/, '');
+          window.location.href = v ? ('/' + v) : '/';
+        });
+      }
+
+      // 点击箭头按钮：展开三级菜单，隐藏二级菜单
+      document.querySelectorAll('.pc-mega__arrow-btn').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var l2Item = btn.closest('.pc-mega__l2item');
+          if (!l2Item) return;
+          var l2Index = l2Item.getAttribute('data-l2-index');
+          var mega = btn.closest('.pc-mega');
+          if (!mega) return;
+          var inner = mega.querySelector('.pc-mega__inner');
+          var threePanel = mega.querySelector('.pc-mega__three-panel[data-l2-index="' + l2Index + '"]');
+
+          // 隐藏二级菜单容器
+          if (inner) {
+            inner.style.display = 'none';
+          }
+
+          // 显示对应的三级菜单 panel
+          if (threePanel) {
+            threePanel.classList.remove('pc-mega__three-panel--hidden');
+            threePanel.classList.add('pc-mega__three-panel--visible');
+          }
+
+          btn.setAttribute('aria-expanded', 'true');
+        });
+      });
+
+      // 点击返回按钮（直接绑定到每个按钮上）
+      function bindBackButtonEvents() {
+        document.querySelectorAll('.pc-mega__back-btn').forEach(function (backBtn) {
+          // 移除旧的事件监听器（如果有）
+          backBtn.onclick = null;
+          
+          backBtn.onclick = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            var threePanel = backBtn.closest('.pc-mega__three-panel');
+            if (!threePanel) {
+              return;
+            }
+            var mega = threePanel.closest('.pc-mega');
+            if (!mega) {
+              return;
+            }
+            var inner = mega.querySelector('.pc-mega__inner');
+
+            // 隐藏三级菜单 panel
+            threePanel.classList.remove('pc-mega__three-panel--visible');
+            threePanel.classList.add('pc-mega__three-panel--hidden');
+
+            // 显示二级菜单容器
+            if (inner) {
+              inner.style.display = '';
+            }
+
+            // 重置箭头状态
+            mega.querySelectorAll('.pc-mega__arrow-btn').forEach(function (btn) {
+              btn.setAttribute('aria-expanded', 'false');
+            });
+          };
+        });
+      }
+      
+      // 初始绑定
+      bindBackButtonEvents();
+      
+
+      // 点击 mega 菜单外部时重置所有状态
+      document.addEventListener('click', function () {
+        document.querySelectorAll('.pc-mega').forEach(function (mega) {
+          var inner = mega.querySelector('.pc-mega__inner');
+          if (inner) {
+            inner.style.display = '';
+          }
+          // 隐藏所有三级菜单 panel
+          mega.querySelectorAll('.pc-mega__three-panel').forEach(function (panel) {
+            panel.classList.remove('pc-mega__three-panel--visible');
+            panel.classList.add('pc-mega__three-panel--hidden');
+          });
+        });
+        document.querySelectorAll('.pc-mega__arrow-btn').forEach(function (btn) {
+          btn.setAttribute('aria-expanded', 'false');
+        });
+      });
+
+      // 阻止 mega 菜单内部点击冒泡
+      document.querySelectorAll('.pc-mega').forEach(function (mega) {
+        mega.addEventListener('click', function (e) { e.stopPropagation(); });
+      });
+
+      // 点击 mega 菜单外部时重置所有状态
+      document.addEventListener('click', function () {
+        document.querySelectorAll('.pc-mega').forEach(function (mega) {
+          var l2 = mega.querySelector('.pc-mega__l2');
+          var l3List = mega.querySelectorAll('.pc-mega__l3');
+          if (l2) l2.classList.remove('is-hidden');
+          l3List.forEach(function (l3) { l3.classList.remove('is-visible'); });
+        });
+        document.querySelectorAll('.pc-mega__arrow-btn').forEach(function (btn) {
+          btn.setAttribute('aria-expanded', 'false');
+        });
+      });
+
+      // 阻止 mega 菜单内部点击冒泡
+      document.querySelectorAll('.pc-mega').forEach(function (mega) {
+        mega.addEventListener('click', function (e) { e.stopPropagation(); });
+      });
+      var megaHideTimer = null;
+      var bodyEl = document.body;
+      function getScrollbarWidth() {
+        return Math.max(0, window.innerWidth - document.documentElement.clientWidth);
+      }
+      function openMega(index) {
+        // 计算滚动条宽度并设置 CSS 变量，防止页面抖动
+        var sbw = getScrollbarWidth();
+        if (sbw > 0) {
+          document.documentElement.style.setProperty('--scrollbar-width', sbw + 'px');
+        }
+        document.querySelectorAll('.pc-mega').forEach(function (m) {
+          var open = m.getAttribute('data-mega-index') === String(index);
+          m.classList.toggle('is-open', open);
+          m.setAttribute('aria-hidden', open ? 'false' : 'true');
+        });
+        if (bodyEl) bodyEl.classList.add('pc-mega-open');
+      }
+      function resetMegaL3State(m) {
+        if (!m) return;
+        var inner = m.querySelector('.pc-mega__inner');
+        if (inner) inner.style.display = '';
+        m.querySelectorAll('.pc-mega__three-panel').forEach(function (panel) {
+          panel.classList.remove('pc-mega__three-panel--visible');
+          panel.classList.add('pc-mega__three-panel--hidden');
+        });
+        m.querySelectorAll('.pc-mega__arrow-btn').forEach(function (btn) {
+          btn.setAttribute('aria-expanded', 'false');
+        });
+      }
+      function closeAllMegas() {
+        document.querySelectorAll('.pc-mega').forEach(function (m) {
+          m.classList.remove('is-open');
+          m.setAttribute('aria-hidden', 'true');
+          resetMegaL3State(m);
+        });
+        if (bodyEl) bodyEl.classList.remove('pc-mega-open');
+        // 清除 CSS 变量
+        document.documentElement.style.removeProperty('--scrollbar-width');
+      }
+      document.querySelectorAll('.pc-navitem--mega').forEach(function (navItem) {
+        var index = navItem.getAttribute('data-mega-index');
+        if (index === null) return;
+        navItem.addEventListener('mouseenter', function () {
+          if (megaHideTimer) { clearTimeout(megaHideTimer); megaHideTimer = null; }
+          openMega(index);
+        });
+        navItem.addEventListener('mouseleave', function () {
+          var mega = document.querySelector('.pc-mega[data-mega-index="' + index + '"]');
+          megaHideTimer = setTimeout(function () {
+            megaHideTimer = null;
+            closeAllMegas();
+          }, 120);
+        });
+      });
+      document.querySelectorAll('.pc-mega').forEach(function (mega) {
+        // 使用 mouseover 而不是 mouseenter，因为 mouseover 会冒泡，可以检测子元素
+        mega.addEventListener('mouseover', function (e) {
+          // 二级、三级一致：移入半透明蒙版即关闭整块 mega（含三级 panel 与 inner 显示状态）
+          var backdrop = e.target.classList.contains('pc-mega__backdrop') ? e.target : e.target.closest('.pc-mega__backdrop');
+          if (backdrop) {
+            closeAllMegas();
+            return;
+          }
+          if (megaHideTimer) { clearTimeout(megaHideTimer); megaHideTimer = null; }
+        });
+        mega.addEventListener('mouseleave', function () {
+          closeAllMegas();
+        });
+      });
+      var searchForm = document.getElementById('pcNavSearchForm');
+      var searchInput = document.getElementById('pcNavSearchInput');
+      var searchTrigger = document.getElementById('pcNavSearchTrigger');
+      if (searchForm && searchInput && searchTrigger) {
+        var searchWrap = searchForm.closest('.pc-nav-search');
+        var htmlLang = (document.documentElement.lang || '').toLowerCase();
+        var labelExpand = htmlLang.startsWith('zh') ? '展开搜索' : 'Expand search';
+        var labelSubmit = htmlLang.startsWith('zh') ? '搜索' : 'Search';
+        function syncSearchTriggerAria() {
+          if (!searchWrap || !searchTrigger) return;
+          var expanded = searchWrap.classList.contains('pc-nav-search--expanded');
+          searchTrigger.setAttribute('aria-label', expanded ? labelSubmit : labelExpand);
+        }
+        searchTrigger.addEventListener('click', function () {
+          if (searchWrap && !searchWrap.classList.contains('pc-nav-search--expanded')) {
+            searchWrap.classList.add('pc-nav-search--expanded');
+            syncSearchTriggerAria();
+            searchInput.focus();
+            return;
+          }
+          var q = (searchInput.value || '').trim();
+          if (q) searchForm.submit();
+        });
+        searchInput.addEventListener('focus', function () {
+          syncSearchTriggerAria();
+        });
+        searchInput.addEventListener('blur', function () {
+          setTimeout(function () {
+            if (!searchWrap) return;
+            if (document.activeElement && (document.activeElement === searchInput || document.activeElement === searchTrigger || searchWrap.contains(document.activeElement))) return;
+            searchWrap.classList.remove('pc-nav-search--expanded');
+            syncSearchTriggerAria();
+          }, 120);
+        });
+        searchInput.addEventListener('keydown', function (e) {
+          if (e.key !== 'Enter') return;
+          e.preventDefault();
+          var q = (searchInput.value || '').trim();
+          if (q) searchForm.submit();
+        });
+      }
+
+      // 语言切换：保留当前路径（英文无前缀，其它语言 /{code}/...）
+      function pathWithoutLocalePrefix(pathname, pathLocale) {
+        var pl = (pathLocale || '').trim().toLowerCase();
+        if (!pl || pl === 'en') return pathname || '/';
+        var prefix = '/' + pl;
+        if (pathname === prefix) return '/';
+        if (pathname.startsWith(prefix + '/')) {
+          var rest = pathname.slice(prefix.length);
+          return rest && rest !== '' ? rest : '/';
+        }
+        return pathname || '/';
+      }
+      function hrefForLocaleSwitch(targetLang) {
+        var wrap = document.getElementById('pcNavLangWrap');
+        var pathLocale = wrap && wrap.getAttribute('data-path-locale') ? wrap.getAttribute('data-path-locale').trim().toLowerCase() : '';
+        var t = (targetLang || '').trim().toLowerCase();
+        var rest = pathWithoutLocalePrefix(window.location.pathname || '/', pathLocale);
+        var path;
+        if (t === 'en') {
+          path = rest === '/' ? '/' : rest;
+        } else {
+          path = rest === '/' ? ('/' + t) : ('/' + t + rest);
+        }
+        return path + (window.location.search || '') + (window.location.hash || '');
+      }
+      window.__hrefForLocaleSwitch = hrefForLocaleSwitch;
+
+      // 语言：悬停地球 → 第一层（图1）；悬停 stage 或点击内层按钮 → 第二层列表（图2）；移动端点击地球展开第一层
+      var langWrap = document.getElementById('pcNavLangWrap');
+      var langPopover = document.getElementById('pcNavLangPopover');
+      var langTrigger = document.getElementById('pcNavLangTrigger');
+      var langInnerTrigger = document.getElementById('pcNavLangInnerTrigger');
+      if (langWrap && langPopover) {
+        function syncInnerAria() {
+          if (!langInnerTrigger) return;
+          langInnerTrigger.setAttribute(
+            'aria-expanded',
+            langPopover.classList.contains('is-inner-open') ? 'true' : 'false',
+          );
+        }
+        function syncLangPopoverUi() {
+          var open = langPopover.classList.contains('is-open');
+          if (langTrigger) {
+            langTrigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+          }
+          if (open) {
+            langPopover.setAttribute('aria-hidden', 'false');
+          } else if (!langWrap.matches(':hover')) {
+            langPopover.setAttribute('aria-hidden', 'true');
+          }
+          syncInnerAria();
+        }
+        syncLangPopoverUi();
+
+        langWrap.addEventListener('mouseenter', function () {
+          langPopover.setAttribute('aria-hidden', 'false');
+        });
+        langWrap.addEventListener('mouseleave', function () {
+          if (!langPopover.classList.contains('is-open')) {
+            langPopover.setAttribute('aria-hidden', 'true');
+          }
+          langPopover.classList.remove('is-inner-open');
+          syncInnerAria();
+        });
+
+        langWrap.addEventListener('click', function (e) {
+          var globe = e.target && e.target.closest && e.target.closest('.pc-nav-lang-trigger');
+          if (!globe || !langWrap.contains(globe)) return;
+          e.preventDefault();
+          e.stopPropagation();
+          langPopover.classList.toggle('is-open');
+          syncLangPopoverUi();
+        });
+
+        if (langInnerTrigger) {
+          langInnerTrigger.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            langPopover.classList.toggle('is-inner-open');
+            syncInnerAria();
+          });
+        }
+
+        // 点击语言选项切换
+        langPopover.querySelectorAll('.pc-nav-lang-option').forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var lang = this.getAttribute('data-lang');
+            if (lang) window.location.href = hrefForLocaleSwitch(lang);
+          });
+        });
+
+        // 键盘支持：ESC 先关内层再关外层
+        langWrap.addEventListener('keydown', function (e) {
+          if (e.key !== 'Escape') return;
+          if (langPopover.classList.contains('is-inner-open')) {
+            langPopover.classList.remove('is-inner-open');
+            syncInnerAria();
+            return;
+          }
+          langPopover.classList.remove('is-open');
+          syncLangPopoverUi();
+        });
+
+        document.addEventListener('click', function (e) {
+          setTimeout(function () {
+            if (!langWrap.contains(e.target)) {
+              langPopover.classList.remove('is-open');
+              langPopover.classList.remove('is-inner-open');
+              syncLangPopoverUi();
+            }
+          }, 0);
+        });
+      }
+
+      var contactTrigger = document.getElementById('pcNavContactTrigger');
+      if (contactTrigger) {
+        contactTrigger.addEventListener('click', function (e) {
+          if (typeof window.openGContactusModal === 'function') {
+            e.preventDefault();
+            window.openGContactusModal();
+          }
+        });
+      }
+
+      // 购物车数量 badge
+      var cartBadge = document.getElementById('pcNavCartBadge');
+      var cartTrigger = document.getElementById('pcNavCartTrigger');
+      function updateCartBadge(count) {
+        if (cartBadge) {
+          if (count > 0) {
+            cartBadge.textContent = count > 99 ? '99+' : count;
+            cartBadge.style.display = 'flex';
+          } else {
+            cartBadge.style.display = 'none';
+          }
+        }
+      }
+      // 获取购物车数量
+      function fetchCartCount() {
+        // 只有已登录用户才显示购物车数量
+        if (!cartTrigger || cartTrigger.dataset.loggedIn !== '1') {
+          return;
+        }
+        fetch('/api/member/cart/count', { credentials: 'same-origin' })
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            if (data && typeof data.count === 'number') {
+              updateCartBadge(data.count);
+            }
+          })
+          .catch(function () {});
+      }
+      // 页面加载时获取购物车数量
+      fetchCartCount();
+      // 监听购物车更新事件
+      document.addEventListener('pc:cart-updated', function () {
+        fetchCartCount();
+      });
+    })();
+  </script>
+</header>

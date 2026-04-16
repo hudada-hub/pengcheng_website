@@ -1,0 +1,154 @@
+<nav class="admin-sidebar" aria-label="后台主导航">
+  <ul class="admin-sidebar-menu">
+    <li>
+      <a href="/admin" class="{{#if (eq activeMenu 'dashboard')}}active{{/if}}">
+        <iconify-icon icon="mdi:view-dashboard"></iconify-icon><span class="sidebar-text">仪表盘</span>
+      </a>
+    </li>
+
+ <li><a href="/admin/menu" class="{{#if (eq activeMenu 'menu')}}active{{/if}}"><iconify-icon icon="mdi:menu"></iconify-icon><span class="sidebar-text">导航菜单管理</span></a></li>
+
+    <li class="admin-sidebar-group">
+      <details class="admin-nav-group" data-group="config">
+        <summary class="admin-nav-summary">
+          <iconify-icon icon="mdi:tune-variant"></iconify-icon><span class="sidebar-text">区块管理</span>
+        </summary>
+        <ul class="admin-sidebar-submenu">
+          <li><a href="/admin/config-category" class="{{#if (eq activeMenu 'config-category')}}active{{/if}}"><iconify-icon icon="mdi:cog-outline"></iconify-icon><span class="sidebar-text">区块分类</span></a></li>
+          <li><a href="/admin/config" class="{{#if (eq activeMenu 'config')}}active{{/if}}"><iconify-icon icon="mdi:form-textbox"></iconify-icon><span class="sidebar-text">区块管理</span></a></li>
+         
+        </ul>
+      </details>
+    </li>
+
+    <li class="admin-sidebar-group">
+      <details class="admin-nav-group" data-group="news">
+        <summary class="admin-nav-summary">
+          <iconify-icon icon="mdi:newspaper-variant-outline"></iconify-icon><span class="sidebar-text">新闻管理</span>
+        </summary>
+        <ul class="admin-sidebar-submenu">
+          <li><a href="/admin/news-category" class="{{#if (eq activeMenu 'news-category')}}active{{/if}}"><iconify-icon icon="mdi:folder-outline"></iconify-icon><span class="sidebar-text">新闻分类</span></a></li>
+          <li><a href="/admin/news" class="{{#if (eq activeMenu 'news')}}active{{/if}}"><iconify-icon icon="mdi:newspaper"></iconify-icon><span class="sidebar-text">新闻管理</span></a></li>
+          <li><a href="/admin/activity-calendar" class="{{#if (eq activeMenu 'activity-calendar')}}active{{/if}}"><iconify-icon icon="mdi:calendar-month-outline"></iconify-icon><span class="sidebar-text">活动日历管理</span></a></li>
+        </ul>
+      </details>
+    </li>
+
+    <li class="admin-sidebar-group">
+      <details class="admin-nav-group" data-group="solution">
+        <summary class="admin-nav-summary">
+          <iconify-icon icon="mdi:lightbulb-on-outline"></iconify-icon><span class="sidebar-text">解决方案</span>
+        </summary>
+        <ul class="admin-sidebar-submenu">
+          <li><a href="/admin/solution-category" class="{{#if (eq activeMenu 'solution-category')}}active{{/if}}"><iconify-icon icon="mdi:folder-multiple-outline"></iconify-icon><span class="sidebar-text">解决方案分类</span></a></li>
+          <li><a href="/admin/solutions" class="{{#if (eq activeMenu 'solutions')}}active{{/if}}"><iconify-icon icon="mdi:lightbulb-multiple"></iconify-icon><span class="sidebar-text">解决方案</span></a></li>
+          <li><a href="/admin/industry-cases" class="{{#if (eq activeMenu 'industry-cases')}}active{{/if}}"><iconify-icon icon="mdi:briefcase-outline"></iconify-icon><span class="sidebar-text">行业应用案例</span></a></li>
+        </ul>
+      </details>
+    </li>
+
+    <li class="admin-sidebar-group">
+      <details class="admin-nav-group" data-group="product">
+        <summary class="admin-nav-summary">
+          <iconify-icon icon="mdi:package-variant-closed"></iconify-icon><span class="sidebar-text">产品管理</span>
+        </summary>
+        <ul class="admin-sidebar-submenu">
+          <li><a href="/admin/product-category" class="{{#if (eq activeMenu 'product-category')}}active{{/if}}"><iconify-icon icon="mdi:folder-multiple"></iconify-icon><span class="sidebar-text">产品分类</span></a></li>
+          <li><a href="/admin/products" class="{{#if (eq activeMenu 'products')}}active{{/if}}"><iconify-icon icon="mdi:package-variant"></iconify-icon><span class="sidebar-text">产品管理</span></a></li>
+          <li><a href="/admin/product-params" class="{{#if (eq activeMenu 'product-params')}}active{{/if}}"><iconify-icon icon="mdi:table-large"></iconify-icon><span class="sidebar-text">产品参数</span></a></li>
+        </ul>
+      </details>
+    </li>
+
+    <li class="admin-sidebar-group">
+      <details class="admin-nav-group" data-group="download">
+        <summary class="admin-nav-summary">
+          <iconify-icon icon="mdi:download-box-outline"></iconify-icon><span class="sidebar-text">资源下载</span>
+        </summary>
+        <ul class="admin-sidebar-submenu">
+          <li><a href="/admin/download-category" class="{{#if (eq activeMenu 'download-category')}}active{{/if}}"><iconify-icon icon="mdi:folder-download-outline"></iconify-icon><span class="sidebar-text">资源下载分类</span></a></li>
+          <li><a href="/admin/download-file-types" class="{{#if (eq activeMenu 'download-file-type')}}active{{/if}}"><iconify-icon icon="mdi:file-certificate-outline"></iconify-icon><span class="sidebar-text">产品文件类型</span></a></li>
+          <li><a href="/admin/downloads" class="{{#if (eq activeMenu 'downloads')}}active{{/if}}"><iconify-icon icon="mdi:download-multiple"></iconify-icon><span class="sidebar-text">资源下载管理</span></a></li>
+          <li><a href="/admin/download-file-records" class="{{#if (eq activeMenu 'download-file-records')}}active{{/if}}"><iconify-icon icon="mdi:history"></iconify-icon><span class="sidebar-text">资料下载记录</span></a></li>
+        </ul>
+      </details>
+    </li>
+
+    <li class="admin-sidebar-group">
+      <details class="admin-nav-group" data-group="form">
+        <summary class="admin-nav-summary">
+          <iconify-icon icon="mdi:clipboard-text-outline"></iconify-icon><span class="sidebar-text">表单管理</span>
+        </summary>
+        <ul class="admin-sidebar-submenu">
+          <li><a href="/admin/contact-messages" class="{{#if (eq activeMenu 'contact-messages')}}active{{/if}}"><iconify-icon icon="mdi:email-outline"></iconify-icon><span class="sidebar-text">联系我们</span></a></li>
+          <li><a href="/admin/overseas-recruit" class="{{#if (eq activeMenu 'overseas-recruit')}}active{{/if}}"><iconify-icon icon="mdi:account-group-outline"></iconify-icon><span class="sidebar-text">海外招募</span></a></li>
+          <li><a href="/admin/cart-inquiries" class="{{#if (eq activeMenu 'cart-inquiries')}}active{{/if}}"><iconify-icon icon="mdi:cart-outline"></iconify-icon><span class="sidebar-text">询价表单</span></a></li>
+          <li><a href="/admin/crm-tokens" class="{{#if (eq activeMenu 'crm-tokens')}}active{{/if}}"><iconify-icon icon="mdi:key-outline"></iconify-icon><span class="sidebar-text">CRM接口</span></a></li>
+        </ul>
+      </details>
+    </li>
+       <li class="admin-sidebar-group">
+      <details class="admin-nav-group" data-group="system">
+        <summary class="admin-nav-summary">
+          <iconify-icon icon="mdi:cog-outline"></iconify-icon><span class="sidebar-text">系统管理</span>
+        </summary>
+        <ul class="admin-sidebar-submenu">
+          <li><a href="/admin/admins" class="{{#if (eq activeMenu 'admins')}}active{{/if}}"><iconify-icon icon="mdi:account-cog-outline"></iconify-icon><span class="sidebar-text">管理员管理</span></a></li>
+          <li><a href="/admin/system-config" class="{{#if (eq activeMenu 'system-config')}}active{{/if}}"><iconify-icon icon="mdi:database-cog"></iconify-icon><span class="sidebar-text">系统配置</span></a></li>
+          <li><a href="/admin/db-backup" class="{{#if (eq activeMenu 'db-backup')}}active{{/if}}"><iconify-icon icon="mdi:database-export-outline"></iconify-icon><span class="sidebar-text">数据库备份</span></a></li>
+          <li><a href="/admin/lang" class="{{#if (eq activeMenu 'lang')}}active{{/if}}"><iconify-icon icon="mdi:translate"></iconify-icon><span class="sidebar-text">多语言管理</span></a></li>
+          <li><a href="/admin/website-users" class="{{#if (eq activeMenu 'website-users')}}active{{/if}}"><iconify-icon icon="mdi:account-multiple-outline"></iconify-icon><span class="sidebar-text">网站用户</span></a></li>
+          <li><a href="/admin/page-stats" class="{{#if (eq activeMenu 'page-stats')}}active{{/if}}"><iconify-icon icon="mdi:chart-line"></iconify-icon><span class="sidebar-text">页面访问量</span></a></li>
+          <li><a href="/admin/responsive-preview" class="{{#if (eq activeMenu 'responsive-preview')}}active{{/if}}"><iconify-icon icon="mdi:monitor-cellphone"></iconify-icon><span class="sidebar-text">多端适配预览</span></a></li>
+          <li><a href="/admin/seo-sitemap-push" class="{{#if (eq activeMenu 'seo-sitemap-push')}}active{{/if}}"><iconify-icon icon="mdi:search-web"></iconify-icon><span class="sidebar-text">搜索引擎推送站点地图</span></a></li>
+        
+          
+        </ul>
+      </details>
+    </li>
+  </ul>
+</nav>
+
+<script>
+  (function () {
+    var KEY = 'pc_admin_nav_open_groups';
+    var groups = document.querySelectorAll('.admin-nav-group[data-group]');
+    if (!groups || !groups.length) return;
+
+    var activeLink = document.querySelector('.admin-sidebar a.active');
+    var activeGroup = activeLink ? activeLink.closest('.admin-nav-group[data-group]') : null;
+
+    var saved = null;
+    try { saved = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { saved = null; }
+    // 兼容旧数据（数组），但手风琴模式只保留一个
+    var savedIds = Array.isArray(saved) ? saved : (saved ? [saved] : []);
+    var savedId = savedIds && savedIds.length ? String(savedIds[0]) : '';
+
+    groups.forEach(function (d) {
+      var id = d.getAttribute('data-group') || '';
+      if (savedId && id === savedId) d.open = true;
+    });
+    if (activeGroup) activeGroup.open = true;
+
+    groups.forEach(function (d) {
+      var summary = d.querySelector('summary');
+      if (!summary) return;
+
+      // 手风琴：只允许同时展开一个
+      d.addEventListener('toggle', function () {
+        if (d.open) {
+          groups.forEach(function (x) {
+            if (x !== d) x.open = false;
+          });
+        }
+        var openId = '';
+        groups.forEach(function (x) {
+          if (x.open && !openId) openId = x.getAttribute('data-group') || '';
+        });
+        try { localStorage.setItem(KEY, JSON.stringify(openId ? [openId] : [])); } catch (e) {}
+      });
+    });
+
+  })();
+</script>
+

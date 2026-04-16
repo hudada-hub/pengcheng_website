@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} - 鹏成后台</title>
+  <meta name="csrf-token" content="{{csrfToken}}">
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/admin/admin-theme.css">
+  <script src="/js/iconify-icon.min.js"></script>
+  <script src="/js/admin-file-manager.js"></script>
+  <script src="/js/admin-transfer.js"></script>
+</head>
+<body class="admin-layout">
+  {{> admin/header}}
+  <div class="admin-body">
+    {{> admin/sidebar}}
+    <main class="admin-main">
+      <div class="admin-page-toolbar">
+        <div>
+          <h1 style="margin:0;">{{title}}</h1>
+          <div style="font-size:var(--font-size-sm);color:var(--admin-text-muted);margin:0.25rem 0;">排序数字越大，在列表中显示越靠前</div>
+        </div>
+        <div class="admin-page-toolbar__row">
+          <label style="font-size:var(--font-size-sm);color:var(--admin-text-muted);">语言</label>
+          <select id="solutionLangId" style="max-width:220px;">
+            <option value="all" {{#if (eq selectedLangId '')}}selected{{/if}}>全部</option>
+            {{#each langs}}
+              <option value="{{this.id}}" {{#if (eq this.id ../selectedLangId)}}selected{{/if}}>{{this.name}} ({{this.code}})</option>
+            {{/each}}
+          </select>
+          <button type="button" class="btn btn-primary" id="btnSolutionAdd"><iconify-icon icon="mdi:plus"></iconify-icon> 新增</button>
+          <button type="button" class="btn btn-secondary" id="btnSolutionBatchDelete" style="margin-left:0.25rem;"><iconify-icon icon="mdi:delete-sweep"></iconify-icon> 批量删除</button>
+          <button type="button" class="btn btn-primary" id="btnSolutionBatchTranslate" style="margin-left:0.25rem;" disabled><iconify-icon icon="mdi:translate"></iconify-icon> 批量翻译</button>
+        </div>
+      </div>
+      <form id="solutionBatchDeleteForm" method="post" action="/admin/solutions/batch-delete" style="display:none;">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      </form>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th style="width:2.5rem;">
+                <input type="checkbox" id="solutionSelectAll" title="全选" aria-label="全选">
+              </th>
+              <th>ID</th>
+              <th>标题</th>
+              <th id="solutionLangTh" style="{{#if (eq selectedLangId '')}}display:table-cell;{{else}}display:none;{{/if}}">语言</th>
+              <th>访问次数</th>
+              <th>状态</th>
+              <th>排序</th>
+              <th style="width:220px;">操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each solutionList}}
+            <tr>
+              <td><input type="checkbox" class="solution-row-cb" value="{{this.id}}" aria-label="选择"></td>
+              <td>{{this.id}}</td>
+              <td>{{this.title}}</td>
+              <td class="solution-lang-cell" style="{{#if (eq ../selectedLangId '')}}display:table-cell;{{else}}display:none;{{/if}}">{{#if this.lang}}{{this.lang.name}} ({{this.lang.code}}){{else}}-{{/if}}</td>
+              <td>{{this.viewCount}}</td>
+              <td>{{#if (eq this.status 1)}}<span class="status-normal">正常</span>{{else}}<span class="status-hidden">隐藏</span>{{/if}}</td>
+              <td>
+                <input type="number" class="solution-sort-input" data-id="{{this.id}}" value="{{this.sort}}" min="0" style="width:60px;">
+              </td>
+              <td class="actions">
+                <a href="#" class="btn-link solution-edit-link" data-id="{{this.id}}">编辑</a>
+                <a href="#" class="solution-translate-link" data-id="{{this.id}}">一键翻译</a>
+                <form method="post" action="/admin/solutions/delete/{{this.id}}" style="display:inline;">
+                  <input type="hidden" name="_csrf" value="{{../csrfToken}}">
+                  <button type="submit" class="btn-link" data-popconfirm="确定删除该解决方案吗？">删除</button>
+                </form>
+              </td>
+            </tr>
+            {{else}}
+            <tr><td colspan="8" style="text-align:center;color:var(--admin-text-muted);">暂无数据</td></tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+      {{#if pagination}}
+      <div class="admin-pagination-wrap" style="margin-top:1rem;">
+        {{> admin/pagination currentPage=pagination.currentPage totalPages=pagination.totalPages baseUrl=pagination.baseUrl}}
+      </div>
+      {{/if}}
+    </main>
+  </div>
+  {{> admin/modal-form title="解决方案"}}
+  {{> admin/file-manager-modal}}
+  {{> admin/translate-modal idPrefix="solutionTranslate"}}
+  {{!-- 批量翻译弹窗：勾选目标语言后提交 --}}
+  <div id="solutionBatchTranslateModalOverlay" class="admin-modal-overlay admin-translate-modal-overlay" aria-hidden="true">
+    <div class="admin-modal-dialog admin-translate-modal" role="dialog" aria-modal="true" aria-labelledby="solutionBatchTranslateModalTitle">
+      <div class="admin-translate-modal-header">
+        <h2 class="admin-translate-modal-title" id="solutionBatchTranslateModalTitle">批量翻译</h2>
+        <button type="button" class="admin-translate-modal-close" id="solutionBatchTranslateModalClose" aria-label="关闭">
+          <iconify-icon icon="mdi:close"></iconify-icon>
+        </button>
+      </div>
+      <div class="admin-translate-modal-body" id="solutionBatchTranslateModalBody">
+        <p style="margin-bottom:0.5rem;">选择要翻译成的语言（可多选）：</p>
+        <div style="max-height:200px;overflow:auto;">
+          {{#each langs}}
+          <label style="display:block;margin-bottom:0.25rem;"><input type="checkbox" class="solution-batch-translate-lang-cb" value="{{this.id}}"> {{this.name}} ({{this.code}})</label>
+          {{/each}}
+        </div>
+      </div>
+      <div class="admin-translate-modal-footer">
+        <div class="admin-translate-modal-actions">
+          <button type="button" class="btn btn-secondary" id="solutionBatchTranslateModalCancel">取消</button>
+          <button type="button" class="btn btn-primary" id="solutionBatchTranslateModalSubmit">开始翻译</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{> admin/confirm-modal}}
+  <script>
+    (function () {
+      var csrfToken = document.querySelector('meta[name="csrf-token"]') ? document.querySelector('meta[name="csrf-token"]').getAttribute('content') : '';
+      var formOverlay = document.getElementById('adminModalFormOverlay');
+      var formModalBody = document.querySelector('.admin-modal-form-body');
+      var formModalTitle = document.getElementById('adminModalFormTitle');
+      function closeFormModal() {
+        if (formOverlay) { formOverlay.classList.remove('open'); formOverlay.setAttribute('aria-hidden', 'true'); }
+      }
+
+      function syncKehuJson(container) {
+        var list = container ? container.querySelector('#solutionKehuList') : null;
+        var items = list ? list.querySelectorAll('.solution-kehu-item') : [];
+        var arr = [];
+        items.forEach(function (el) {
+          var t = (el.querySelector('.kehu-title') && el.querySelector('.kehu-title').value) || '';
+          var c = (el.querySelector('.kehu-content') && el.querySelector('.kehu-content').value) || '';
+          if (t || c) arr.push({ title: t, content: c });
+        });
+        var jsonEl = container ? container.querySelector('#solutionKehuJson') : null;
+        if (jsonEl) jsonEl.value = JSON.stringify(arr);
+      }
+
+      function bindKehuUI(container) {
+        if (!container) return;
+        var addBtn = container.querySelector('#solutionKehuAdd');
+        var list = container.querySelector('#solutionKehuList');
+        if (!addBtn || !list) return;
+        function bindItem(item) {
+          if (!item) return;
+          var rm = item.querySelector('.solution-kehu-remove');
+          if (rm) rm.onclick = function () { item.remove(); syncKehuJson(container); };
+          item.querySelectorAll('.kehu-title, .kehu-content').forEach(function (el) {
+            el.addEventListener('input', function () { syncKehuJson(container); });
+          });
+        }
+        list.querySelectorAll('.solution-kehu-item').forEach(bindItem);
+        addBtn.onclick = function () {
+          var div = document.createElement('div');
+          div.className = 'solution-kehu-item';
+          div.style.cssText = 'border:1px solid var(--admin-border);border-radius:6px;padding:0.75rem;margin-bottom:0.5rem;';
+          div.innerHTML =
+            '<div class="form-group" style="margin-bottom:0.5rem;"><label>标题</label><input type="text" class="kehu-title" placeholder="标题"></div>' +
+            '<div class="form-group" style="margin-bottom:0;"><label>内容</label><textarea class="kehu-content" rows="2" placeholder="内容"></textarea></div>' +
+            '<button type="button" class="btn btn-secondary btn-sm solution-kehu-remove"><iconify-icon icon="mdi:minus"></iconify-icon> 删除</button>';
+          list.appendChild(div);
+          bindItem(div);
+          syncKehuJson(container);
+        };
+        syncKehuJson(container);
+      }
+
+      function bindMetaSync(container) {
+        var titleEl = container.querySelector('#solutionTitle');
+        var metaEl = container.querySelector('#solutionMetaTitle');
+        if (!titleEl || !metaEl) return;
+        if (!metaEl.value && titleEl.value) metaEl.value = titleEl.value;
+        titleEl.addEventListener('input', function () { if (!metaEl.dataset.edited) metaEl.value = titleEl.value; });
+        metaEl.addEventListener('input', function () { metaEl.dataset.edited = '1'; });
+      }
+
+      function bindFilePickers(container) {
+        if (!container || !window.AdminFileManager || !window.AdminFileManager.open) return;
+        var bannerBgInput = container.querySelector('#solutionBannerBgUrl');
+        var kehuBannerInput = container.querySelector('#solutionKehuBannerUrl');
+        var bannerBgPreview = container.querySelector('#solutionBannerBgPreview');
+        var kehuBannerPreview = container.querySelector('#solutionKehuBannerPreview');
+        var btnBannerBg = container.querySelector('#solutionBtnPickBannerBg');
+        var btnKehuBanner = container.querySelector('#solutionBtnPickKehuBanner');
+        if (btnBannerBg && bannerBgInput) btnBannerBg.onclick = function () { window.AdminFileManager.open({ type: 'image', targetInput: bannerBgInput, targetPreview: bannerBgPreview }); };
+        if (btnKehuBanner && kehuBannerInput) btnKehuBanner.onclick = function () { window.AdminFileManager.open({ type: 'image', targetInput: kehuBannerInput, targetPreview: kehuBannerPreview }); };
+      }
+
+      function openFormModal(titleText, formUrl) {
+        if (!formOverlay || !formModalBody) return;
+        formModalTitle.textContent = titleText;
+        formModalBody.innerHTML = '<p style="text-align:center;color:var(--admin-text-muted);">加载中...</p>';
+        formOverlay.classList.add('open');
+        formOverlay.setAttribute('aria-hidden', 'false');
+        fetch(formUrl, { credentials: 'same-origin' })
+          .then(function (r) { return r.text(); })
+          .then(function (html) {
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(html, 'text/html');
+            var frag = doc.getElementById('admin-form-fragment');
+            formModalBody.innerHTML = frag ? frag.innerHTML : html;
+            var _form = formModalBody.querySelector('form');
+            if (_form) { var _inp = document.createElement('input'); _inp.type = 'hidden'; _inp.name = 'returnUrl'; _inp.value = window.location.href; _form.appendChild(_inp); }
+            var cancelBtn = formModalBody.querySelector('.admin-modal-form-cancel');
+            if (cancelBtn) cancelBtn.onclick = closeFormModal;
+            var form = formModalBody.querySelector('#solutionEditForm');
+            if (form) {
+              form.onsubmit = function () {
+                syncKehuJson(formModalBody);
+              };
+            }
+            bindMetaSync(formModalBody);
+            bindKehuUI(formModalBody);
+            bindFilePickers(formModalBody);
+            if (window.AdminTransfer && window.AdminTransfer.initAll) window.AdminTransfer.initAll();
+          })
+          .catch(function () { formModalBody.innerHTML = '<p style="color:var(--admin-danger);">加载失败</p>'; });
+      }
+
+      var closeBtn = document.getElementById('adminModalFormClose');
+      if (closeBtn) closeBtn.onclick = closeFormModal;
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && formOverlay && formOverlay.classList.contains('open')) closeFormModal(); });
+      var addBtn = document.getElementById('btnSolutionAdd');
+      if (addBtn) addBtn.onclick = function () { openFormModal('新增解决方案', '/admin/solutions/edit?modal=1'); };
+      document.querySelectorAll('.solution-edit-link').forEach(function (a) {
+        a.onclick = function (e) { e.preventDefault(); var id = a.getAttribute('data-id'); if (id) openFormModal('编辑解决方案', '/admin/solutions/edit/' + id + '?modal=1'); };
+      });
+      var langSelect = document.getElementById('solutionLangId');
+      if (langSelect) {
+        langSelect.onchange = function () {
+          var val = (langSelect.value || '').trim();
+          var url = '/admin/solutions';
+          if (val && val !== 'all') url += '?langId=' + encodeURIComponent(val);
+          else if (val === 'all') url += '?langId=all';
+          window.location.href = url;
+        };
+      }
+      var selectAll = document.getElementById('solutionSelectAll');
+      if (selectAll) {
+        selectAll.onclick = function () {
+          var cbs = document.querySelectorAll('.solution-row-cb');
+          cbs.forEach(function (cb) { cb.checked = selectAll.checked; });
+        };
+      }
+      var batchDeleteBtn = document.getElementById('btnSolutionBatchDelete');
+      var batchDeleteForm = document.getElementById('solutionBatchDeleteForm');
+      if (batchDeleteBtn && batchDeleteForm) {
+        batchDeleteBtn.onclick = function () {
+          var checked = document.querySelectorAll('.solution-row-cb:checked');
+          var ids = [];
+          checked.forEach(function (cb) { ids.push(cb.value); });
+          if (!ids.length) { alert('请先勾选要删除的解决方案'); return; }
+          var msg = '确定删除所选 ' + ids.length + ' 条解决方案吗？';
+          var doSubmit = function () {
+            batchDeleteForm.innerHTML = '<input type="hidden" name="_csrf" value="' + (csrfToken || '') + '">';
+            ids.forEach(function (id) {
+              var input = document.createElement('input');
+              input.type = 'hidden';
+              input.name = 'ids';
+              input.value = id;
+              batchDeleteForm.appendChild(input);
+            });
+            batchDeleteForm.submit();
+          };
+          if (window.showConfirmModal) {
+            window.showConfirmModal(msg, doSubmit);
+          } else if (confirm(msg)) {
+            doSubmit();
+          }
+        };
+      }
+      // 批量翻译：勾选控制
+      var btnBatchTranslate = document.getElementById('btnSolutionBatchTranslate');
+      var rowCbs = document.querySelectorAll('.solution-row-cb');
+      function syncBatchTranslateBtn() {
+        var checked = document.querySelectorAll('.solution-row-cb:checked');
+        if (btnBatchTranslate) btnBatchTranslate.disabled = checked.length === 0;
+      }
+      rowCbs.forEach(function (cb) { cb.addEventListener('change', syncBatchTranslateBtn); });
+      if (selectAll) selectAll.addEventListener('change', syncBatchTranslateBtn);
+      syncBatchTranslateBtn();
+      // 批量翻译弹窗
+      var batchTranslateOverlay = document.getElementById('solutionBatchTranslateModalOverlay');
+      function openBatchTranslateModal() {
+        var ids = Array.prototype.slice.call(document.querySelectorAll('.solution-row-cb:checked')).map(function (cb) { return parseInt(cb.value, 10); }).filter(function (n) { return !isNaN(n); });
+        if (!ids.length) { alert('请先勾选要翻译的解决方案'); return; }
+        if (!batchTranslateOverlay) return;
+        batchTranslateOverlay.classList.add('open');
+        batchTranslateOverlay.setAttribute('aria-hidden', 'false');
+        batchTranslateOverlay.dataset.sourceIds = ids.join(',');
+      }
+      function closeBatchTranslateModal() {
+        if (batchTranslateOverlay) { batchTranslateOverlay.classList.remove('open'); batchTranslateOverlay.setAttribute('aria-hidden', 'true'); }
+      }
+      if (btnBatchTranslate) btnBatchTranslate.onclick = openBatchTranslateModal;
+      document.getElementById('solutionBatchTranslateModalClose').onclick = closeBatchTranslateModal;
+      document.getElementById('solutionBatchTranslateModalCancel').onclick = closeBatchTranslateModal;
+      if (batchTranslateOverlay) batchTranslateOverlay.onclick = function (e) { if (e.target === batchTranslateOverlay) closeBatchTranslateModal(); };
+      document.getElementById('solutionBatchTranslateModalSubmit').onclick = function () {
+        var langCbs = document.querySelectorAll('.solution-batch-translate-lang-cb:checked');
+        var targetLangIds = [];
+        langCbs.forEach(function (cb) { targetLangIds.push(parseInt(cb.value, 10)); });
+        if (!targetLangIds.length) { alert('请至少选择一种目标语言'); return; }
+        var sourceIdsStr = batchTranslateOverlay && batchTranslateOverlay.dataset.sourceIds ? batchTranslateOverlay.dataset.sourceIds : '';
+        var sourceIds = sourceIdsStr.split(',').map(function (s) { return parseInt(s.trim(), 10); }).filter(function (n) { return !isNaN(n) && n > 0; });
+        if (!sourceIds.length) { alert('未找到要翻译的解决方案'); return; }
+        var btn = document.getElementById('solutionBatchTranslateModalSubmit');
+        var oldText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = '翻译中...';
+        fetch('/admin/api/solution/translate-batch', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json', 'csrf-token': csrfToken },
+          body: JSON.stringify({ _csrf: csrfToken, sourceIds: sourceIds, targetLangIds: targetLangIds })
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            btn.disabled = false;
+            btn.textContent = oldText;
+            if (d && d.ok) { alert(d.message || '翻译完成'); closeBatchTranslateModal(); window.location.reload(); }
+            else { alert(d && d.message ? d.message : '翻译失败'); }
+          })
+          .catch(function () { btn.disabled = false; btn.textContent = oldText; alert('请求失败'); });
+      };
+      var translateOverlay = document.getElementById('solutionTranslateModalOverlay');
+      var translateBody = document.getElementById('solutionTranslateModalBody');
+      var translateSourceId = 0;
+      function escapeHtml(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;').replace(/'/g, '&#039;'); }
+      function loadTranslateLangs() {
+        if (!translateBody || !translateSourceId) return;
+        var retranslateEl = document.getElementById('solutionTranslateRetranslateCb');
+        var retranslate = retranslateEl ? retranslateEl.checked : false;
+        translateBody.innerHTML = '<p class="admin-text-muted">加载中...</p>';
+        var url = '/admin/api/solution/missing-langs?id=' + encodeURIComponent(translateSourceId);
+        if (retranslate) url += '&retranslate=1';
+        fetch(url, { credentials: 'same-origin' }).then(function (r) { return r.json(); })
+          .then(function (langs) {
+            if (!langs || !langs.length) { translateBody.innerHTML = '<p class="admin-text-muted">' + (retranslate ? '暂无其他语言。' : '暂无缺失语言。') + '</p>'; return; }
+            var html = '<p style="margin-bottom:0.5rem;">选择要翻译成的语言：</p><button type="button" class="btn btn-secondary btn-sm" id="solutionTranslateSelectAll">一键补充缺失的所有语言</button><div style="margin-top:0.75rem;max-height:200px;overflow:auto;">';
+            langs.forEach(function (l) { html += '<label style="display:block;margin-bottom:0.25rem;"><input type="checkbox" class="solution-translate-cb" value="' + escapeHtml(String(l.id)) + '"> ' + escapeHtml(l.name) + ' (' + escapeHtml(l.code) + ')</label>'; });
+            html += '</div>';
+            translateBody.innerHTML = html;
+            var selAll = document.getElementById('solutionTranslateSelectAll');
+            if (selAll) selAll.onclick = function () { translateBody.querySelectorAll('.solution-translate-cb').forEach(function (cb) { cb.checked = true; }); };
+          }).catch(function () { translateBody.innerHTML = '<p style="color:var(--admin-danger);">加载失败</p>'; });
+      }
+      function openTranslateModal(id) {
+        translateSourceId = id;
+        if (!translateOverlay || !translateBody) return;
+        var cb = document.getElementById('solutionTranslateRetranslateCb');
+        if (cb) cb.checked = false;
+        translateBody.innerHTML = '<p class="admin-text-muted">加载中...</p>';
+        translateOverlay.classList.add('open');
+        translateOverlay.setAttribute('aria-hidden', 'false');
+        loadTranslateLangs();
+      }
+      function closeTranslateModal() { if (translateOverlay) { translateOverlay.classList.remove('open'); translateOverlay.setAttribute('aria-hidden', 'true'); } }
+      document.getElementById('solutionTranslateModalClose').onclick = closeTranslateModal;
+      document.getElementById('solutionTranslateModalCancel').onclick = closeTranslateModal;
+      if (translateOverlay) translateOverlay.onclick = function (e) { if (e.target === translateOverlay) closeTranslateModal(); };
+      var retranslateCb = document.getElementById('solutionTranslateRetranslateCb');
+      if (retranslateCb) retranslateCb.onchange = loadTranslateLangs;
+      document.querySelectorAll('.solution-translate-link').forEach(function (a) {
+        a.onclick = function (e) { e.preventDefault(); var id = a.getAttribute('data-id'); if (id) openTranslateModal(parseInt(id, 10)); };
+      });
+      document.getElementById('solutionTranslateModalSubmit').onclick = function () {
+        var cbs = document.querySelectorAll('#solutionTranslateModalBody .solution-translate-cb:checked');
+        var ids = [];
+        cbs.forEach(function (cb) { ids.push(parseInt(cb.value, 10)); });
+        if (!ids.length) { alert('请至少选择一种语言'); return; }
+        var btn = document.getElementById('solutionTranslateModalSubmit');
+        var oldText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = '翻译中...';
+        fetch('/admin/api/solution/translate', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'csrf-token': csrfToken }, body: JSON.stringify({ _csrf: csrfToken, sourceId: translateSourceId, targetLangIds: ids }) })
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            btn.disabled = false;
+            btn.textContent = oldText;
+            if (d && d.ok) { alert(d.message || '翻译完成'); closeTranslateModal(); window.location.reload(); }
+            else { alert(d && d.message ? d.message : '翻译失败'); }
+          })
+          .catch(function () { btn.disabled = false; btn.textContent = oldText; alert('请求失败'); });
+      };
+      var paginationNav = document.querySelector('.admin-pagination');
+      if (paginationNav) {
+        var baseUrl = paginationNav.getAttribute('data-base-url');
+        var cur = parseInt(paginationNav.getAttribute('data-current'), 10) || 1;
+        var total = parseInt(paginationNav.getAttribute('data-total'), 10) || 1;
+        document.querySelector('.admin-pagination-prev').addEventListener('click', function () {
+          if (cur > 1 && baseUrl) window.location.href = baseUrl + '&page=' + (cur - 1);
+        });
+        document.querySelector('.admin-pagination-next').addEventListener('click', function () {
+          if (cur < total && baseUrl) window.location.href = baseUrl + '&page=' + (cur + 1);
+        });
+      }
+
+      // 监听排序输入框变化，实时更新排序
+      function initSolutionSortInputs() {
+        const inputs = document.querySelectorAll('.solution-sort-input');
+        inputs.forEach(function(input) {
+          input.addEventListener('change', function() {
+            const solutionId = parseInt(input.getAttribute('data-id'), 10);
+            const sortValue = parseInt(input.value, 10) || 0;
+            
+            // 显示加载状态
+            const originalValue = input.value;
+            input.disabled = true;
+            
+            // 发送请求更新排序
+            fetch('/admin/solutions/update-sort', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+              },
+              credentials: 'same-origin',
+              body: JSON.stringify({ id: solutionId, sort: sortValue })
+            })
+            .then(function(response) {
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+              return response.json();
+            })
+            .then(function(data) {
+              if (data.success) {
+                // 更新成功，刷新页面以重新排序
+                window.location.reload();
+              } else {
+                // 更新失败，恢复原始值
+                input.value = originalValue;
+                alert('排序更新失败');
+              }
+            })
+            .catch(function(error) {
+              console.error('Error:', error);
+              input.value = originalValue;
+              alert('排序更新失败');
+            })
+            .finally(function() {
+              input.disabled = false;
+            });
+          });
+        });
+      }
+
+      // 初始化排序输入框
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSolutionSortInputs);
+      } else {
+        initSolutionSortInputs();
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head><body><div id="admin-form-fragment">
+  <div class="admin-card">
+    <form class="admin-form" method="post" action="/admin/config/save">
+      <div class="admin-modal-form-scroll">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        {{#if config}}<input type="hidden" name="id" value="{{config.id}}">{{/if}}
+        <div class="form-group">
+          <label>配置说明（名称） <span style="color:var(--admin-danger);">*</span></label>
+          <input type="text" name="name" required value="{{#if config}}{{config.name}}{{/if}}" placeholder="如：首页轮播图、合作伙伴">
+        </div>
+        <div class="form-group">
+          <label>大标题</label>
+          <input type="text" name="title" value="{{#if config}}{{config.title}}{{/if}}" placeholder="区块大标题">
+        </div>
+        <div class="form-group">
+          <label>描述</label>
+          <textarea name="description" rows="2" placeholder="可选">{{#if config}}{{config.description}}{{/if}}</textarea>
+        </div>
+        <div class="form-group">
+          <label>Key <span style="color:var(--admin-danger);">*</span></label>
+          <input type="text" name="keyName" required value="{{#if config}}{{config.keyName}}{{/if}}" placeholder="与 langId 配合唯一，如 home_banner" {{#if config}}readonly{{/if}}>
+        </div>
+        <div class="form-group">
+          <label>语言</label>
+          <select name="langId" required>
+            {{#each langs}}
+            <option value="{{this.id}}" {{#if ../config}}{{#if (eq this.id ../config.langId)}}selected{{/if}}{{else}}{{#if (eq this.id ../defaultLangId)}}selected{{/if}}{{/if}}>{{this.name}} ({{this.code}})</option>
+            {{/each}}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>区块分类</label>
+          <select name="categoryId">
+            <option value="">— 不选 —</option>
+            {{#each categories}}
+            <option value="{{this.id}}" {{#if ../config}}{{#if (eq this.id ../config.categoryId)}}selected{{/if}}{{/if}}>{{this.name}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>类型</label>
+          <select name="type">
+            <option value="1" {{#if config}}{{#if (eq config.type 1)}}selected{{/if}}{{/if}}>1-单条文字</option>
+            <option value="2" {{#if config}}{{#if (eq config.type 2)}}selected{{/if}}{{else}}selected{{/if}}>2-单个图片</option>
+            <option value="3" {{#if config}}{{#if (eq config.type 3)}}selected{{/if}}{{/if}}>3-图片+标题</option>
+            <option value="4" {{#if config}}{{#if (eq config.type 4)}}selected{{/if}}{{/if}}>4-图片+链接</option>
+            <option value="5" {{#if config}}{{#if (eq config.type 5)}}selected{{/if}}{{/if}}>5-标题+内容+图片</option>
+            <option value="6" {{#if config}}{{#if (eq config.type 6)}}selected{{/if}}{{/if}}>6-图片+标题+链接</option>
+            <option value="7" {{#if config}}{{#if (eq config.type 7)}}selected{{/if}}{{/if}}>7-双图+标题+链接</option>
+            <option value="8" {{#if config}}{{#if (eq config.type 8)}}selected{{/if}}{{/if}}>8-标题+内容+描述+图</option>
+            <option value="9" {{#if config}}{{#if (eq config.type 9)}}selected{{/if}}{{/if}}>9-双图+标题</option>
+            <option value="10" {{#if config}}{{#if (eq config.type 10)}}selected{{/if}}{{/if}}>10-标题+描述</option>
+            <option value="11" {{#if config}}{{#if (eq config.type 11)}}selected{{/if}}{{/if}}>11-标题+描述+图片+链接</option>
+            <option value="12" {{#if config}}{{#if (eq config.type 12)}}selected{{/if}}{{/if}}>12-大标题+标题+描述+小标题+小描述+图片</option>
+            <option value="13" {{#if config}}{{#if (eq config.type 13)}}selected{{/if}}{{/if}}>13-富文本（wangeditor）</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>是否数组</label>
+          <select name="isArray">
+            <option value="0" {{#if config}}{{#if (eq config.isArray 0)}}selected{{/if}}{{else}}selected{{/if}}>否</option>
+            <option value="1" {{#if config}}{{#if (eq config.isArray 1)}}selected{{/if}}{{/if}}>是</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>背景图 URL</label>
+          <div class="admin-input-row">
+            <input type="text" id="bgPicUrl" name="bgPicUrl" value="{{#if config}}{{config.bgPicUrl}}{{/if}}" placeholder="点击右侧选择图片">
+            <button type="button" class="btn" id="btnPickBgPic"><iconify-icon icon="mdi:image-search-outline"></iconify-icon> 选择文件</button>
+            <span class="admin-input-preview" id="bgPicPreview">{{#if config}}{{#if config.bgPicUrl}}<img src="{{config.bgPicUrl}}" alt="">{{/if}}{{/if}}</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>链接地址</label>
+          <input type="text" name="linkUrl" value="{{#if config}}{{config.linkUrl}}{{/if}}" placeholder="linkUrl">
+        </div>
+        <div class="form-group">
+          <label>视频地址</label>
+          <div class="admin-input-row">
+            <input type="text" id="videoUrl" name="videoUrl" value="{{#if config}}{{config.videoUrl}}{{/if}}" placeholder="点击右侧选择视频文件">
+            <button type="button" class="btn" id="btnPickVideo"><iconify-icon icon="mdi:video-outline"></iconify-icon> 选择文件</button>
+            <span class="admin-input-preview" id="videoPreview">{{#if config}}{{#if config.videoUrl}}<video src="{{config.videoUrl}}" controls style="max-height:100px;"></video>{{/if}}{{/if}}</span>
+          </div>
+        </div>
+        <div class="form-group" id="content-editor-wrapper">
+          <label>内容（根据类型显示字段，isArray 时可点「新增」增加一项）</label>
+          <textarea name="content" id="configContent" style="display:none;"></textarea>
+          <div id="content-editor">
+          <div class="config-content-items">
+            {{#each contentItems}}{{> admin/config-content-item index=@index displayNum=this.displayNum}}{{/each}}
+          </div>
+          <button type="button" class="btn config-content-add-btn" style="margin-top:0.5rem;"><iconify-icon icon="mdi:plus"></iconify-icon> 新增一项</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>是否可删除</label>
+          <select name="deletable">
+            <option value="1" {{#if config}}{{#if (eq config.deletable 1)}}selected{{/if}}{{else}}selected{{/if}}>是</option>
+            <option value="0" {{#if config}}{{#if (eq config.deletable 0)}}selected{{/if}}{{/if}}>否</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>状态</label>
+          <select name="status">
+            <option value="1" {{#if config}}{{#if (eq config.status 1)}}selected{{/if}}{{else}}selected{{/if}}>正常</option>
+            <option value="0" {{#if config}}{{#if (eq config.status 0)}}selected{{/if}}{{/if}}>隐藏</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">保存</button>
+        <button type="button" class="btn admin-modal-form-cancel">取消</button>
+      </div>
+    </form>
+  </div>
+</div></body></html>

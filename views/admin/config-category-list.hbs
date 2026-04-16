@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} - 鹏成后台</title>
+  <meta name="csrf-token" content="{{csrfToken}}">
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/admin/admin-theme.css">
+  <script src="/js/iconify-icon.min.js"></script>
+</head>
+<body class="admin-layout">
+  {{> admin/header}}
+  <div class="admin-body">
+    {{> admin/sidebar}}
+    <main class="admin-main">
+      <div class="admin-page-toolbar">
+        <h1 style="margin:0;">{{title}}</h1>
+        <a href="/admin/config-category/edit" class="btn btn-primary"><iconify-icon icon="mdi:plus"></iconify-icon> 新增</a>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>名称</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each categories}}
+            <tr>
+              <td>{{this.id}}</td>
+              <td>{{this.name}}</td>
+              <td class="actions">
+                <a href="/admin/config-category/edit/{{this.id}}">编辑</a>
+                <button type="button" class="btn-link btn-delete-config-category" data-id="{{this.id}}">删除</button>
+              </td>
+            </tr>
+            {{else}}
+            <tr><td colspan="3" style="text-align:center;color:var(--admin-text-muted);">暂无区块分类</td></tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+  {{> admin/confirm-modal}}
+<script>
+  (function () {
+    var csrfMeta = document.querySelector('meta[name="csrf-token"]');
+    var csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : '';
+
+    document.querySelectorAll('.btn-delete-config-category').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = parseInt(btn.getAttribute('data-id'), 10);
+        if (!id) return;
+        var msg = '确定删除该区块分类吗？';
+        var doDelete = function () {
+          fetch('/admin/api/config/categories/' + id, {
+            method: 'DELETE',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json', 'csrf-token': csrfToken },
+            body: JSON.stringify({ _csrf: csrfToken })
+          })
+            .then(function (r) { return r.json(); })
+            .then(function (d) {
+              if (d && d.ok) { location.reload(); }
+              else { alert((d && d.message) ? d.message : '删除失败'); }
+            })
+            .catch(function () { alert('请求失败'); });
+        };
+        if (window.showConfirmModal) {
+          window.showConfirmModal(msg, doDelete);
+        } else if (confirm(msg)) {
+          doDelete();
+        }
+      });
+    });
+  })();
+</script>
+</body>
+</html>

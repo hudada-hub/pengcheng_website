@@ -1,0 +1,51 @@
+{{!-- �?website/website/products/product-list 单卡一致（含悬�?Tabs + CTA�?--}}
+<article class="g-product-card" data-product-id="{{this.id}}">
+  <div class="g-product-card__image-wrap">
+    <a href="{{this.url}}" class="g-product-card__image-link">
+      <img src="{{this.picUrl}}" alt="{{this.title}}" class="g-product-card__image" loading="lazy" />
+    </a>
+  </div>
+
+  <div class="g-product-card__content">
+    {{#if this.model}}
+    <div class="g-product-card__model">{{this.model}}</div>
+    {{else if this.tag}}
+    <div class="g-product-card__model">{{this.tag}}</div>
+    {{/if}}
+    <h3 class="g-product-card__title">
+      <a href="{{this.url}}">{{this.title}}</a>
+    </h3>
+
+    <div class="g-product-card__tab-content">
+      {{#if this.coreParams}}
+      <div class="g-product-card__specs">
+        {{#each this.coreParams}}
+        {{#if (lt @index 2)}}
+        <div class="g-product-card__spec-item{{#unless this.label}} g-product-card__spec-item--single{{/unless}}">
+          {{#if this.label}}
+          <span class="g-product-card__spec-label">{{this.label}}</span>
+          {{/if}}
+          <span class="g-product-card__spec-value">{{this.value}}</span>
+        </div>
+        {{/if}}
+        {{/each}}
+      </div>
+      {{/if}}
+    </div>
+
+    <div class="g-product-card__hover-footer">
+      <div class="g-product-card__tabs" aria-label="Product media">
+        <span class="g-product-card__tab">{{@root.productListCardTabs.images}}</span>
+        <div class="g-product-card__tab-sep" aria-hidden="true"></div>
+        <span class="g-product-card__tab">{{@root.productListCardTabs.description}}</span>
+        <div class="g-product-card__tab-sep" aria-hidden="true"></div>
+        <span class="g-product-card__tab">{{@root.productListCardTabs.specifications}}</span>
+      </div>
+      <div class="g-product-card__action">
+        <a href="{{this.url}}" class="g-product-card__btn">
+          {{@root.getAQuoteLabel}}
+        </a>
+      </div>
+    </div>
+  </div>
+</article>

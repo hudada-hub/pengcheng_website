@@ -1,0 +1,74 @@
+{{!-- 配置 about-us-culture：type 8 数组；bg_pic_url 区块背景 cover（默认可�?/images/global/culture01.png）；每项 pic1�? 同前 --}}
+{{#if hasAboutUsCulture}}
+<section
+  id="{{aboutUsCultureSectionId}}"
+  class="g-about-us-culture about_culture_warp about_culture_warp--pending g-about-us-anchor-target"
+  {{#if aboutUsCultureBgUrl}}
+  style="background-image: url('{{aboutUsCultureBgUrl}}');"
+  {{/if}}
+  aria-labelledby="g-about-us-culture-title"
+>
+  <div class="layout">
+    <div class="about_culture_main index_flex">
+      {{#if aboutUsCultureItems}}
+      <ul class="about_culture_list index_flex" role="list">
+        {{#each aboutUsCultureItems}}
+        <li
+          class="about_culture_slide{{#if isMission}} about_culture_slide--mission g-about-us-culture__slide--mission{{/if}}{{#if slideSwap}} g-about-us-culture__slide--swap{{/if}}"
+          role="listitem"
+          tabindex="0"
+        >
+          <div class="item_bg">
+            {{#if bgUrl}}
+            <img src="{{bgUrl}}" alt="" loading="lazy" decoding="async" />
+            {{/if}}
+            {{#if bgHoverUrl}}
+            <img src="{{bgHoverUrl}}" alt="" loading="lazy" decoding="async" />
+            {{/if}}
+          </div>
+          <div class="item_text">
+            <div class="item_img">
+              {{#if iconUrl}}
+              <img src="{{iconUrl}}" alt="" loading="lazy" decoding="async" />
+              {{/if}}
+              {{#if iconHoverUrl}}
+              <img src="{{iconHoverUrl}}" alt="" loading="lazy" decoding="async" />
+              {{/if}}
+            </div>
+            <h2>{{itemTitle}}</h2>
+            {{#if text}}
+            <p>{{text}}</p>
+            {{/if}}
+          </div>
+        </li>
+        {{/each}}
+      </ul>
+      {{/if}}
+      <div class="about_culture_item">
+        {{#if aboutUsCultureTitle}}
+        <h2 id="g-about-us-culture-title">{{aboutUsCultureTitle}}</h2>
+        {{/if}}
+        {{#if aboutUsCultureIntro}}
+        <p>{{aboutUsCultureIntro}}</p>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+  <ul class="about_culture_box" aria-hidden="true">
+    <li><img src="/images/global/culture_icon01.png" alt="" loading="lazy" decoding="async" /></li>
+    <li><img src="/images/global/culture_icon02.png" alt="" loading="lazy" decoding="async" /></li>
+    <li><img src="/images/global/culture_icon01.png" alt="" loading="lazy" decoding="async" /></li>
+    <li><img src="/images/global/culture_icon02.png" alt="" loading="lazy" decoding="async" /></li>
+    <li><img src="/images/global/culture_icon01.png" alt="" loading="lazy" decoding="async" /></li>
+    <li><img src="/images/global/culture_icon02.png" alt="" loading="lazy" decoding="async" /></li>
+  </ul>
+  <noscript>
+    <style>
+      .g-about-us-culture.about_culture_warp.about_culture_warp--pending {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    </style>
+  </noscript>
+</section>
+{{/if}}

@@ -1,0 +1,36 @@
+main:
+  push:
+    
+    - services:
+        - docker
+      env:
+          REMOTE_HOST: 154.193.246.133
+          REMOTE_PORT: 22
+          REMOTE_USERNAME: root
+          REMOTE_PASSWORD: KJYMhnMxiX4QjHaG
+          # HTTP 直连或未上 HTTPS 时须为 false，否则 session cookie 无法写入，后台报 Missing csrf secret
+          SESSION_COOKIE_SECURE: "false"
+      stages:
+        - name: docker build
+          script: docker build -t ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:latest .
+
+        - name: docker push
+          script: docker push ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:latest
+
+        - name: deploy via ssh (password)
+          image: cnbcool/ssh
+          settings:
+            host:
+              - ${REMOTE_HOST}:${REMOTE_PORT}
+            username: ${REMOTE_USERNAME}
+            password: ${REMOTE_PASSWORD}
+            script: |
+              set -e
+              docker pull ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:latest
+              docker rm -f pengcheng_website || true
+              docker run -d --name pengcheng_website \
+                --restart=always \
+                -p 3002:3000 \
+                -e SESSION_COOKIE_SECURE=${SESSION_COOKIE_SECURE:-false} \
+                ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:latest
+

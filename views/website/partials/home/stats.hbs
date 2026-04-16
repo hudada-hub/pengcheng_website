@@ -1,0 +1,25 @@
+{{!-- Key metrics / stats - 6 cards above OUR CUSTOMERS (Figma) --}}
+<section class="g-section g-stats " aria-label="Key metrics">
+  <div class="container">
+    <div class="row g-3 g-md-4">
+      {{#each advantageItems}}
+      <div class="col-6 col-sm-6 col-lg-4">
+        <div class="g-stats__card">
+          <div class="g-stats__icon {{#if @even}}g-stats__icon--solid{{else}}g-stats__icon--outline{{/if}}">
+            <img src="{{pic1Url}}" alt="" width="40" height="40" loading="lazy">
+          </div>
+          <div class="g-stats__content">
+            <p class="g-stats__value"><span class="g-stats__value-num" data-value="{{title}}" data-suffix="{{subtitle}}">{{title}}<sup>{{subtitle}}</sup>
+            {{#if subDescription}}
+              <sub class="g-stats__subdescription">{{subDescription}}</sub>
+            {{/if}}
+            </span></p>
+            
+            <p class="g-stats__label">{{description}}</p>
+          </div>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+</section>

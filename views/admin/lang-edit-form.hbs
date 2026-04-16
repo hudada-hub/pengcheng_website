@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head><body><div id="admin-form-fragment">
+  <div class="admin-card">
+    <form class="admin-form admin-form-modal" method="post" action="/admin/lang/save">
+      <div class="admin-modal-form-scroll">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        {{#if lang}}<input type="hidden" name="id" value="{{lang.id}}">{{/if}}
+
+        <section class="admin-form-section">
+          <div class="admin-form-section-title">基础信息</div>
+          <div class="admin-form-grid admin-form-grid-2">
+            <div class="form-group">
+              <label>名称 <span class="admin-required">*</span></label>
+              <input type="text" name="name" required value="{{#if lang}}{{lang.name}}{{/if}}" placeholder="例如：中文 / English">
+            </div>
+            <div class="form-group">
+              <label>编码 <span class="admin-required">*</span></label>
+              <input type="text" name="code" required value="{{#if lang}}{{lang.code}}{{/if}}" placeholder="例如：zh / en / jp">
+            </div>
+            <div class="form-group admin-col-span-2">
+              <label>展示全名</label>
+              <input type="text" name="langFullName" value="{{#if lang}}{{lang.langFullName}}{{/if}}" placeholder="例如：English、简体中文、日本語（前台语言切换等展示）" maxlength="64">
+              <p class="admin-form-help">与「名称」区分：此处为面向用户的完整语言名称，可为中文或当地语文案。</p>
+            </div>
+            <div class="form-group">
+              <label>是否默认</label>
+              <select name="isDefault">
+                <option value="0" {{#if lang}}{{#if (eq lang.isDefault 0)}}selected{{/if}}{{else}}selected{{/if}}>否</option>
+                <option value="1" {{#if lang}}{{#if (eq lang.isDefault 1)}}selected{{/if}}{{/if}}>是</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>状态</label>
+              <select name="status">
+                <option value="1" {{#if lang}}{{#if (eq lang.status 1)}}selected{{/if}}{{else}}selected{{/if}}>正常</option>
+                <option value="0" {{#if lang}}{{#if (eq lang.status 0)}}selected{{/if}}{{/if}}>隐藏</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <section class="admin-form-section admin-form-section-last">
+          <div class="admin-form-section-title">语言图标</div>
+          <div class="admin-form-grid admin-form-grid-2">
+            <div class="form-group admin-col-span-2">
+              <label>语言图标 URL</label>
+              <div class="admin-input-row">
+                <input type="text" id="langIconUrl" name="langIconUrl" value="{{#if lang}}{{lang.langIconUrl}}{{/if}}" placeholder="点击右侧按钮选择/上传">
+                <button type="button" class="btn" id="btnPickLangIcon"><iconify-icon icon="mdi:image-search-outline"></iconify-icon> 选择文件</button>
+                <span class="admin-input-preview" id="langIconPreview">{{#if lang}}{{#if lang.langIconUrl}}<img src="{{lang.langIconUrl}}" alt="">{{/if}}{{/if}}</span>
+              </div>
+              <p class="admin-form-help">建议使用正方形透明底 PNG / SVG，小尺寸（&lt; 64×64）。</p>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">保存</button>
+        <button type="button" class="btn admin-modal-form-cancel">取消</button>
+      </div>
+    </form>
+  </div>
+</div></body></html>

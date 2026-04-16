@@ -1,0 +1,48 @@
+{{!--
+  年月筛选（Figma file 工业类官�?node 384:6542）：#424558 顶栏 + Year/Month �?+ 浮层菜单
+  传入：labels.filterTitle、labels.filterYear、labels.filterMonth、labels.allYears、labels.allMonths�?        allListUrl、monthClearUrl、yearOptions、monthOptions、selectedYear、selectedMonth、idPrefix（如 gNews / gEvents�?--}}
+<nav class="g-list-filter-card" aria-label="{{labels.filterTitle}}">
+  <div class="g-list-filter-card__head">{{labels.filterTitle}}</div>
+  <div class="g-list-filter-card__body">
+    <div class="g-list-filter-field">
+      <button type="button" class="g-list-filter-trigger" id="{{idPrefix}}YearTrigger" aria-expanded="false" aria-controls="{{idPrefix}}YearMenu" aria-haspopup="listbox">
+        <span class="g-list-filter-trigger__label">{{labels.filterYear}}</span>
+        <span class="g-list-filter-trigger__trail">
+          <span class="g-list-filter-trigger__value">{{#if selectedYear}}{{selectedYear}}{{else}}{{labels.allYears}}{{/if}}</span>
+          <span class="g-list-filter-trigger__icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </span>
+      </button>
+      <ul class="g-list-filter-menu" id="{{idPrefix}}YearMenu" hidden role="listbox">
+        <li role="none"><a role="option" class="g-list-filter-menu__opt{{#unless selectedYear}} is-selected{{/unless}}" href="{{allListUrl}}">{{labels.allYears}}</a></li>
+        {{#each yearOptions}}
+        <li role="none"><a role="option" class="g-list-filter-menu__opt{{#if selected}} is-selected{{/if}}" href="{{url}}">{{label}}</a></li>
+        {{/each}}
+      </ul>
+    </div>
+    <div class="g-list-filter-field{{#unless selectedYear}} g-list-filter-field--disabled{{/unless}}">
+      <button type="button" class="g-list-filter-trigger" id="{{idPrefix}}MonthTrigger" aria-expanded="false" aria-controls="{{idPrefix}}MonthMenu" aria-haspopup="listbox" {{#unless selectedYear}}disabled{{/unless}}>
+        <span class="g-list-filter-trigger__label">{{labels.filterMonth}}</span>
+        <span class="g-list-filter-trigger__trail">
+          <span class="g-list-filter-trigger__value">{{#if selectedMonth}}{{selectedMonth}}{{else}}{{labels.allMonths}}{{/if}}</span>
+          <span class="g-list-filter-trigger__icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </span>
+      </button>
+      <ul class="g-list-filter-menu" id="{{idPrefix}}MonthMenu" hidden role="listbox">
+        <li role="none"><a role="option" class="g-list-filter-menu__opt{{#unless selectedMonth}} is-selected{{/unless}}" href="{{monthClearUrl}}">{{labels.allMonths}}</a></li>
+        {{#each monthOptions}}
+        <li role="none">
+          {{#if disabled}}
+          <span class="g-list-filter-menu__opt g-list-filter-menu__opt--disabled">{{label}}</span>
+          {{else}}
+          <a role="option" class="g-list-filter-menu__opt{{#if selected}} is-selected{{/if}}" href="{{url}}">{{label}}</a>
+          {{/if}}
+        </li>
+        {{/each}}
+      </ul>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="{{locale}}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  {{#if description}}<meta name="description" content="{{description}}">{{/if}}
+  {{#if keywords}}<meta name="keywords" content="{{keywords}}">{{/if}}
+  <link rel="icon" type="image/png" href="/images/icon.png">
+  <link rel="stylesheet" href="/css/bootstrap-grid.css">
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/grid.css">   
+  <link rel="stylesheet" href="/css/global/common-global.css">
+  <link rel="stylesheet" href="/css/global/products-global.css">
+  <link rel="stylesheet" href="/js/swiper/swiper-bundle.min.css">
+  <link rel="stylesheet" href="/css/global/product-detail-global.css">
+  <link rel="stylesheet" href="/css/other/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/exo.css">
+</head>
+<body class="g-products-page g-product-detail-page">
+  {{> website/common/nav-drawer}}
+  {{> website/common/header}}
+
+  {{!-- 小屏适配样式�?product-detail-global.css（媒体查询均�?.g-product-detail-page，≥992px �?PC 一致） --}}
+  <main class="g-main">
+    {{> website/products/banner}}
+    {{> website/products/product-detail-breadcrumb}}
+    <div class="g-products-layout g-product-detail-layout " style="background: #fff;"{{#if categoryQueryId}} data-category-id="{{categoryQueryId}}"{{/if}}>
+      <div class="container g-products-layout__inner">
+        {{> website/products/product-detail-main}}
+      </div>
+    </div>
+    
+    <div class="g-products-layout g-product-detail-layout" style="background: #fff; align-items: flex-start; max-width: 1332px; margin-left: auto; margin-right: auto; width: 100%;">
+      <div class="container g-products-layout__inner" style="padding-top:0;">
+        {{> website/common/related-products relatedProducts=relatedProducts hasRelatedProducts=hasRelatedProducts locale=locale relatedProductsConfig=relatedProductsConfig}}
+      </div>
+          
+    {{> website/common/contactus}}
+    </div>
+
+    
+    {{> website/common/footer}}
+  </main>
+
+  <script src="/js/wow.min.js"></script>
+  <script src="/js/swiper/swiper-bundle.min.js"></script>
+  <script src="/js/products.js"></script>
+  <script src="/js/product-detail.js"></script>
+  <script>
+    (function () {
+      if (typeof WOW === 'function') {
+        window.wow = new WOW({
+          boxClass: 'wow',
+          animateClass: 'animate__animated',
+          offset: 40,
+          mobile: false,
+          live: false,
+        });
+        window.wow.init();
+      }
+    })();
+  </script>
+</body>
+</html>
