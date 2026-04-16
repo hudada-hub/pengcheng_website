@@ -45,7 +45,7 @@
           </form>
 
           {{#if searchQuery}}
-            <h1 class="g-search__title">{{headlineSearchPrefix}} “{{searchQuery}}�?{{headlineSearchReturned}} <strong>{{totalMatches}}</strong> {{headlineSearchMatches}}</h1>
+            <h1 class="g-search__title">{{headlineSearchPrefix}} “{{searchQuery}}”{{headlineSearchReturned}} <strong>{{totalMatches}}</strong> {{headlineSearchMatches}}</h1>
           {{else}}
             <h1 class="g-search__title">{{headlineSearchPrefix}}</h1>
             <p class="g-search__sub">{{emptyHint}}</p>
@@ -68,7 +68,7 @@
             <h2 class="g-search__section-label">{{labelSectionProducts}}</h2>
             {{> website/search/search-product-cards}}
             {{#if showMoreProducts}}
-            <p class="g-search__more"><a href="{{urlSearchProducts}}">{{labelViewMore}} �?{{labelTabProducts}}</a></p>
+            <p class="g-search__more"><a href="{{urlSearchProducts}}">{{labelViewMore}} {{labelTabProducts}}</a></p>
             {{/if}}
           </div>
           {{/if}}
@@ -78,7 +78,7 @@
             <h2 class="g-search__section-label">{{labelSectionUsecases}}</h2>
             {{> website/search/search-usecase-cards}}
             {{#if showMoreSolutions}}
-            <p class="g-search__more"><a href="{{urlSearchUsecases}}">{{labelViewMore}} �?{{labelTabUsecases}}</a></p>
+            <p class="g-search__more"><a href="{{urlSearchUsecases}}">{{labelViewMore}} {{labelTabUsecases}}</a></p>
             {{/if}}
           </div>
           {{/if}}
@@ -88,7 +88,7 @@
             <h2 class="g-search__section-label">{{labelSectionNews}}</h2>
             {{> website/search/search-news-cards}}
             {{#if showMoreNews}}
-            <p class="g-search__more"><a href="{{urlSearchNews}}">{{labelViewMore}} �?{{labelTabNews}}</a></p>
+            <p class="g-search__more"><a href="{{urlSearchNews}}">{{labelViewMore}} {{labelTabNews}}</a></p>
             {{/if}}
           </div>
           {{/if}}

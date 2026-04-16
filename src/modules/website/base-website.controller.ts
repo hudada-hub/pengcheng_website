@@ -962,8 +962,8 @@ export abstract class BaseWebsiteController {
 
   /**
    * 搜索页文案：`key_name` = seach-page-texts，is_array。
-   * 下标：0 全部 | 1 应用场景 | 2 产品 | 3 新闻 | 4 搜索标题词 | 5 结果行中间 | 6 结果行单位/结尾 | 7 搜索框占位
-   * 可选：8 无关键词副标题 | 9 无结果提示 | 10 「查看全部」
+   * 下标：0 全部 | 1 应用场景 | 2 产品 | 3 新闻 | 4 搜索标题词 | 5 结果行中间 | 6 结果行单位/结尾 | 7 搜索框占位 | 8 无结果提示 | 9 搜索框占位（重复）
+   * 注：数组中未提供 无关键词副标题 和 「查看全部」
    */
   protected getSearchPageTexts(config: Config | null): {
     labelTabAll: string;
@@ -977,25 +977,13 @@ export abstract class BaseWebsiteController {
     emptyHint: string;
     noResultsHint: string;
     labelViewMore: string;
+    navSearchPlaceholder: string; // 导航栏搜索框占位符
   } {
-    const fb = {
-      labelTabAll: 'All',
-      labelTabUsecases: 'User Cases',
-      labelTabProducts: 'Products',
-      labelTabNews: 'News',
-      headlineSearchPrefix: 'Search for',
-      headlineSearchReturned: 'returned',
-      headlineSearchMatches: 'matches',
-      heroSearchPlaceholder: 'Search products...',
-      emptyHint: 'Enter a keyword to search.',
-      noResultsHint: 'No results found.',
-      labelViewMore: 'View all',
-    };
-    if (!config || !Array.isArray(config.content)) return fb;
-    const arr = config.content as Record<string, unknown>[];
-    const pick = (i: number, def: string) => {
+    const getValue = (i: number): string => {
+      if (!config || !Array.isArray(config.content)) return '';
+      const arr = config.content as Record<string, unknown>[];
       const row = arr[i];
-      if (!row || typeof row !== 'object') return def;
+      if (!row || typeof row !== 'object') return '';
       const o = row;
       const c = typeof o.content === 'string' ? o.content.trim() : '';
       if (c) return c;
@@ -1003,20 +991,21 @@ export abstract class BaseWebsiteController {
       if (t) return t;
       const d = typeof o.description === 'string' ? o.description.trim() : '';
       if (d) return d;
-      return def;
+      return '';
     };
     return {
-      labelTabAll: pick(0, fb.labelTabAll),
-      labelTabUsecases: pick(1, fb.labelTabUsecases),
-      labelTabProducts: pick(2, fb.labelTabProducts),
-      labelTabNews: pick(3, fb.labelTabNews),
-      headlineSearchPrefix: pick(4, fb.headlineSearchPrefix),
-      headlineSearchReturned: pick(5, fb.headlineSearchReturned),
-      headlineSearchMatches: pick(6, fb.headlineSearchMatches),
-      heroSearchPlaceholder: pick(9, fb.heroSearchPlaceholder),
-      emptyHint: pick(7, fb.emptyHint),
-      noResultsHint: pick(8, fb.noResultsHint),
-      labelViewMore: pick(10, fb.labelViewMore),
+      labelTabAll: getValue(0),
+      labelTabUsecases: getValue(1),
+      labelTabProducts: getValue(2),
+      labelTabNews: getValue(3),
+      headlineSearchPrefix: getValue(4),
+      headlineSearchReturned: getValue(5),
+      headlineSearchMatches: getValue(6),
+      heroSearchPlaceholder: getValue(7),
+      emptyHint: '', // 数组中未提供无关键词副标题
+      noResultsHint: getValue(8), // 无结果提示在索引 8
+      labelViewMore: '', // 数组中未提供「查看全部」
+      navSearchPlaceholder: getValue(9), // 导航栏搜索框占位符，使用索引 9
     };
   }
 

@@ -77,7 +77,7 @@ export class AdminIndustryCaseController {
       : showAll
         ? ''
         : defaultLangId || '';
-    
+
     // 根据当前选择的语言获取分类数据
     let categories: any[] = [];
     if (selectedLangId) {
@@ -193,7 +193,10 @@ export class AdminIndustryCaseController {
         take: 500,
       }),
     ]);
-    const defaultLang = langs.find((l) => l.code === 'zh') ?? langs.find((l) => l.isDefault === 1) ?? langs[0];
+    const defaultLang =
+      langs.find((l) => l.code === 'zh') ??
+      langs.find((l) => l.isDefault === 1) ??
+      langs[0];
     const langId = defaultLang?.id ?? 0;
     const categories = await this.solutionCategoryRepo.find({
       where: { type: 1, status: Status.Normal, langId },

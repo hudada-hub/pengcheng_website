@@ -293,15 +293,14 @@ export class SolutionsController extends BaseWebsiteController {
     viewDetails: string;
     moreCases: string;
   } {
-    const fb = {
-      sectionTitle: isZh ? '应用案例' : 'APPLICATION CASES',
-      sectionSubtitle: isZh
-        ? '安全、可靠、智能、高效且灵活的一体化储能系统。'
-        : 'A safe, reliable, intelligent, efficient, and flexible all-in-one energy storage system.',
-      viewDetails: isZh ? '查看详情' : 'View details',
-      moreCases: isZh ? '更多案例' : 'More Cases',
-    };
-    if (!cfg) return fb;
+    if (!cfg) {
+      return {
+        sectionTitle: '',
+        sectionSubtitle: '',
+        viewDetails: '',
+        moreCases: '',
+      };
+    }
     const obj =
       cfg.content &&
       typeof cfg.content === 'object' &&
@@ -316,10 +315,10 @@ export class SolutionsController extends BaseWebsiteController {
     const tableDesc =
       typeof cfg.description === 'string' ? cfg.description.trim() : '';
     return {
-      sectionTitle: jsonTitle || fb.sectionTitle,
-      sectionSubtitle: jsonDesc || fb.sectionSubtitle,
-      viewDetails: tableTitle || fb.viewDetails,
-      moreCases: tableDesc || fb.moreCases,
+      sectionTitle: jsonTitle,
+      sectionSubtitle: jsonDesc,
+      viewDetails: tableTitle,
+      moreCases: tableDesc,
     };
   }
 
@@ -329,30 +328,40 @@ export class SolutionsController extends BaseWebsiteController {
   ): {
     sectionTitle: string;
     sectionSubtitle: string;
+    viewDetails: string;
   } {
-    const fb = {
-      sectionTitle: isZh ? '关联产品' : 'Related Products',
-      sectionSubtitle: '',
-    };
-    if (!cfg) return fb;
-    
+    if (!cfg) {
+      return {
+        sectionTitle: '',
+        sectionSubtitle: '',
+        viewDetails: '',
+      };
+    }
+
     // 处理数组形式的配置
     if (cfg.content && Array.isArray(cfg.content)) {
       // 第一个元素是 Related Products
       const productItem = cfg.content[0];
       if (productItem && typeof productItem === 'object') {
         const productItemObj = productItem as Record<string, unknown>;
-        const jsonTitle = typeof productItemObj.title === 'string' ? productItemObj.title.trim() : '';
-        const jsonDesc = typeof productItemObj.description === 'string' ? productItemObj.description.trim() : '';
+        const jsonTitle =
+          typeof productItemObj.title === 'string'
+            ? productItemObj.title.trim()
+            : '';
+        const jsonDesc =
+          typeof productItemObj.description === 'string'
+            ? productItemObj.description.trim()
+            : '';
         if (jsonTitle) {
           return {
             sectionTitle: jsonTitle,
             sectionSubtitle: jsonDesc,
+            viewDetails: '',
           };
         }
       }
     }
-    
+
     // 兼容旧的对象形式配置
     const obj =
       cfg.content &&
@@ -368,8 +377,9 @@ export class SolutionsController extends BaseWebsiteController {
     const tableDesc =
       typeof cfg.description === 'string' ? cfg.description.trim() : '';
     return {
-      sectionTitle: jsonTitle || tableTitle || fb.sectionTitle,
-      sectionSubtitle: jsonDesc || tableDesc || fb.sectionSubtitle,
+      sectionTitle: jsonTitle || tableTitle,
+      sectionSubtitle: jsonDesc || tableDesc,
+      viewDetails: '',
     };
   }
 
@@ -378,12 +388,14 @@ export class SolutionsController extends BaseWebsiteController {
     allSolutions: string;
     businessSegments: string;
     applicationScenarios: string;
+    solutionTextBgPicUrl: string;
   } {
     const defaultResult = {
       solutionCategories: '',
       allSolutions: '',
       businessSegments: '',
       applicationScenarios: '',
+      solutionTextBgPicUrl: '',
     };
     if (!cfg) return defaultResult;
     // 配置是数组类型，content 是数组
@@ -412,11 +424,14 @@ export class SolutionsController extends BaseWebsiteController {
       fourthItem && typeof fourthItem.content === 'string'
         ? fourthItem.content.trim()
         : '';
+    const solutionTextBgPicUrl =
+      typeof cfg.bgPicUrl === 'string' ? cfg.bgPicUrl.trim() : '';
     return {
       solutionCategories: categoriesText,
       allSolutions: allSolutionsText,
       businessSegments: businessSegmentsText,
       applicationScenarios: applicationScenariosText,
+      solutionTextBgPicUrl,
     };
   }
 
@@ -712,13 +727,7 @@ export class SolutionsController extends BaseWebsiteController {
 
     // 解决方案侧边栏文字配置
     const solutionTextCfg = layoutData.configByKey['solution-text'] ?? null;
-    console.log('DEBUG langId:', langId);
-    console.log('DEBUG configByKey keys:', Object.keys(layoutData.configByKey));
-    console.log('DEBUG solution-text config:', solutionTextCfg);
-    console.log(
-      'DEBUG config content:',
-      solutionTextCfg ? (solutionTextCfg as any).content : null,
-    );
+
     const configTexts = this.parseSolutionTextConfig(solutionTextCfg);
 
     const solutionSidebarItems = this.buildSolutionSidebarItems(
@@ -963,6 +972,7 @@ export class SolutionsController extends BaseWebsiteController {
       relatedProductsConfig: {
         title: relatedProductsText.sectionTitle,
         description: relatedProductsText.sectionSubtitle,
+        viewDetails: applicationCasesCopy.viewDetails,
       },
       pageViewPageType: 'solution-detail',
       breadcrumbTexts,

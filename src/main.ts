@@ -99,6 +99,10 @@ async function bootstrap() {
       .replace(/>/g, '\\u003e')
       .replace(/&/g, '\\u0026');
   });
+  handlebars.registerHelper('log', (v: unknown) => {
+    console.log('[Handlebars log]', JSON.stringify(v, null, 2));
+    return '';
+  });
   handlebars.registerHelper('localeNativeLabel', (code: unknown) =>
     typeof code === 'string' ? getLocaleNativeLabel(code) : '',
   );
@@ -199,14 +203,11 @@ async function bootstrap() {
   );
 
   // 或运算 helper
-  handlebars.registerHelper(
-    'or',
-    (...args) => {
-      // 移除最后一个参数（Handlebars的options对象）
-      args.pop();
-      return args.some(Boolean);
-    },
-  );
+  handlebars.registerHelper('or', (...args) => {
+    // 移除最后一个参数（Handlebars的options对象）
+    args.pop();
+    return args.some(Boolean);
+  });
 
   // 小于比较 helper
   handlebars.registerHelper(
@@ -266,10 +267,13 @@ async function bootstrap() {
   });
 
   // 检查字符串是否包含指定值 helper
-  handlebars.registerHelper('contains', (str: string, value: string | number) => {
-    if (!str) return false;
-    return String(str).includes(String(value));
-  });
+  handlebars.registerHelper(
+    'contains',
+    (str: string, value: string | number) => {
+      if (!str) return false;
+      return String(str).includes(String(value));
+    },
+  );
 
   // 连接数组元素为字符串 helper
   handlebars.registerHelper('join', (arr: any[], separator: string) => {

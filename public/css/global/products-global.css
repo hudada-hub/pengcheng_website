@@ -159,7 +159,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: #ffffff;
+  color: #0d0d0d;
   font-family: 'Exo', sans-serif;
   font-weight: 700;
   font-size: 18px;
@@ -206,7 +206,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 14px 18px;
+  padding: 20px 18px;
   margin: 0;
   background: none;
   border: none;
@@ -392,7 +392,7 @@
 
 .g-product-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
 }
 
 @media (min-width: 768px) and (max-width: 1199.98px) {
@@ -528,7 +528,7 @@
 }
 
 .g-product-card__tab {
-  flex: 1 1 0;
+
   min-width: 0;
   font-family: 'Exo', system-ui, sans-serif;
   font-weight: 500;
@@ -566,7 +566,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  padding: 10px 16px;
+  padding: 7px 16px;
   background: #f2f2f4;
   border-radius: 10px;
 }
@@ -612,10 +612,11 @@
 /* CTA 在 hover-footer 内，随整块滑入 */
 .g-product-card__action {
   position: static;
-  width: 80%;
+  width: 100%;
   margin: 0 auto;
   display: flex;
   justify-content: center;
+  cursor: pointer;
 }
 
 .g-product-card:hover .g-product-card__tab-content {
@@ -660,8 +661,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 0;
-  max-width: 100%;
+  cursor: pointer;
+  width: 100%;
   padding: 14px 24px;
   background: #f89d1b;
   color: #ffffff;

@@ -462,7 +462,14 @@ export class DownloadController extends BaseWebsiteController {
         currentPage,
         totalPages,
         totalItems: totalDownloads,
-        makeUrl: (p) => dl({ page: p, tab: q.tabRowId, series: q.seriesRowId, fileType: q.fileTypeRowId, docLang: docLangId }),
+        makeUrl: (p) =>
+          dl({
+            page: p,
+            tab: q.tabRowId,
+            series: q.seriesRowId,
+            fileType: q.fileTypeRowId,
+            docLang: docLangId,
+          }),
         isDomestic,
       }),
       ...commonData,

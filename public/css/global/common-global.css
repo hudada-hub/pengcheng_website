@@ -214,8 +214,8 @@
 
 /* Follow（并入联系列底部，行高对齐时贴底） */
 .g-footer__col--contact .g-footer__follow-section {
-  margin-top: auto;
-  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+
 }
 
 .g-footer__follow-section {
@@ -3035,6 +3035,8 @@ body.pc-cart-drawer-open {
 .pc-cart-empty__icon-wrap {
   width: 80px;
   height: 80px;
+  padding:10px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -38,7 +38,12 @@ export class IndustryCase extends BaseSeoEntity {
   bannerUrl: string | null;
 
   /** Banner 标题 */
-  @Column({ name: 'banner_title', type: 'varchar', length: 255, nullable: true })
+  @Column({
+    name: 'banner_title',
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+  })
   bannerTitle: string | null;
 
   /** 标签：JSON 数组，如 ["行业","地区","产品线"] */

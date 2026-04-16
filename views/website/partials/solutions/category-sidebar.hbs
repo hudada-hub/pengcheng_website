@@ -2,32 +2,22 @@
   <div class="g-products-sidebar__inner">
     <div class="g-products-sidebar__header">
       <button type="button" class="g-products-sidebar__toggle" id="categoryToggleBtn" aria-expanded="false" aria-controls="categoryList">
-        
+        {{#if configTexts.solutionTextBgPicUrl}}
+          <span class="g-products-sidebar__header-image">
+            <img src="{{configTexts.solutionTextBgPicUrl}}" alt="{{configTexts.solutionCategories}}" />
+          </span>
+        {{/if}}
         <span class="g-products-sidebar__title">
           {{configTexts.solutionCategories}}
         </span>
       </button>
     </div>
     <div class="g-products-sidebar__content" id="categoryList">
-      <!-- 全部分类 -->
-      {{#each solutionSidebarItems}}
-        {{#unless this.group}}
-          <div class="g-solutions-sidebar__row">
-            <a href="{{this.url}}" class="g-solutions-sidebar__link{{#if this.active}} is-active{{/if}}">
-              {{this.title}}
-              {{#if this.count}}
-                <span class="g-solutions-sidebar__count">{{this.count}}</span>
-              {{/if}}
-            </a>
-          </div>
-        {{/unless}}
-      {{/each}}
-      
       <!-- 业务板块 -->
       <div class="g-solutions-sidebar__group">
         <button type="button" class="g-solutions-sidebar__group-toggle" data-type="1" aria-expanded="true" aria-controls="group-1">
           <span class="g-solutions-sidebar__group-title">{{configTexts.businessSegments}}</span>
-          <span class="g-solutions-sidebar__group-icon">▼</span>
+          <span class="g-solutions-sidebar__group-icon"><svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 5L6 1L11 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </button>
         <div class="g-solutions-sidebar__group-content" id="group-1">
           {{#each solutionSidebarItems}}
@@ -47,9 +37,9 @@
       
       <!-- 应用场景 -->
       <div class="g-solutions-sidebar__group">
-        <button type="button" class="g-solutions-sidebar__group-toggle" data-type="2" aria-expanded="false" aria-controls="group-2">
+        <button type="button" class="g-solutions-sidebar__group-toggle g-solutions-sidebar__group-toggle-secondary" data-type="2" aria-expanded="false" aria-controls="group-2">
           <span class="g-solutions-sidebar__group-title">{{configTexts.applicationScenarios}}</span>
-          <span class="g-solutions-sidebar__group-icon">▶</span>
+          <span class="g-solutions-sidebar__group-icon"><svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 1L7 6L3 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </button>
         <div class="g-solutions-sidebar__group-content" id="group-2" style="display: none;">
           {{#each solutionSidebarItems}}
@@ -82,7 +72,12 @@
         
         // 切换展开/折叠状态
         this.setAttribute('aria-expanded', !expanded);
-        this.querySelector('.g-solutions-sidebar__group-icon').textContent = !expanded ? '▼' : '▶';
+        const iconElement = this.querySelector('.g-solutions-sidebar__group-icon');
+        if (!expanded) {
+          iconElement.innerHTML = '<svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 5L6 1L11 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        } else {
+          iconElement.innerHTML = '<svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 1L7 6L3 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        }
         content.style.display = !expanded ? 'block' : 'none';
       });
     });

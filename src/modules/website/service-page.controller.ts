@@ -314,7 +314,7 @@ export class ServicePageController extends BaseWebsiteController {
 
     const philosophy = this.parsePhilosophy(philosophyCfg);
     const serviceCards = this.parseServiceCards(contentCfg);
-    
+
     // 解析地图数据
     const mapCfg = layoutData.configByKey['about-us-map'] ?? null;
     const mapDataCfg = layoutData.configByKey['about-us-map-data'] ?? null;
@@ -373,7 +373,7 @@ export class ServicePageController extends BaseWebsiteController {
     const serviceBannerDesc = menuBanner.desc || '';
 
     const mapZh = locale === 'zh-CN';
-    
+
     return {
       locale,
       langId,
@@ -405,7 +405,9 @@ export class ServicePageController extends BaseWebsiteController {
       globalMapLegendOffice: globalMap.legendOffice,
       globalMapSupplement: globalMap.supplement,
       globalMapPointsJson: globalMap.pointsJson,
-      globalMapAriaLabel: globalMap.title || (mapZh ? '全球销售服务网络' : 'Global Sales Service Network'),
+      globalMapAriaLabel:
+        globalMap.title ||
+        (mapZh ? '全球销售服务网络' : 'Global Sales Service Network'),
       globalMapLegendAria: mapZh ? '图例' : 'Map legend',
       globalMapErrNoEcharts: mapZh ? '图表库未加载' : 'ECharts unavailable',
       globalMapErrLoad: mapZh ? '地图加载失败' : 'Map failed to load',

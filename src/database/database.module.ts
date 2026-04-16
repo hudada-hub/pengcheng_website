@@ -88,6 +88,12 @@ import { WebsiteUser } from '../entities/website-user.entity';
         // 关闭 SQL 查询日志，避免终端刷屏；需要调试时可设为 true 或 ['query']
         logging: false,
         charset: 'utf8mb4',
+        // 连接池配置
+        connectTimeout: 10000, // 连接超时时间（毫秒）
+        acquireTimeout: 10000, // 获取连接超时时间（毫秒）
+        waitForConnections: true, // 当连接池满时等待
+        connectionLimit: 10, // 连接池最大连接数
+        queueLimit: 0, // 连接池队列最大长度（0 表示无限制）
       }),
       inject: [ConfigService],
     }),

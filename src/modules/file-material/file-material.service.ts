@@ -40,7 +40,9 @@ export class FileMaterialService {
         categoryId: params.categoryId,
       });
     if (params?.keyword)
-      qb.andWhere('(f.fileName LIKE :kw OR f.filePath LIKE :kw)', { kw: `%${params.keyword}%` });
+      qb.andWhere('(f.fileName LIKE :kw OR f.filePath LIKE :kw)', {
+        kw: `%${params.keyword}%`,
+      });
     if (params?.fileType === 'image') {
       qb.andWhere(
         '(f.file_type LIKE :imagePrefix OR f.file_type IN (:...imageExts))',

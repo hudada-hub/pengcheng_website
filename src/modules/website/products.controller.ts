@@ -70,6 +70,8 @@ const LAYOUT_CONFIG_KEYS = [
   'submit',
   /** 联系表单成功提示 */
   'contact-us-success',
+  /** 应用案例详情页查看详情按钮文字：取自表字段 title */
+  'application-text',
 ];
 
 @Controller()
@@ -159,6 +161,17 @@ export class ProductsController extends BaseWebsiteController {
       description: pick(1, fb.description),
       specifications: pick(2, fb.specifications),
     };
+  }
+
+  /** 配置 `application-text`：取表字段 title 作为查看详情按钮文字 */
+  private pickApplicationTextLabel(
+    layoutData: LayoutCachePayload,
+    isZh: boolean,
+  ): string {
+    const cfg = layoutData.configByKey['application-text'] ?? null;
+    if (!cfg) return '';
+    const tableTitle = typeof cfg.title === 'string' ? cfg.title.trim() : '';
+    return tableTitle;
   }
 
   /** 分类表上的 Banner 地址 */
@@ -467,6 +480,8 @@ export class ProductsController extends BaseWebsiteController {
     const layoutData = await this.getLayoutData(langId || 0, {
       configKeys: LAYOUT_CONFIG_KEYS,
     });
+    console.log('[DEBUG products] application-text config:', JSON.stringify(layoutData.configByKey['application-text']));
+    console.log('[DEBUG products] viewDetails:', this.pickApplicationTextLabel(layoutData, isDomestic));
     const logoUrl = this.getLogoUrlFromConfig(
       layoutData.configByKey['logo'] ?? null,
     );
@@ -606,7 +621,7 @@ export class ProductsController extends BaseWebsiteController {
           typeof productRelationsCfg.content === 'string'
             ? JSON.parse(productRelationsCfg.content)
             : productRelationsCfg.content;
-        
+
         // 处理数组形式的配置
         if (content && Array.isArray(content)) {
           // 第一个元素是 Related Products
@@ -616,7 +631,9 @@ export class ProductsController extends BaseWebsiteController {
               relatedProductsTitle = String(productItem.title).trim();
             }
             if (productItem.description) {
-              relatedProductsDescription = String(productItem.description).trim();
+              relatedProductsDescription = String(
+                productItem.description,
+              ).trim();
             }
           }
         } else if (content && typeof content === 'object') {
@@ -637,6 +654,7 @@ export class ProductsController extends BaseWebsiteController {
     const relatedProductsConfig = {
       title: relatedProductsTitle,
       description: relatedProductsDescription,
+      viewDetails: this.pickApplicationTextLabel(layoutData, isDomestic),
     };
 
     // 联系表单配置

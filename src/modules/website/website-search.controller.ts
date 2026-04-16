@@ -191,8 +191,8 @@ export class WebsiteSearchController extends BaseWebsiteController {
 
   /**
    * 配置 `seach-page-texts`：type 1、is_array=1，每项 `content` 为一段文案。
-   * 下标：0 全部 | 1 应用场景 | 2 产品 | 3 新闻 | 4 搜索标题词 | 5 结果行中间 | 6 结果行单位/结尾 | 7 搜索框占位
-   * 可选：8 无关键词副标题 | 9 无结果提示 | 10 「查看全部」
+   * 下标：0 全部 | 1 应用场景 | 2 产品 | 3 新闻 | 4 搜索标题词 | 5 结果行中间 | 6 结果行单位/结尾 | 7 搜索框占位 | 8 无结果提示 | 9 搜索框占位（重复）
+   * 注：数组中未提供 无关键词副标题 和 「查看全部」
    */
   private pickSearchPageTexts(
     layoutData: LayoutCachePayload,
@@ -200,30 +200,13 @@ export class WebsiteSearchController extends BaseWebsiteController {
     locale: string,
   ) {
     const cfg = layoutData.configByKey['seach-page-texts'] ?? null;
-    const arrLen =
-      cfg?.content && Array.isArray(cfg.content) ? cfg.content.length : 0;
-    const row = (i: number, def: string): string => {
-      if (!cfg?.content || !Array.isArray(cfg.content)) return def;
+    const row = (i: number): string => {
+      if (!cfg?.content || !Array.isArray(cfg.content)) return '';
       const arr = cfg.content as Record<string, unknown>[];
       const item = arr[i];
-      if (!item || typeof item !== 'object') return def;
+      if (!item || typeof item !== 'object') return '';
       const c = item.content;
-      return typeof c === 'string' && c.trim() ? c.trim() : def;
-    };
-    const defaults = {
-      labelTabAll: isDomestic ? '全部' : 'ALL',
-      labelTabUsecases: isDomestic ? '应用场景' : 'Use Cases',
-      labelTabProducts: isDomestic ? '产品' : 'Products',
-      labelTabNews: isDomestic ? '新闻' : 'News',
-      headlineSearchPrefix: isDomestic ? '搜索' : 'Search for',
-      headlineSearchReturned: isDomestic ? '共找到' : 'returned',
-      headlineSearchMatches: isDomestic ? '条结果' : 'matches',
-      heroSearchPlaceholder: isDomestic ? '输入关键词搜索…' : 'Search…',
-      emptyHint: isDomestic
-        ? '请输入关键词开始搜索。'
-        : 'Enter a keyword to search.',
-      noResultsHint: isDomestic ? '没有找到相关内容。' : 'No results found.',
-      labelViewMore: isDomestic ? '查看全部' : 'View all',
+      return typeof c === 'string' && c.trim() ? c.trim() : '';
     };
     const l = (locale || '').toLowerCase();
     const cjkColon =
@@ -233,21 +216,19 @@ export class WebsiteSearchController extends BaseWebsiteController {
       l === 'jp' ||
       l === 'ko';
     const sectionSuffix = cjkColon ? '：' : ':';
-    const labelTabAll = row(0, defaults.labelTabAll);
-    const labelTabUsecases = row(1, defaults.labelTabUsecases);
-    const labelTabProducts = row(2, defaults.labelTabProducts);
-    const labelTabNews = row(3, defaults.labelTabNews);
-    const headlineSearchPrefix = row(4, defaults.headlineSearchPrefix);
-    const headlineSearchReturned = row(5, defaults.headlineSearchReturned);
-    const headlineSearchMatches = row(6, defaults.headlineSearchMatches);
-    const heroSearchPlaceholder = row(7, defaults.heroSearchPlaceholder);
-    const emptyHint =
-      arrLen > 8 ? row(8, defaults.emptyHint) : defaults.emptyHint;
-    const noResultsHint =
-      arrLen > 9 ? row(9, defaults.noResultsHint) : defaults.noResultsHint;
-    const labelViewMore =
-      arrLen > 10 ? row(10, defaults.labelViewMore) : defaults.labelViewMore;
+    const labelTabAll = row(0);
+    const labelTabUsecases = row(1);
+    const labelTabProducts = row(2);
+    const labelTabNews = row(3);
+    const headlineSearchPrefix = row(4);
+    const headlineSearchReturned = row(5);
+    const headlineSearchMatches = row(6);
+    const heroSearchPlaceholder = row(7);
+    const emptyHint = ''; // 数组中未提供无关键词副标题
+    const noResultsHint = row(8); // 无结果提示在索引 8
+    const labelViewMore = ''; // 数组中未提供「查看全部」
 
+    const navSearchPlaceholder = row(9); // 导航栏搜索框占位符，使用索引 9
     return {
       labelTabAll,
       labelTabUsecases,
@@ -260,6 +241,7 @@ export class WebsiteSearchController extends BaseWebsiteController {
       headlineSearchReturned,
       headlineSearchMatches,
       heroSearchPlaceholder,
+      navSearchPlaceholder,
       emptyHint,
       noResultsHint,
       labelViewMore,

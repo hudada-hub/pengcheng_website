@@ -282,7 +282,7 @@ export class HomeController extends BaseWebsiteController {
       label: string;
       data: ReturnType<HomeController['getBusinessArea']>;
     }> = [];
-    
+
     // 从 config 的 content 字段获取标签
     if (metaConfig?.content) {
       const raw = Array.isArray(metaConfig.content) ? metaConfig.content : [];
@@ -1057,14 +1057,20 @@ export class HomeController extends BaseWebsiteController {
 
   /** 悬浮询价表单等非首页场景拉取 CSRF（默认语言路径无前缀） */
   @Get('contact-form-meta')
-  async contactFormMetaDefault(@Req() req: FastifyRequest, @Res() reply: FastifyReply) {
-    const token = await (reply as any).generateCsrf?.() ?? '';
+  async contactFormMetaDefault(
+    @Req() req: FastifyRequest,
+    @Res() reply: FastifyReply,
+  ) {
+    const token = (await (reply as any).generateCsrf?.()) ?? '';
     return reply.type('application/json').send({ csrfToken: token });
   }
 
   @Get(':locale/contact-form-meta')
-  async contactFormMetaLocale(@Req() req: FastifyRequest, @Res() reply: FastifyReply) {
-    const token = await (reply as any).generateCsrf?.() ?? '';
+  async contactFormMetaLocale(
+    @Req() req: FastifyRequest,
+    @Res() reply: FastifyReply,
+  ) {
+    const token = (await (reply as any).generateCsrf?.()) ?? '';
     return reply.type('application/json').send({ csrfToken: token });
   }
 
