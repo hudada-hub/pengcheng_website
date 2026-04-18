@@ -1007,7 +1007,7 @@ export class HomeController extends BaseWebsiteController {
       }
 
       links.push(
-        `<xhtml:link rel="alternate" hreflang="${lang.code === 'cn' ? 'zh-CN' : lang.code}" href="${baseUrl}${langPath}" />`,
+        `<xhtml:link rel="alternate" hreflang="${lang.code === 'cn' ? 'cn' : lang.code}" href="${baseUrl}${langPath}" />`,
       );
     }
 

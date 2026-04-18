@@ -75,4 +75,9 @@ export class RedisService {
   getClient(): Redis {
     return this.redis;
   }
+
+  /** 发送 Redis 心跳，保持连接活跃 */
+  async ping(): Promise<void> {
+    await this.redis.ping();
+  }
 }

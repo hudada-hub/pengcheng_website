@@ -28,7 +28,7 @@
 .g-pd-main {
   flex: 1 1 0;
   min-width: 0;
-  padding-bottom: clamp(48px, 8vw, 88px);
+  padding-bottom: clamp(48px, 8vw, 30px);
 }
 
 .g-pd-main__row {
@@ -36,7 +36,9 @@
   --bs-gutter-x: clamp(20px, 3vw, 36px);
   --bs-gutter-y: clamp(24px, 4vw, 40px);
 }
-
+.g-pd-gallery{
+  max-width: 100vw;
+}
 /* Gallery：主图外侧箭头 + Swiper + 缩略图透明度 */
 .g-pd-gallery__row {
   display: flex;
@@ -333,7 +335,7 @@ body.g-pd-lightbox-open {
   width: 100%;
   height: 100%;
   max-height: 100vh;
-  padding: 48px clamp(12px, 4vw, 32px) 24px;
+  padding: clamp(32px, 6vw, 48px) clamp(12px, 4vw, 32px) clamp(16px, 4vw, 24px);
   box-sizing: border-box;
   pointer-events: none;
 }
@@ -391,18 +393,19 @@ body.g-pd-lightbox-open {
 .g-pd-lightbox__swiper {
   width: 100%;
   max-width: min(96vw, 1200px);
-  max-height: calc(100vh - 200px);
+  max-height: calc(100vh - clamp(120px, 24vw, 200px));
 }
 
 .g-pd-lightbox__swiper .swiper-slide {
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 100%;
 }
 
 .g-pd-lightbox__img {
   max-width: 100%;
-  max-height: calc(100vh - 200px);
+  max-height: calc(100vh - clamp(120px, 24vw, 200px));
   width: auto;
   height: auto;
   object-fit: contain;
@@ -829,6 +832,18 @@ body.g-pd-lightbox-open {
   background: #fff;
   border: 1px solid #cecfd4;
   border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.g-pd-info__feature-tab:hover {
+  border-color: #f89d1b;
+}
+
+.g-pd-info__feature-tab.is-active {
+  background: #f89d1b;
+  color: #fff;
+  border-color: #f89d1b;
 }
 
 @media (max-width: 767.98px) {
@@ -953,7 +968,7 @@ body.g-pd-lightbox-open {
 .g-pd-info__cert--figma {
   border: none !important;
   background: transparent !important;
-  padding: 4px 6px !important;
+  padding: 6px 6px !important;
   margin: 0;
   font-family: 'Exo', system-ui, sans-serif;
   font-weight: 600;
@@ -962,6 +977,8 @@ body.g-pd-lightbox-open {
   color: #424558;
   text-align: center;
   line-height: 1.25;
+  box-sizing: border-box;
+
 }
 
 .g-pd-info__certs-figma-divider {
@@ -1001,7 +1018,7 @@ body.g-pd-lightbox-open {
 
 /* Blocks */
 .g-pd-block {
-  margin-top: clamp(36px, 6vw, 56px);
+  margin-top: clamp(16px, 4vw, 36px);
 }
 
 .g-pd-block__title {
@@ -1078,7 +1095,7 @@ body.g-pd-lightbox-open {
   font-size: clamp(28px, 3.5vw, 40px);
   line-height: 1.329;
   color: #0d0d0d;
-  margin: 0 0 clamp(16px, 2vw, 24px);
+  margin: 0 0 2px;
   padding-bottom: 0;
   border-bottom: none;
   display: block;
@@ -1119,6 +1136,7 @@ body.g-pd-lightbox-open {
   color: #0d0d0d;
   margin: 0;
   max-width: none;
+  margin-bottom: 1rem;
 }
 
 .g-pd-params-spec__table-wrap {
@@ -1148,6 +1166,7 @@ body.g-pd-lightbox-open {
   color: #fff;
   font-weight: 600;
   padding: 12px 12px;
+  font-size: 18px;
   border: none;
   border-right: 1px solid #e6e7e9;
 }
@@ -1417,6 +1436,12 @@ body.g-pd-lightbox-open {
  * 产品详情页移动端（<992px）：仅作用 .g-product-detail-page，PC 端不变
  * -------------------------------------------------------------------------- */
 @media (max-width: 991.98px) {
+  .g-product-detail-page,
+  .g-product-detail-layout,
+  .g-products-layout {
+    overflow-x: hidden;
+  }
+
   .g-product-detail-page .g-product-detail-layout .g-products-layout__inner {
     padding-top: clamp(16px, 3.5vw, 28px);
     padding-bottom: clamp(40px, 10vw, 64px);
@@ -1441,6 +1466,7 @@ body.g-pd-lightbox-open {
 
   .g-product-detail-page .g-pd-gallery__row {
     gap: 8px;
+    max-width: 100%;
   }
 
   .g-product-detail-page .g-pd-gallery__nav {
@@ -1687,4 +1713,28 @@ body.g-pd-lightbox-open {
 .g-product-detail-page .g-pd-main--borderless .g-pd-adv-row--no-media .g-pd-adv-row__body {
   border-top: none;
   padding-top: 0;
+}
+
+/* 全屏宽度横线 */
+.g-pd-main__full-width-line {
+  position: relative;
+  left: 49.5%;
+  transform: translateX(-50%);
+  width: 99vw;
+  height: 1px;
+  background-color: #e8e8e8;
+  margin: 20px 0;
+}
+
+/* 移动端适配 */
+@media (max-width: 991.98px) {
+  .g-pd-main__full-width-line {
+    margin: 16px 0;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .g-pd-main__full-width-line {
+    margin: 12px 0;
+  }
 }

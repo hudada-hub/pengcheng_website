@@ -108,20 +108,28 @@ export class FileMaterialController implements OnModuleInit {
     const categoryId = Number.isFinite(parsedCat) ? parsedCat : null;
 
     const mimeOrExt = mime || ext || '';
+    // 检查文件大小，小于20kb的图片不进行压缩
+    const fileStatBeforeCompress = await stat(diskPath);
+    const fileSizeBeforeCompress = fileStatBeforeCompress.size;
+    const isImage = mimeOrExt.includes('image') || ['.jpg', '.jpeg', '.png', '.gif', '.webp'].includes(ext);
+    const shouldCompress = fileSizeBeforeCompress >= 20 * 1024 || !isImage;
+
     // 优先使用 TinyPNG 压缩图片，如果没有配置则使用 Sharp
-    if (!this.tinyPngCompressService.isConfigured()) {
-      await this.sharpCompressService.compress(diskPath, mimeOrExt);
-    } else {
-      const tinyResult = await this.tinyPngCompressService.compress(
-        diskPath,
-        mimeOrExt,
-      );
-      if (!tinyResult) {
+    if (shouldCompress) {
+      if (!this.tinyPngCompressService.isConfigured()) {
         await this.sharpCompressService.compress(diskPath, mimeOrExt);
+      } else {
+        const tinyResult = await this.tinyPngCompressService.compress(
+          diskPath,
+          mimeOrExt,
+        );
+        if (!tinyResult) {
+          await this.sharpCompressService.compress(diskPath, mimeOrExt);
+        }
       }
+      // 使用 ffmpeg 压缩视频
+      await this.ffmpegCompressService.compress(diskPath, mimeOrExt);
     }
-    // 使用 ffmpeg 压缩视频
-    await this.ffmpegCompressService.compress(diskPath, mimeOrExt);
 
     const fileStat = await stat(diskPath);
     const filePath = `/uploads/${yyyyMM}/${savedName}`;

@@ -11,12 +11,21 @@
   <link rel="stylesheet" href="/css/common.css">
   <link rel="stylesheet" href="/css/grid.css">
   <link rel="stylesheet" href="/js/swiper/swiper-bundle.min.css">
+  {{#if (eq locale 'cn')}}
+  <link rel="stylesheet" href="/css/cn/common-cn.css">
+  <link rel="stylesheet" href="/css/cn/products-cn.css">
+  <link rel="stylesheet" href="/css/cn/home-cn.css">
+  <link rel="stylesheet" href="/css/cn/about-us-cn.css">
+  {{else}}
   <link rel="stylesheet" href="/css/global/common-global.css">
   <link rel="stylesheet" href="/css/global/products-global.css">
   <link rel="stylesheet" href="/css/global/home-global.css">
   <link rel="stylesheet" href="/css/global/about-us-global.css">
+  {{/if}}
   
+  {{#if (ne locale 'cn')}}
   <link rel="stylesheet" href="/css/exo.css">
+  {{/if}}
   <script src="/js/iconify-icon.min.js" defer></script>
 </head>
 <body class="g-products-page g-about-us-page">

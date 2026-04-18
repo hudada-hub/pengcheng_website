@@ -11,6 +11,24 @@
   overflow: hidden;
 }
 
+/* 新闻详情页：菜单栏 fixed 盖在 banner 上方，同屏叠放 */
+.g-news-detail-page .pc-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  transition: background 0.25s ease, backdrop-filter 0.25s ease;
+}
+
+.g-news-detail-page .pc-nav.nav-scrolled {
+  background: rgba(255, 255, 255, 0.7);
+}
+
 .g-news-banner__inner {
   position: relative;
   z-index: 2;

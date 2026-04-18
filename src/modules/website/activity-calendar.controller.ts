@@ -141,7 +141,7 @@ export class ActivityCalendarController extends BaseWebsiteController {
 
   private intlLocaleForActivityCalendar(langCode: string): string {
     const c = (langCode || 'en').toLowerCase();
-    if (c === 'cn' || c === 'zh') return 'zh-CN';
+    if (c === 'cn' || c === 'zh') return 'cn';
     if (c === 'jp' || c === 'ja') return 'ja-JP';
     if (c === 'kr' || c === 'ko') return 'ko-KR';
     if (c === 'de') return 'de-DE';
@@ -276,7 +276,7 @@ export class ActivityCalendarController extends BaseWebsiteController {
     if (!lang) throw new NotFoundException();
     const langId = lang.id;
     const locale =
-      lang.code === 'cn' ? 'zh-CN' : lang.code === 'en' ? 'en' : lang.code;
+      lang.code === 'cn' ? 'cn' : lang.code === 'en' ? 'en' : lang.code;
     const isDomestic = lang.code === 'cn';
     const basePath = lang.code === 'en' ? '' : `/${lang.code}`;
     const codes = await this.langService
@@ -500,7 +500,7 @@ export class ActivityCalendarController extends BaseWebsiteController {
     if (!lang) throw new NotFoundException();
     const langId = lang.id;
     const locale =
-      lang.code === 'cn' ? 'zh-CN' : lang.code === 'en' ? 'en' : lang.code;
+      lang.code === 'cn' ? 'cn' : lang.code === 'en' ? 'en' : lang.code;
     const isDomestic = lang.code === 'cn';
     const basePath = lang.code === 'en' ? '' : `/${lang.code}`;
     const codes = await this.langService

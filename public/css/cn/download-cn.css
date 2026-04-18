@@ -45,7 +45,6 @@
   border-radius: var(--dl-radius-lg);
   padding: 1.5rem 1.5rem 1.25rem;
   margin-bottom: 1.5rem;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
 }
 
 .g-download-panel--filters {

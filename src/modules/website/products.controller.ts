@@ -245,7 +245,7 @@ export class ProductsController extends BaseWebsiteController {
     }
     const langId = lang.id;
     const locale =
-      lang.code === 'cn' ? 'zh-CN' : lang.code === 'en' ? 'en' : lang.code;
+      lang.code === 'cn' ? 'cn' : lang.code === 'en' ? 'en' : lang.code;
     const isDomestic = lang.code === 'cn';
     const basePath = lang.code === 'en' ? '' : `/${lang.code}`;
     const codes = await this.langService
@@ -468,7 +468,7 @@ export class ProductsController extends BaseWebsiteController {
     }
     const langId = lang.id;
     const locale =
-      lang.code === 'cn' ? 'zh-CN' : lang.code === 'en' ? 'en' : lang.code;
+      lang.code === 'cn' ? 'cn' : lang.code === 'en' ? 'en' : lang.code;
     const isDomestic = lang.code === 'cn';
     const basePath = lang.code === 'en' ? '' : `/${lang.code}`;
     const codes = await this.langService

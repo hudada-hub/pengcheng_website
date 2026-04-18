@@ -168,7 +168,7 @@ export class WebsiteNewsController extends BaseWebsiteController {
 
   private intlLocaleForNews(langCode: string): string {
     const c = (langCode || 'en').toLowerCase();
-    if (c === 'cn' || c === 'zh') return 'zh-CN';
+    if (c === 'cn' || c === 'zh') return 'cn';
     if (c === 'jp' || c === 'ja') return 'ja-JP';
     if (c === 'kr' || c === 'ko') return 'ko-KR';
     if (c === 'de') return 'de-DE';
@@ -205,7 +205,7 @@ export class WebsiteNewsController extends BaseWebsiteController {
     if (!lang) throw new NotFoundException();
     const langId = lang.id;
     const locale =
-      lang.code === 'cn' ? 'zh-CN' : lang.code === 'en' ? 'en' : lang.code;
+      lang.code === 'cn' ? 'cn' : lang.code === 'en' ? 'en' : lang.code;
     const isDomestic = lang.code === 'cn';
     const basePath = lang.code === 'en' ? '' : `/${lang.code}`;
     const codes = await this.langService
@@ -366,21 +366,21 @@ export class WebsiteNewsController extends BaseWebsiteController {
       newsBannerUrl,
       newsBannerTitle,
       labels: {
-        newsHeading: locale === 'zh-CN' ? '新闻' : 'NEWS',
-        filterTitle: locale === 'zh-CN' ? '筛选' : 'Filter',
-        filterYear: locale === 'zh-CN' ? '年份' : 'Year',
-        filterMonth: locale === 'zh-CN' ? '月份' : 'Month',
-        allYears: locale === 'zh-CN' ? '全部' : 'All',
-        allMonths: locale === 'zh-CN' ? '全部' : 'All',
+        newsHeading: locale === 'cn' ? '新闻' : 'NEWS',
+        filterTitle: locale === 'cn' ? '筛选' : 'Filter',
+        filterYear: locale === 'cn' ? '年份' : 'Year',
+        filterMonth: locale === 'cn' ? '月份' : 'Month',
+        allYears: locale === 'cn' ? '全部' : 'All',
+        allMonths: locale === 'cn' ? '全部' : 'All',
         readMore:
           this.getTextFromConfig(
             layoutData.configByKey['readmore'],
             'title',
-          )?.trim() || (locale === 'zh-CN' ? '阅读全文' : 'Read More'),
-        empty: locale === 'zh-CN' ? '暂无新闻' : 'No news yet.',
-        prev: locale === 'zh-CN' ? '上一页' : 'Previous',
-        next: locale === 'zh-CN' ? '下一页' : 'Next',
-        pageOf: locale === 'zh-CN' ? '第' : 'Page',
+          )?.trim() || (locale === 'cn' ? '阅读全文' : 'Read More'),
+        empty: locale === 'cn' ? '暂无新闻' : 'No news yet.',
+        prev: locale === 'cn' ? '上一页' : 'Previous',
+        next: locale === 'cn' ? '下一页' : 'Next',
+        pageOf: locale === 'cn' ? '第' : 'Page',
       },
       ...commonData,
     };
@@ -433,7 +433,7 @@ export class WebsiteNewsController extends BaseWebsiteController {
     if (!lang) throw new NotFoundException();
     const langId = lang.id;
     const locale =
-      lang.code === 'cn' ? 'zh-CN' : lang.code === 'en' ? 'en' : lang.code;
+      lang.code === 'cn' ? 'cn' : lang.code === 'en' ? 'en' : lang.code;
     const isDomestic = lang.code === 'cn';
     const basePath = lang.code === 'en' ? '' : `/${lang.code}`;
     const codes = await this.langService

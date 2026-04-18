@@ -1,5 +1,32 @@
 <header class="pc-nav">
   <div class="container-fluid pc-nav__inner">
+    {{#if (eq locale 'cn')}}
+    <!-- 中文语言结构：左中右布局，pc-menu 水平居中 -->
+    <div class="pc-nav__left">
+      <a class="pc-brand" href="{{#if basePath}}{{basePath}}{{else}}/{{/if}}">
+        {{#if logoUrl}}
+          <img class="pc-logo" src="{{logoUrl}}" alt="{{title}}" />
+        {{/if}}
+      </a>
+    </div>
+
+    <div class="pc-nav__center">
+      <nav class="pc-menu" aria-label="Primary">
+        {{#each navItems}}
+          {{#if children}}
+            <div class="pc-navitem pc-navitem--mega" data-mega-index="{{@index}}">
+              <a class="pc-navlink" href="{{url}}">{{title}}</a>
+            </div>
+          {{else}}
+            <a class="pc-navlink" href="{{url}}">{{title}}</a>
+          {{/if}}
+        {{/each}}
+      </nav>
+    </div>
+
+    <div class="pc-nav__right">
+    {{else}}
+    <!-- 其他语言结构：原始布局 -->
     <div class="pc-nav__left">
       <a class="pc-brand" href="{{#if basePath}}{{basePath}}{{else}}/{{/if}}">
         {{#if logoUrl}}
@@ -21,24 +48,25 @@
     </div>
 
     <div class="pc-nav__right">
+    {{/if}}
       <form class="pc-nav-search" id="pcNavSearchForm" action="{{#if basePath}}{{basePath}}/search{{else}}/search{{/if}}" method="get" role="search">
         <input type="search" name="q" class="pc-nav-search__input" id="pcNavSearchInput" placeholder="{{#if searchPageTexts.navSearchPlaceholder}}{{searchPageTexts.navSearchPlaceholder}}{{/if}}" aria-label="{{#if searchPageTexts.navSearchPlaceholder}}{{searchPageTexts.navSearchPlaceholder}}{{else}}Search products{{/if}}" autocomplete="off">
-        <button type="button" class="pc-nav-search__btn" id="pcNavSearchTrigger" aria-label="{{#if (eq locale 'zh-CN')}}展开搜索{{else}}Expand search{{/if}}">
+        <button type="button" class="pc-nav-search__btn" id="pcNavSearchTrigger" aria-label="{{#if (eq locale 'cn')}}展开搜索{{else}}Expand search{{/if}}">
           <img src="/images/head/search-normal.png" alt="Search" class="pc-nav-icon" width="24" height="24">
         </button>
       </form>
       <div class="pc-nav-icons">
-        <a type="button" class="pc-nav-icons__item" id="pcNavContactTrigger" aria-label="{{#if (eq locale 'zh-CN')}}联系我们{{else}}Contact{{/if}}">
+        <a type="button" class="pc-nav-icons__item" id="pcNavContactTrigger" aria-label="{{#if (eq locale 'cn')}}联系我们{{else}}Contact{{/if}}">
           <img src="/images/head/sms.png" alt="Contact" class="pc-nav-icon" width="24" height="24">
         </a>
         <div class="pc-nav-icons__item pc-nav-lang-wrap" id="pcNavLangWrap" data-path-locale="{{pathLocale}}">
           {{#if navLangs}}
           {{#if navLangs.length}}
-          <button type="button" class="pc-nav-lang-trigger" id="pcNavLangTrigger" aria-expanded="false" aria-haspopup="menu" aria-controls="pcNavLangPopover" aria-label="{{#if (eq locale 'zh-CN')}}语言切换{{else}}Language{{/if}}">
+          <button type="button" class="pc-nav-lang-trigger" id="pcNavLangTrigger" aria-expanded="false" aria-haspopup="menu" aria-controls="pcNavLangPopover" aria-label="{{#if (eq locale 'cn')}}语言切换{{else}}Language{{/if}}">
             <img src="/images/head/global.png" alt="Language" class="pc-nav-icon" width="24" height="24">
           </button>
           <div class="pc-nav-lang-popover" id="pcNavLangPopover" role="presentation" aria-hidden="true">
-            <p class="pc-nav-lang-popover__title" id="pcNavLangPopoverTitle">{{#if (eq locale 'zh-CN')}}语言{{else}}Language{{/if}}</p>
+            <p class="pc-nav-lang-popover__title" id="pcNavLangPopoverTitle">{{#if (eq locale 'cn')}}语言{{else}}Language{{/if}}</p>
             <div class="pc-nav-lang-popover__stage">
               {{#with (langNavCurrent navLangs pathLocale)}}
               <button type="button" class="pc-nav-lang-current-row" id="pcNavLangInnerTrigger" aria-expanded="false" aria-haspopup="listbox" aria-labelledby="pcNavLangPopoverTitle" aria-controls="pcNavLangListPanel">
@@ -51,7 +79,7 @@
                 <img src="/images/global/arrow-right-black.png" alt="" class="pc-nav-lang-current-row__caret" aria-hidden="true" />
               </button>
               {{/with}}
-              <div class="pc-nav-lang-popover__dropdown" id="pcNavLangListPanel" role="listbox" aria-label="{{#if (eq locale 'zh-CN')}}选择语言{{else}}Choose language{{/if}}">
+              <div class="pc-nav-lang-popover__dropdown" id="pcNavLangListPanel" role="listbox" aria-label="{{#if (eq locale 'cn')}}选择语言{{else}}Choose language{{/if}}">
                 <div class="pc-nav-lang-popover__list">
                   {{#each navLangs}}
                   <button type="button" class="pc-nav-lang-option {{#if (langSwitchActive ../pathLocale this.code)}}is-active{{/if}}" data-lang="{{this.code}}" role="option" lang="{{this.code}}">
@@ -198,6 +226,22 @@
         } else {
           initGradientUnderlineLinks();
         }
+      })();
+
+      // 导航栏滚动事件：滚动后文字和图片变黑色
+      (function () {
+        var nav = document.querySelector('.pc-nav');
+        if (!nav) return;
+        var scrollThreshold = 10;
+        function onScroll() {
+          if (window.scrollY > scrollThreshold) {
+            nav.classList.add('is-scrolled');
+          } else {
+            nav.classList.remove('is-scrolled');
+          }
+        }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
       })();
 
       var sel = document.getElementById('langSwitch');

@@ -92,7 +92,7 @@ function formatNewsDate(d: Date | null | undefined, localeTag: string): string {
 
 function intlLocaleForNews(langCode: string): string {
   const c = (langCode || 'en').toLowerCase();
-  if (c === 'cn' || c === 'zh') return 'zh-CN';
+  if (c === 'cn' || c === 'zh') return 'cn';
   if (c === 'jp' || c === 'ja') return 'ja-JP';
   if (c === 'kr' || c === 'ko') return 'ko-KR';
   if (c === 'de') return 'de-DE';
@@ -210,7 +210,7 @@ export class WebsiteSearchController extends BaseWebsiteController {
     };
     const l = (locale || '').toLowerCase();
     const cjkColon =
-      l === 'zh-cn' ||
+      l === 'cn' ||
       l.startsWith('zh') ||
       l === 'ja' ||
       l === 'jp' ||
@@ -379,7 +379,7 @@ export class WebsiteSearchController extends BaseWebsiteController {
     if (!lang) throw new NotFoundException();
     const langId = lang.id;
     const locale =
-      lang.code === 'cn' ? 'zh-CN' : lang.code === 'en' ? 'en' : lang.code;
+      lang.code === 'cn' ? 'cn' : lang.code === 'en' ? 'en' : lang.code;
     const isDomestic = lang.code === 'cn';
     const basePath = lang.code === 'en' ? '' : `/${lang.code}`;
     const codes = await this.langService

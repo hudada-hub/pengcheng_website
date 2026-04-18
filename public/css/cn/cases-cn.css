@@ -2,7 +2,7 @@
 
 .g-cases-page .g-cases-hero {
   position: relative;
-  min-height: 220px;
+  min-height: 308px;
   background: #2c3e50;
 }
 
@@ -242,8 +242,8 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  flex: 1 1 auto;
-  justify-content: flex-end;
+
+ 
   min-width: 0;
 }
 
@@ -374,3 +374,112 @@
 }
 
 /* 地图样式见 common-global.css（.g-global-map） */
+
+/* 应用案例列表 — 案例分类侧栏 */
+
+.g-cases-page .g-cases-sidebar .g-products-sidebar__inner {
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.g-cases-page .g-cases-sidebar .g-products-sidebar__header {
+  background: #fff;
+}
+
+.g-cases-page .g-cases-sidebar .g-products-sidebar__toggle {
+  padding: 18px 20px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.g-cases-page .g-cases-sidebar .g-products-sidebar__toggle:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+@media (min-width: 768px) {
+  .g-cases-page .g-cases-sidebar .g-products-sidebar__icon {
+    display: none;
+  }
+}
+
+.g-cases-page .g-cases-sidebar .g-products-sidebar__content {
+  padding: 0;
+}
+
+.g-cases-page .g-cases-sidebar__row {
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.g-cases-page .g-cases-sidebar__row:last-child {
+  border-bottom: none;
+}
+
+.g-cases-page .g-cases-sidebar__link {
+  display: block;
+  margin: 0;
+  padding: 16px 20px;
+  font-family: 'Exo', sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 1.45;
+  color: #1a1a1a;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.g-cases-page .g-cases-sidebar__link:hover {
+  background: #f7f7f8;
+  color: #1a1a1a;
+}
+
+.g-cases-page .g-cases-sidebar__link.is-active {
+  background: #e0e1e6;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.g-cases-page .g-cases-sidebar__row.is-active {
+  background: #e0e1e6;
+}
+
+/* 分类数量样式 */
+.g-cases-page .g-cases-sidebar__count {
+  display: inline-block;
+  margin-left: 8px;
+  font-weight: 400;
+  font-size: 14px;
+  color: #666666;
+}
+
+/* 案例页 ≤992：侧栏与列表上下排布，主区接近全宽 */
+@media (max-width: 991.98px) {
+  .g-cases-page .g-products-layout__inner {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 16px;
+  }
+
+  .g-cases-page .g-products-sidebar {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* 案例列表布局 */
+.g-cases-layout .g-products-layout__content {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.g-cases-layout .g-cases-list-grid {
+  padding: 0;
+}
+
+/* 案例列表与分页间距 */
+.g-cases-layout .g-cases-list-grid {
+  margin-bottom: 32px;
+}

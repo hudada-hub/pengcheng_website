@@ -149,7 +149,7 @@
 
 .g-hero .swiper-button-next:after,
 .g-hero .swiper-button-prev:after {
-  font-size: 24px;
+  font-size: 18px;
   font-weight: bold;
 }
 
@@ -193,9 +193,9 @@
 .g-hero__content {
   position: absolute;
   left: 0;
-  bottom: 0;
+  top: 42%;
   padding: 0 clamp(8%, 3vw, 9%);
-  padding-bottom: clamp(12%, 5vw, 19%);
+  /* padding: clamp(12%, 5vw, 19%); */
   max-width: clamp(280px, 90%, 800px);
 }
 

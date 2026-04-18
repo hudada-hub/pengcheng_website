@@ -8,13 +8,17 @@
   <link rel="stylesheet" href="/css/bootstrap-grid.css">
   <link rel="stylesheet" href="/css/common.css">
   <link rel="stylesheet" href="/css/grid.css">
+  {{#if (eq locale 'cn')}}
+  <link rel="stylesheet" href="/css/cn/common-cn.css">
+  {{else}}
   <link rel="stylesheet" href="/css/global/common-global.css">
+  {{/if}}
   {{#if notFoundStylesheets}}
   {{#each notFoundStylesheets}}
   <link rel="stylesheet" href="{{this}}">
   {{/each}}
   {{/if}}
-  <link rel="stylesheet" href="/css/exo.css">
+  {{#if (ne locale 'cn')}}<link rel="stylesheet" href="/css/exo.css">{{/if}}
 </head>
 <body class="{{notFoundBodyClass}}">
   {{> website/common/nav-drawer}}

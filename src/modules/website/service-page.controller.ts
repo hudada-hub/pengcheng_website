@@ -296,7 +296,7 @@ export class ServicePageController extends BaseWebsiteController {
 
     const langId = lang.id;
     const locale =
-      lang.code === 'cn' ? 'zh-CN' : lang.code === 'en' ? 'en' : lang.code;
+      lang.code === 'cn' ? 'cn' : lang.code === 'en' ? 'en' : lang.code;
     const isDomestic = lang.code === 'cn';
     const basePath = lang.code === 'en' ? '' : `/${lang.code}`;
     const codes = await this.langService
@@ -322,10 +322,10 @@ export class ServicePageController extends BaseWebsiteController {
 
     const pageTitleFromConfig = trimStr(contentCfg?.title);
     const pageHeading =
-      pageTitleFromConfig || (locale === 'zh-CN' ? '服务说明' : 'Service');
+      pageTitleFromConfig || (locale === 'cn' ? '服务说明' : 'Service');
     const serviceSectionHeading =
       pageTitleFromConfig ||
-      (locale === 'zh-CN' ? '服务内容' : 'Service Content');
+      (locale === 'cn' ? '服务内容' : 'Service Content');
 
     const logoUrl = this.getLogoUrlFromConfig(
       layoutData.configByKey['logo'] ?? null,
@@ -372,7 +372,7 @@ export class ServicePageController extends BaseWebsiteController {
     const serviceBannerHeading = menuBanner.title || pageHeading;
     const serviceBannerDesc = menuBanner.desc || '';
 
-    const mapZh = locale === 'zh-CN';
+    const mapZh = locale === 'cn';
 
     return {
       locale,

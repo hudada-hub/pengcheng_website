@@ -2,16 +2,17 @@
 
 .g-solutions-page .g-solutions-sidebar .g-products-sidebar__inner {
   border-radius: 10px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  padding:24px 24px;
   overflow: hidden;
 }
 
 .g-solutions-page .g-solutions-sidebar .g-products-sidebar__header {
-  background: #4b4d5e;
+  background: #fff;
+
 }
 
 .g-solutions-page .g-solutions-sidebar .g-products-sidebar__toggle {
-  padding: 18px 20px;
+  padding: 18px 0;
   font-size: 17px;
   font-weight: 700;
   letter-spacing: 0.01em;
@@ -34,7 +35,7 @@
 .g-solutions-page .g-solutions-sidebar__row {
   margin: 0;
   padding: 0;
-  border-bottom: 1px solid #eeeeee;
+
 }
 
 .g-solutions-page .g-solutions-sidebar__row:last-child {
@@ -60,9 +61,100 @@
 }
 
 .g-solutions-page .g-solutions-sidebar__link.is-active {
-  background: #e0e1e6;
+
   font-weight: 700;
-  color: #1a1a1a;
+  color: #F89D1B;
+}
+
+/* 分组标题样式 */
+.g-solutions-page .g-solutions-sidebar__group {
+  
+  padding: 0;
+
+  overflow: hidden;
+}
+
+.g-solutions-page .g-solutions-sidebar__group:first-child {
+  margin-top: 0;
+}
+
+.g-solutions-page .g-solutions-sidebar__group-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 0 0 16px 0;
+  padding: 12px 16px;
+  font-family: 'Exo', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #ffffff;
+  background: #4b4d5e;
+  border-radius: 8px;
+  
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.g-solutions-page .g-solutions-sidebar__group-toggle:hover {
+  background: #5a5c6e;
+}
+
+.g-solutions-page .g-solutions-sidebar__group-title {
+  font-family: 'Exo', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #ffffff;
+}
+
+.g-solutions-page .g-solutions-sidebar__group-icon {
+  font-size: 12px;
+  line-height: 1;
+  color: #ffffff;
+  transition: transform 0.15s ease;
+}
+
+/* 应用场景样式 */
+.g-solutions-page .g-solutions-sidebar__group:nth-child(2) .g-solutions-sidebar__group-toggle {
+  color: #000000;
+  background: #f6f6f7;
+}
+
+.g-solutions-page .g-solutions-sidebar__group:nth-child(2) .g-solutions-sidebar__group-toggle:hover {
+  background: #e6e6e7;
+}
+
+.g-solutions-page .g-solutions-sidebar__group:nth-child(2) .g-solutions-sidebar__group-title {
+  color: #000000;
+}
+
+.g-solutions-page .g-solutions-sidebar__group:nth-child(2) .g-solutions-sidebar__group-icon {
+  color: #000000;
+}
+
+.g-solutions-page .g-solutions-sidebar__group-content {
+  background: #ffffff;
+
+}
+
+.g-solutions-page .g-solutions-sidebar__group-content .g-solutions-sidebar__row {
+ 
+}
+
+.g-solutions-page .g-solutions-sidebar__group-content .g-solutions-sidebar__row:last-child {
+  border-bottom: none;
+}
+
+/* 分类数量样式 */
+.g-solutions-page .g-solutions-sidebar__count {
+  display: inline-block;
+  margin-left: 8px;
+  font-weight: 400;
+  font-size: 14px;
+  color: #666666;
 }
 
 /* 方案页 ≤992：侧栏与列表上下排布，主区接近全宽（避免固定 342px 侧栏把列表挤成百余像素） */
@@ -119,7 +211,7 @@
 
 .g-solution-card:hover,
 .g-solution-card:focus-within {
-  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.14);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
 }
 
 .g-solution-card__media {
@@ -198,12 +290,14 @@
 .g-solution-card:hover .g-solution-card__title a,
 .g-solution-card:focus-within .g-solution-card__title,
 .g-solution-card:focus-within .g-solution-card__title a {
-  color: #f89d1b;
+  /* color: #f89d1b; */
 }
 
 .g-solution-card__btn {
+  width: 100%;
   align-self: flex-start;
   display: inline-flex;
+  justify-content: space-between;
   align-items: center;
   gap: 6px;
   margin-top: 0;
@@ -215,7 +309,7 @@
   overflow: hidden;
   font-family: 'Exo', sans-serif;
   
-  font-size: 14px;
+  font-size: 18px;
   line-height: 1.2;
   color: #fff;
   background: #f89d1b;
@@ -251,6 +345,32 @@
 .g-solution-card__btn:focus-visible {
   outline: 2px solid #f89d1b;
   outline-offset: 2px;
+}
+
+/* 解决方案案例卡片箭头样式 */
+.g-solution-case-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s ease;
+}
+
+.g-solution-case-card__arrow {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  margin-left:14px;
+  background-image: url('/images/global/arrow-right-black.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: background-image 0.2s ease;
+}
+
+.g-solution-case-card__cta:hover .g-solution-case-card__arrow {
+  background-image: url('/images/global/arrow-right-white.png');
 }
 
 /* 触屏：底部区域与按钮常显 */

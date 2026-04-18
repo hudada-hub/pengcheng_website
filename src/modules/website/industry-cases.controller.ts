@@ -143,7 +143,7 @@ export class IndustryCasesController extends BaseWebsiteController {
     if (!lang) throw new NotFoundException();
     const langId = lang.id;
     const locale =
-      lang.code === 'cn' ? 'zh-CN' : lang.code === 'en' ? 'en' : lang.code;
+      lang.code === 'cn' ? 'cn' : lang.code === 'en' ? 'en' : lang.code;
     const isDomestic = lang.code === 'cn';
     const basePath = lang.code === 'en' ? '' : `/${lang.code}`;
     const codes = await this.langService
@@ -442,7 +442,7 @@ export class IndustryCasesController extends BaseWebsiteController {
     if (!lang) throw new NotFoundException();
     const langId = lang.id;
     const locale =
-      lang.code === 'cn' ? 'zh-CN' : lang.code === 'en' ? 'en' : lang.code;
+      lang.code === 'cn' ? 'cn' : lang.code === 'en' ? 'en' : lang.code;
     const isDomestic = lang.code === 'cn';
     const basePath = lang.code === 'en' ? '' : `/${lang.code}`;
     const codes = await this.langService
@@ -621,13 +621,13 @@ export class IndustryCasesController extends BaseWebsiteController {
     );
 
     const caseBannerSearchPlaceholder =
-      locale === 'zh-CN' ? '搜索案例' : 'Search cases';
+      locale === 'cn' ? '搜索案例' : 'Search cases';
 
     const globalMap = parseGlobalMapFromConfigs(
       layoutData.configByKey['about-us-map'] ?? null,
       layoutData.configByKey['about-us-map-data'] ?? null,
     );
-    const mapZh = locale === 'zh-CN';
+    const mapZh = locale === 'cn';
 
     const rawTagsUnknown: unknown = industryCase.tags;
     let caseTags: string[] = [];
@@ -679,7 +679,7 @@ export class IndustryCasesController extends BaseWebsiteController {
       caseTags,
       hasCaseTags: caseTags.length > 0,
       caseReleaseDate,
-      caseReleaseLabel: locale === 'zh-CN' ? '发布时间' : 'Release time',
+      caseReleaseLabel: locale === 'cn' ? '发布时间' : 'Release time',
 
       caseBannerSearchPlaceholder,
       pageViewPageType: 'case-detail',

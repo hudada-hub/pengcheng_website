@@ -406,14 +406,14 @@ export class AboutUsController extends BaseWebsiteController {
         sectionId: 'lead-energy-revolution',
         title: '',
         intro: '',
-        keyNumbersLabel: locale === 'zh-CN' ? '关键数据' : 'Key Numbers',
+        keyNumbersLabel: locale === 'cn' ? '关键数据' : 'Key Numbers',
         stats: [],
         hasContent: false,
       };
     }
     const title = trimStr(cfg.title);
     const intro = trimStr(cfg.description);
-    const keyNumbersLabel = locale === 'zh-CN' ? '关键数据' : 'Key Numbers';
+    const keyNumbersLabel = locale === 'cn' ? '关键数据' : 'Key Numbers';
     const raw = cfg.content;
     const arr = Array.isArray(raw) ? raw : [];
     const stats: Array<{
@@ -876,7 +876,7 @@ export class AboutUsController extends BaseWebsiteController {
 
     const langId = lang.id;
     const locale =
-      lang.code === 'cn' ? 'zh-CN' : lang.code === 'en' ? 'en' : lang.code;
+      lang.code === 'cn' ? 'cn' : lang.code === 'en' ? 'en' : lang.code;
     const isDomestic = lang.code === 'cn';
     const basePath = lang.code === 'en' ? '' : `/${lang.code}`;
     const codes = await this.langService
@@ -924,7 +924,7 @@ export class AboutUsController extends BaseWebsiteController {
       layoutData.configByKey['about-us-map'] ?? null,
       layoutData.configByKey['about-us-map-data'] ?? null,
     );
-    const mapZh = locale === 'zh-CN';
+    const mapZh = locale === 'cn';
 
     const aboutUsAnchorItems = this.buildAboutUsAnchorItems(aboutUsAnchorRows, {
       whoAreWe,

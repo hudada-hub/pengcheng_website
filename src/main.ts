@@ -85,6 +85,7 @@ async function bootstrap() {
   const handlebars = require('handlebars');
   const fs = require('fs');
   handlebars.registerHelper('eq', (a: unknown, b: unknown) => a === b);
+  handlebars.registerHelper('ne', (a: unknown, b: unknown) => a !== b);
   /** 产品侧栏：是否存在非产品的子级（即子分类） */
   handlebars.registerHelper('hasCategoryChildren', (ctx: unknown) => {
     const ch = (ctx as { children?: Array<{ isProduct?: boolean }> })?.children;

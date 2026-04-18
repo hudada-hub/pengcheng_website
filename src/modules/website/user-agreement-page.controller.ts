@@ -78,7 +78,7 @@ export class UserAgreementPageController extends BaseWebsiteController {
 
     const langId = lang.id;
     const locale =
-      lang.code === 'cn' ? 'zh-CN' : lang.code === 'en' ? 'en' : lang.code;
+      lang.code === 'cn' ? 'cn' : lang.code === 'en' ? 'en' : lang.code;
     const isDomestic = lang.code === 'cn';
     const effectivePathLocale =
       pathLocale || (lang.code === 'en' ? '' : lang.code);

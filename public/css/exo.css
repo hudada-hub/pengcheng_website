@@ -3,7 +3,7 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/exo-400.woff2') format('woff2');
+  src: url('/fonts/Exo-Regular.ttf') format('truetype');
 }
 
 @font-face {
@@ -11,7 +11,7 @@
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url('/fonts/exo-500.woff2') format('woff2');
+  src: url('/fonts/Exo-Medium.ttf') format('truetype');
 }
 
 @font-face {
@@ -19,7 +19,7 @@
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url('/fonts/exo-600.woff2') format('woff2');
+  src: url('/fonts/Exo-SemiBold.ttf') format('truetype');
 }
 
 @font-face {
@@ -27,7 +27,7 @@
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('/fonts/exo-700.woff2') format('woff2');
+  src: url('/fonts/Exo-Bold.ttf') format('truetype');
 }
 
 @font-face {
@@ -35,7 +35,7 @@
   font-style: normal;
   font-weight: 800;
   font-display: swap;
-  src: url('/fonts/exo-800.woff2') format('woff2');
+  src: url('/fonts/Exo-ExtraBold.ttf') format('truetype');
 }
 
 @font-face {
