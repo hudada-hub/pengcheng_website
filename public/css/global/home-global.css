@@ -1113,8 +1113,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
   -webkit-box-orient: vertical;
 }
 
@@ -1221,9 +1221,8 @@
 }
 
 .g-events__slide {
-  /* 让 Swiper 计算 slide 高度，避免露出第 4 个 */
-  /* flex-shrink: 0; */
-  width: 300px;
+
+  width: calc(100% - 20px)
 }
 
 .g-events__item {

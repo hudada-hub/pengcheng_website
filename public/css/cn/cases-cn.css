@@ -15,7 +15,7 @@
 
 .g-cases-page .g-cases-hero__title {
   margin: 0;
-  font-family: 'Exo', sans-serif;
+  font-family: 'Source Han Sans', sans-serif;
   font-weight: 800;
   font-size: clamp(1.5rem, 3vw, 2rem);
   letter-spacing: 0.04em;
@@ -75,7 +75,7 @@
   color: #111;
 }
 
-/* 案例详情 Banner：居中标题 + 白底圆角搜索（与参考稿一致） */
+/* 案例详情 Banner：居中标�?+ 白底圆角搜索（与参考稿一致） */
 .g-case-detail-page .g-case-detail-banner {
   height: clamp(380px, 52vw, 556px);
 }
@@ -100,7 +100,7 @@
 .g-case-detail-page .g-case-detail-banner__title {
   margin: 0 0 clamp(1rem, 3vw, 2rem);
   max-width: 56rem;
-  font-family: 'Exo', sans-serif;
+  font-family: 'Source Han Sans', sans-serif;
   font-weight: 700;
   font-size: clamp(1.2rem, 3.5vw, 2.75rem);
   line-height: 1.28;
@@ -167,7 +167,7 @@
   background: #f5f5f7;
 }
 
-/* 案例详情主区域：参考 container 1200px 居中 + padding 20px（覆盖 Bootstrap .container 断点宽度） */
+/* 案例详情主区域：参�?container 1200px 居中 + padding 20px（覆�?Bootstrap .container 断点宽度�?*/
 .g-case-detail-page .g-case-detail-main > .container.g-case-detail-container {
   max-width: 1200px;
   width: 100%;
@@ -189,7 +189,7 @@
   }
 }
 
-/* 主文卡片（移动端全宽居中；lg+ 与侧栏同排 max 600px） */
+/* 主文卡片（移动端全宽居中；lg+ 与侧栏同�?max 600px�?*/
 .g-case-detail-article {
   width: 100%;
   max-width: min(1200px, 100%);
@@ -201,7 +201,7 @@
 }
 
 .g-case-detail-h1 {
-  font-family: 'Exo', sans-serif;
+  font-family: 'Source Han Sans', sans-serif;
   font-weight: 700;
   font-size: clamp(1.35rem, 3vw, 1.85rem);
   color: #333;
@@ -212,12 +212,12 @@
 
 .g-case-detail-spec {
   margin: 0.75rem 0 0;
-  font-family: 'Exo', sans-serif;
+  font-family: 'Source Han Sans', sans-serif;
   font-weight: 600;
   color: #f89d1b;
 }
 
-/* 发布时间 + 标签（设计稿：左侧时间，右侧标签胶囊） */
+/* 发布时间 + 标签（设计稿：左侧时间，右侧标签胶囊�?*/
 .g-case-detail-meta {
   display: flex;
   flex-wrap: wrap;
@@ -285,7 +285,7 @@
   margin: 1.25rem 0 0;
 }
 
-/* 桌面：正文居中 + 右侧侧栏（与正文间距 25px），高度随正文撑开 */
+/* 桌面：正文居�?+ 右侧侧栏（与正文间距 25px），高度随正文撑开 */
 @media (min-width: 992px) {
   .g-case-detail-layout .g-case-detail-article {
     max-width: 1200px;
@@ -352,7 +352,7 @@
 
 .g-cases-list-card__title {
   margin: 0;
-  font-family: 'Exo', sans-serif;
+  font-family: 'Source Han Sans', sans-serif;
   font-weight: 600;
   font-size: 1rem;
 }
@@ -373,9 +373,9 @@
   font-weight: 600;
 }
 
-/* 地图样式见 common-global.css（.g-global-map） */
+/* 地图样式�?common-global.css�?g-global-map�?*/
 
-/* 应用案例列表 — 案例分类侧栏 */
+/* 应用案例列表 �?案例分类侧栏 */
 
 .g-cases-page .g-cases-sidebar .g-products-sidebar__inner {
   border-radius: 10px;
@@ -422,7 +422,7 @@
   display: block;
   margin: 0;
   padding: 16px 20px;
-  font-family: 'Exo', sans-serif;
+  font-family: 'Source Han Sans', sans-serif;
   font-weight: 400;
   font-size: 15px;
   line-height: 1.45;
@@ -455,7 +455,7 @@
   color: #666666;
 }
 
-/* 案例页 ≤992：侧栏与列表上下排布，主区接近全宽 */
+/* 案例�?�?92：侧栏与列表上下排布，主区接近全�?*/
 @media (max-width: 991.98px) {
   .g-cases-page .g-products-layout__inner {
     flex-direction: column;
@@ -479,7 +479,7 @@
   padding: 0;
 }
 
-/* 案例列表与分页间距 */
+/* 案例列表与分页间�?*/
 .g-cases-layout .g-cases-list-grid {
   margin-bottom: 32px;
 }

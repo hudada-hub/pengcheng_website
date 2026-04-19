@@ -5,11 +5,7 @@
 {{else}}
 <section class="g-section g-contactus " aria-label="{{#if contactUs.title}}{{contactUs.title}}{{else}}{{#if contactUs.description}}{{contactUs.description}}{{else}}Contact{{/if}}{{/if}}" data-wow-offset="60">
   <div class="container">
-    {{#if contactUs.title}}
-    <h2 class="g-section-title">{{contactUs.title}}</h2>
-    {{else}}
-    <h2 class="g-section-title">{{contactUs.description}}</h2>
-    {{/if}}
+    <h2 class="g-section-title">{{#if contactUs.title}}{{contactUs.title}}{{else}}{{#if contactUs.description}}{{contactUs.description}}{{else}}Contact{{/if}}{{/if}}{{#if (eq locale 'cn')}}<span class="g-section-title__subtitle">{{#if contactUsEnglishTitle}}{{contactUsEnglishTitle}}{{else}}Contact {{/if}}</span>{{/if}}</h2>
     <div class="g-contactus__wrap">
 {{/if}}
       <div class="g-contactus__left">

@@ -56,7 +56,7 @@
   margin: 0;
   font-size: clamp(1.35rem, 3.5vw, 1.6rem);
   font-weight: 800;
-  font-family: Exo, system-ui, sans-serif;
+  font-family: 'Source Han Sans', system-ui, sans-serif;
   letter-spacing: -0.02em;
   line-height: 1.2;
   color: #0d0d0d;
@@ -90,7 +90,7 @@
   border: 1px solid #e5e7eb;
   border-radius: 10px;
   font-size: 0.9375rem;
-  font-family: Exo, system-ui, sans-serif;
+  font-family: 'Source Han Sans', system-ui, sans-serif;
   color: #0d0d0d;
   background: #fff;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
@@ -169,7 +169,7 @@
   font-weight: 700;
   font-size: 0.95rem;
   cursor: pointer;
-  font-family: Exo, system-ui, sans-serif;
+  font-family: 'Source Han Sans', system-ui, sans-serif;
   letter-spacing: 0.02em;
   transition: background 0.2s ease, opacity 0.2s ease;
 }
@@ -255,7 +255,7 @@
 }
 
 .g-member-title {
-  font-family: Exo, system-ui, sans-serif;
+  font-family: 'Source Han Sans', system-ui, sans-serif;
   font-size: clamp(1.5rem, 3vw, 2rem);
   margin: 0 0 0.35rem;
 }
@@ -271,7 +271,7 @@
 }
 
 .g-member-section-title {
-  font-family: Exo, system-ui, sans-serif;
+  font-family: 'Source Han Sans', system-ui, sans-serif;
   font-size: 1.125rem;
   margin: 0 0 1rem;
   padding-bottom: 0.5rem;

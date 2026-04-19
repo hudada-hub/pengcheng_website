@@ -1,9 +1,9 @@
-/* 解决方案详情：Hero 左文、上浮卡片、应用案例区块 */
+/* 解决方案详情：Hero 左文、上浮卡片、应用案例区�?*/
 
 .g-solution-detail-page {
   --g-sd-accent: #f89d1b;
   --g-sd-hero-h: clamp(320px, 42vw, 556px);
-  /* 与 .pc-nav__inner 同高：垂直居中时不把顶栏区域算进对齐范围 */
+  /* �?.pc-nav__inner 同高：垂直居中时不把顶栏区域算进对齐范围 */
   --g-sd-header-offset: 72px;
 }
 
@@ -65,7 +65,7 @@
 
 .g-solution-detail-hero__title {
   margin: 0 0 16px;
-  font-family: 'Exo', sans-serif;
+  font-family: 'Source Han Sans', sans-serif;
   font-weight: 700;
   font-size: clamp(1.35rem, 3.2vw, 2.25rem);
   line-height: 1.25;
@@ -82,7 +82,7 @@
 
 .g-solution-detail-hero__desc {
   margin: 0;
-  font-family: 'Exo', sans-serif;
+  font-family: 'Source Han Sans', sans-serif;
   font-weight: 400;
   font-size: clamp(0.95rem, 1.8vw, 1.3rem);
   line-height: 1.65;
@@ -90,7 +90,7 @@
   max-width: 680px;
 }
 
-/* 面包屑贴在 Hero 下，白底区之上 */
+/* 面包屑贴�?Hero 下，白底区之�?*/
 .g-solution-detail-layout {
   background: #f5f5f7;
   padding-top: 60px;
@@ -136,7 +136,7 @@
 
 .g-solution-kehu-col__title {
   margin: 0 0 12px;
-  font-family: 'Exo', sans-serif;
+  font-family: 'Source Han Sans', sans-serif;
   font-weight: 700;
   font-size: 1.05rem;
   color: #1a1a1a;
@@ -172,7 +172,7 @@
 
 .g-solution-cases-section__title {
   margin: 0 0 10px;
-  font-family: 'Exo', sans-serif;
+  font-family: 'Source Han Sans', sans-serif;
   font-weight: 800;
   font-size: clamp(1.15rem, 2.2vw, 3rem);
   letter-spacing: 0.06em;
@@ -182,7 +182,7 @@
 
 .g-solution-cases-section__subtitle {
   margin: 0;
-  font-family: 'Exo', sans-serif;
+  font-family: 'Source Han Sans', sans-serif;
   font-size: 1.5rem;
   color: #4a5568;
  
@@ -233,7 +233,7 @@
 
 .g-solution-case-card__title {
   margin: 0 0 14px;
-  font-family: 'Exo', sans-serif;
+  font-family: 'Source Han Sans', sans-serif;
   font-weight: 700;
   font-size: 1rem;
   line-height: 1.35;
@@ -281,7 +281,7 @@
 }
 
 .g-solution-case-card__spec-text {
-  font-family: 'Exo', sans-serif;
+  font-family: 'Source Han Sans', sans-serif;
   font-weight: 600;
   font-size: 0.9rem;
   color: var(--g-sd-accent);
@@ -297,7 +297,7 @@
   align-items: center;
   gap: 4px;
   padding: 12px 16px;
-  font-family: 'Exo', sans-serif;
+  font-family: 'Source Han Sans', sans-serif;
   font-weight: 600;
   font-size: 0.82rem;
   color: #888;
@@ -324,7 +324,7 @@
   align-items: center;
   gap: 8px;
   padding: 12px 28px;
-  font-family: 'Exo', sans-serif;
+  font-family: 'Source Han Sans', sans-serif;
   font-weight: 600;
   font-size: 0.95rem;
   color: #fff;

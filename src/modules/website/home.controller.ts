@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Logger,
   Param,
   Post,
   Req,
@@ -68,6 +69,8 @@ const LAYOUT_CONFIG_KEYS = [
   'learn-more',
   /** 首页 About「阅读更多」文案（type 1，content JSON 的 content） */
   'readmore',
+  /** 新闻与活动标题（type 1，content JSON 的 content） */
+  'news-events',
   /** 搜索页文案（后台「搜索页文字」，key_name `seach-page-texts`） */
   'seach-page-texts',
 ];
@@ -669,10 +672,22 @@ export class HomeController extends BaseWebsiteController {
     const readmoreConfig = layoutData.configByKey['readmore'] ?? null;
     const aboutUs = this.getAboutUs(aboutUsConfig, readmoreConfig);
     const aboutUsEnglishTitle = await this.getEnglishTitleFromConfig(aboutUsConfig, langId ?? 0, 'about-us');
+    console.log('[DEBUG] aboutUsEnglishTitle result:', { 
+      aboutUsExists: !!aboutUsConfig,
+      aboutUsEnglishTitle 
+    });
 
     const ourCustomersEnglishTitle = await this.getEnglishTitleFromConfig(ourCustomersConfig, langId ?? 0, 'our-customers');
 
     const businessAreasEnglishTitle = await this.getEnglishTitleFromConfig(businessAreasMeta, langId ?? 0, 'business-areas');
+
+    // 新闻和活动配置
+    const newsEventsConfig = layoutData.configByKey['news-events'] ?? null;
+    Logger.log(newsEventsConfig)
+    
+    const newsEventsTitle = this.getTextFromConfig(newsEventsConfig, 'content')?.trim() ;
+    Logger.log(newsEventsTitle,"xxxxxx")
+    const newsEventsEnglishTitle = await this.getEnglishTitleFromConfig(newsEventsConfig, langId ?? 0, 'news-events');
 
     const isZhContact = resolvedLangCode === 'cn';
     const contactUsSuccessText = this.getContactUsSuccessText(
@@ -728,6 +743,8 @@ export class HomeController extends BaseWebsiteController {
       aboutUsEnglishTitle: aboutUsEnglishTitle ?? undefined,
       ourCustomersEnglishTitle: ourCustomersEnglishTitle ?? undefined,
       businessAreasEnglishTitle: businessAreasEnglishTitle ?? undefined,
+      newsEventsTitle,
+      newsEventsEnglishTitle: newsEventsEnglishTitle ?? undefined,
       newsList,
       activities,
       contactUsSuccessText,
@@ -776,6 +793,8 @@ export class HomeController extends BaseWebsiteController {
       aboutUsEnglishTitle: ctx.aboutUsEnglishTitle,
       ourCustomersEnglishTitle: ctx.ourCustomersEnglishTitle,
       businessAreasEnglishTitle: ctx.businessAreasEnglishTitle,
+      newsEventsTitle: ctx.newsEventsTitle,
+      newsEventsEnglishTitle: ctx.newsEventsEnglishTitle,
       newsList: ctx.newsList,
       activities: ctx.activities,
       contactUs: ctx.contactUs,

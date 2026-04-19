@@ -6,6 +6,7 @@ import type { ProductCategory } from '../../entities/product-category.entity';
 import type { Product } from '../../entities/product.entity';
 import type { Config } from '../../entities/config.entity';
 import type { LayoutCachePayload } from './website-layout.types';
+import { Logger } from '@nestjs/common';
 
 export const LOCALE_KEY = 'locale';
 
@@ -152,6 +153,9 @@ export type WebsitePageContext = {
   aboutUsEnglishTitle?: string;
   ourCustomersEnglishTitle?: string;
   businessAreasEnglishTitle?: string;
+  contactUsEnglishTitle?: string;
+  newsEventsTitle?: string;
+  newsEventsEnglishTitle?: string;
   newsList?: Array<{
     id: number;
     newsUrlId: number;
@@ -659,9 +663,19 @@ export abstract class BaseWebsiteController {
         configKeys: [configKey],
       });
       const enCfg = enLayoutData.configByKey[configKey] ?? null;
-      if (!enCfg) return null;
-      return this.getTextFromConfig(enCfg, 'title') ?? enCfg.title ?? null;
-    } catch {
+      if (!enCfg) {
+        console.log(`[DEBUG] No English config found for key: ${configKey}`);
+        return null;
+      }
+      const result = this.getTextFromConfig(enCfg, 'content');
+      console.log(`[DEBUG] English title for ${configKey}:`, { 
+        configExists: !!enCfg, 
+        contentField: enCfg.content,
+        result 
+      });
+      return result;
+    } catch (error) {
+      console.error(`[DEBUG] Error getting English title for ${configKey}:`, error);
       return null;
     }
   }
@@ -669,7 +683,7 @@ export abstract class BaseWebsiteController {
   /** 从 Config 取单行文案（title / description / keywords），优先从 content 的 content 字段取。 */
   protected getTextFromConfig(
     cfg: Config | null,
-    field: 'title' | 'description' | 'keywords',
+    field: 'title' | 'description' | 'keywords' | 'content',
   ): string | null {
     if (!cfg) return null;
     const c = cfg.content;
@@ -694,12 +708,30 @@ export abstract class BaseWebsiteController {
       return null;
     }
     if (field === 'keywords') {
+      
       if (typeof cfg.description === 'string' && cfg.description.trim())
         return cfg.description.trim();
       if (obj && typeof obj.keywords === 'string' && obj.keywords.trim())
         return String(obj.keywords).trim();
       if (obj && typeof obj.content === 'string' && obj.content.trim())
         return String(obj.content).trim();
+      return null;
+    }
+    if (field === 'content') {
+  
+      const contentVal  = cfg.content;
+      // 如果是字符串，直接返回
+      if (typeof contentVal === 'string' && contentVal) {
+        return contentVal;
+      }
+      // 如果是对象，尝试从 content 属性获取
+      if (contentVal && typeof contentVal === 'object' && !Array.isArray(contentVal)) {
+        const contentObj = contentVal as Record<string, unknown>;
+   
+        if (typeof contentObj.content === 'string' && contentObj.content.trim()) {
+          return contentObj.content.trim();
+        }
+      }
       return null;
     }
     return null;
@@ -1136,6 +1168,11 @@ export abstract class BaseWebsiteController {
 
     // Contact Us
     const contactUs = layoutData.configByKey['contact-us'] ?? null;
+    const contactUsEnglishTitle = await this.getEnglishTitleFromConfig(contactUs, langId || 0, 'contact-us');
+    console.log('[DEBUG] contactUsEnglishTitle result:', { 
+      contactUsExists: !!contactUs,
+      contactUsEnglishTitle 
+    });
 
     const loginRegisterConfig =
       layoutData.configByKey['login-register'] ?? null;
@@ -1185,6 +1222,7 @@ export abstract class BaseWebsiteController {
       footerBeian,
       followUs,
       contactUs,
+      contactUsEnglishTitle: contactUsEnglishTitle ?? undefined,
       contactUsLabels,
       contactUsFormLabels,
       contactUsSubmitLabel,

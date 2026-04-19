@@ -1,7 +1,7 @@
 {{!-- News & Events - Swiper轮播版（新闻水平轮播，活动垂直滚动） --}}
 <section class="g-section g-news " aria-label="News and Events">
   <div class="container">
-    <h2 class="g-section-title">NEWS & EVENTS{{#if (eq locale 'cn')}}<span class="g-section-title__subtitle">新闻与活动</span>{{/if}}</h2>
+    <h2 class="g-section-title">{{#if newsEventsTitle}}{{newsEventsTitle}}{{/if}}{{#if (eq locale 'cn')}}<span class="g-section-title__subtitle">{{newsEventsEnglishTitle}}</span>{{/if}}</h2>
     <div class="g-news__wrap">
       {{!-- Left: News Swiper --}}
       <div class="g-news__left">
@@ -14,25 +14,34 @@
                     <div class="g-news__card-img-wrap">
                       {{#if thumbUrl}}
                         <img src="{{thumbUrl}}" alt="{{title}}" class="g-news__card-img" loading="lazy">
-                   
                       {{/if}}
                     </div>
                     <div class="g-news__card-overlay">
                       {{#if publishAt}}
                         <div class="g-news__card-date-badge">
-                          <svg class="g-news__card-date-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                            <path d="M12 22c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9Z" stroke="currentColor" stroke-width="2"/>
-                            <path d="M12 7v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M9 2h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                          <svg class="g-news__card-date-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                           </svg>
-                          <span>{{formatDate publishAt 'MMM.DD-YYYY'}}</span>
+                          <span>{{formatDate publishAt 'YYYY-MM-DD'}}</span>
                         </div>
                       {{/if}}
-                      <h3 class="g-news__card-title">{{truncate title 80}}</h3>
-                      <div class="g-news__card-arrow" aria-hidden="true">
-                        <svg width="29" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform:scale(1.2)">
-                          <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
+                      <div class="g-news__card-content">
+                        <h3 class="g-news__card-title">{{truncate title 80}}</h3>
+                        {{#if (eq locale 'cn')}}
+                        {{#if summary}}
+                        <p class="g-news__card-summary">{{truncate summary 120}}</p>
+                        {{/if}}
+                        {{/if}}
+                        {{#if (eq locale 'cn')}}
+                        <div class="g-news__card-arrow" aria-hidden="true">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </div>
+                        {{/if}}
                       </div>
                     </div>
                   </a>
@@ -96,37 +105,6 @@
                   </a>
                 </div>
               {{/each}}
-            {{else}}
-              {{!-- Fallback --}}
-              <div class="swiper-slide g-events__slide">
-                <a href="{{basePath}}/activity-calendar" class="g-events__item">
-                  <div class="g-events__date-block">
-                    <span class="g-events__date-weekday">TUES</span>
-                    <span class="g-events__date-num">20</span>
-                  </div>
-                  <div class="g-events__content">
-                    <div class="g-events__header">
-                      <h4 class="g-events__title">
-                        <span class="g-events__title-arrow" style="color:var(--g-color-primary); margin-right:4px;">&gt;</span>
-                        PGA SHOW 2026
-                      </h4>
-                      <span class="g-events__arrow">
-                        <span class="iconify" data-icon="vuesax:linear-arrow-right" width="16" height="16"></span>
-                      </span>
-                    </div>
-                    <div class="g-events__meta">
-                      <span class="g-events__meta-item">
-                        <span class="iconify" data-icon="vuesax:linear-location" width="16" height="16"></span>
-                        Orlando, Florida
-                      </span>
-                      <span class="g-events__meta-item">
-                        <span class="iconify" data-icon="vuesax:linear-calendar" width="16" height="16"></span>
-                        Jan 20 - Jan 23
-                      </span>
-                    </div>
-                  </div>
-                </a>
-              </div>
             {{/if}}
           </div>
           {{!-- 垂直滚动条--}}
