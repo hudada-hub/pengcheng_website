@@ -43,6 +43,7 @@ const BUSINESS_AREA_DETAIL_KEYS = [
 
 const LAYOUT_CONFIG_KEYS = [
   'logo',
+  'zh-logo-white',
   'website-title',
   'website-description',
   'website-keywords',
@@ -622,6 +623,10 @@ export class HomeController extends BaseWebsiteController {
       layoutData.configByKey['logo'] ?? null,
     );
 
+    // 中文首页顶部白色 logo
+    const zhLogoWhiteCfg = layoutData.configByKey['zh-logo-white'] ?? null;
+    const zhLogoWhiteUrl = this.getLogoUrlFromConfig(zhLogoWhiteCfg);
+
     const title = this.getWebsiteTitle(layoutData, isDomestic);
     const description = this.getWebsiteDescription(layoutData, isDomestic);
     const keywords = this.getWebsiteKeywords(layoutData, isDomestic);
@@ -727,6 +732,7 @@ export class HomeController extends BaseWebsiteController {
       langId,
       isDomestic,
       logoUrl,
+      zhLogoWhiteUrl,
       navItems,
       carouselItems,
       heroLearnMoreLabel,
@@ -772,7 +778,6 @@ export class HomeController extends BaseWebsiteController {
       langId: ctx.langId,
       isDomestic: ctx.isDomestic,
       logoUrl: ctx.logoUrl,
-      englishLogoUrl: ctx.englishLogoUrl,
       navItems: ctx.navItems,
       carouselItems: ctx.carouselItems,
       heroLearnMoreLabel: ctx.heroLearnMoreLabel,

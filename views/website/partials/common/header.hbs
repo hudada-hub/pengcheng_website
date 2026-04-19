@@ -4,13 +4,13 @@
     <!-- 中文语言结构：左中右布局，pc-menu 水平居中 -->
     <div class="pc-nav__left">
       <a class="pc-brand" href="{{#if basePath}}{{basePath}}{{else}}/{{/if}}">
-        {{#if logoUrl}}
-          <!-- 顶部状态：中文 logo -->
-          <img class="pc-logo pc-logo--top" src="{{logoUrl}}" alt="{{title}}" />
-          <!-- 滚动状态：英文 logo -->
-          {{#if englishLogoUrl}}
-          <img class="pc-logo pc-logo--scrolled" src="{{englishLogoUrl}}" alt="{{title}}" />
+        {{#if zhLogoWhiteUrl}}
+          <img class="pc-logo pc-logo--top" src="{{zhLogoWhiteUrl}}" alt="{{title}}" />
+          {{#if logoUrl}}
+          <img class="pc-logo pc-logo--scrolled" src="{{logoUrl}}" alt="{{title}}" />
           {{/if}}
+        {{else if logoUrl}}
+          <img class="pc-logo" src="{{logoUrl}}" alt="{{title}}" />
         {{/if}}
       </a>
     </div>
@@ -104,19 +104,9 @@
             {{#if (eq locale 'cn')}}<span class="pc-nav-text">&nbsp;中文</span>{{/if}}
           </button>
           <div class="pc-nav-lang-popover" id="pcNavLangPopover" role="presentation" aria-hidden="true">
-            <p class="pc-nav-lang-popover__title" id="pcNavLangPopoverTitle">{{#if (eq locale 'cn')}}语言{{else}}Language{{/if}}</p>
+       
             <div class="pc-nav-lang-popover__stage">
-              {{#with (langNavCurrent navLangs pathLocale)}}
-              <button type="button" class="pc-nav-lang-current-row" id="pcNavLangInnerTrigger" aria-expanded="false" aria-haspopup="listbox" aria-labelledby="pcNavLangPopoverTitle" aria-controls="pcNavLangListPanel">
-                {{#if this.langIconUrl}}
-                <img class="pc-nav-lang-flag" src="{{this.langIconUrl}}" alt="" width="24" height="18" loading="lazy" decoding="async" />
-                {{else}}
-                <span class="pc-nav-lang-flag pc-nav-lang-flag--ph" aria-hidden="true"></span>
-                {{/if}}
-                <span class="pc-nav-lang-current-row__text">{{this.langFullName}}</span>
-                <img src="/images/global/arrow-right-black.png" alt="" class="pc-nav-lang-current-row__caret" aria-hidden="true" />
-              </button>
-              {{/with}}
+            
               <div class="pc-nav-lang-popover__dropdown" id="pcNavLangListPanel" role="listbox" aria-label="{{#if (eq locale 'cn')}}选择语言{{else}}Choose language{{/if}}">
                 <div class="pc-nav-lang-popover__list">
                   {{#each navLangs}}

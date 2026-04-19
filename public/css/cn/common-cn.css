@@ -41,7 +41,7 @@ html[lang="cn"] .g-home-page .pc-nav .pc-nav-icon {
 /* 导航栏文字 - 默认黑色（非首页） */
 html[lang="cn"] .pc-nav .pc-nav-text {
   color: #0d0d0d;
-  transition: color 0.3s ease;
+  
 }
 
 /* 首页：导航栏文字为白色 */
@@ -66,29 +66,45 @@ html[lang="cn"] .pc-nav .pc-logo {
   display: none;
 }
 
-/* 首页：默认显示中文 logo，滚动后显示英文 logo */
-html[lang="cn"] .g-home-page .pc-nav .pc-logo--top {
+html[lang="cn"] .pc-nav .pc-logo--top {
   display: block;
+  height: 41px;
+  width: auto;
 }
 
+html[lang="cn"] .pc-nav .pc-logo--scrolled {
+  display: none;
+  height: 41px;
+  width: auto;
+}
+
+/* 首页滚动后：顶部logo隐藏，滚动logo显示 */
 html[lang="cn"] .g-home-page .pc-nav.is-scrolled .pc-logo--top {
   display: none;
 }
 
 html[lang="cn"] .g-home-page .pc-nav.is-scrolled .pc-logo--scrolled {
   display: block;
-  height: 30px;
+  height: 41px;
   width: auto;
 }
 
-/* 其他页面：直接显示英文 logo（滚动后的 logo） */
-html[lang="cn"] .pc-nav .pc-logo--scrolled {
+/* 非首页：只显示默认logo */
+html[lang="cn"]:not(.g-home-page) .pc-nav .pc-logo--top {
+  display: none;
+}
+
+html[lang="cn"]:not(.g-home-page) .pc-nav .pc-logo--scrolled {
+  display: none;
+}
+
+html[lang="cn"]:not(.g-home-page) .pc-nav .pc-logo {
   display: block;
-  height: 30px;
+  height: 41px;
   width: auto;
 }
 
-/* 导航栏滚动后的样�?- 图标恢复原始颜色 */
+/* 导航栏滚动后的样式 - 图标恢复原始颜色 */
 html[lang="cn"] .pc-nav.is-scrolled .pc-nav-icon {
   filter: none;
   -webkit-filter: none;
@@ -1794,6 +1810,7 @@ html[lang="cn"] .pc-mega__arrow-btn:focus-visible .pc-mega__arrow {
   justify-content: center;
   color: var(--g-color-dark, #424558);
   text-decoration: none;
+  cursor: pointer;
 }
 
 /* 顶部购物车按钮：与图标链接一致的“无边框/无背景”基础样式 */
@@ -1851,25 +1868,22 @@ html[lang="cn"] .pc-mega__arrow-btn:focus-visible .pc-mega__arrow {
   line-height: 0;
   cursor: pointer;
   border-radius: 50%;
-  transition:
-    color 0.15s ease,
-    background 0.15s ease;
+
 }
 
 .pc-nav-lang-wrap:hover .pc-nav-lang-trigger {
-  box-shadow:
-    0 0 0 1px #fff,
-    0 0 0 2px rgba(0, 0, 0, 0.09);
+
 }
 
 .pc-nav-lang-trigger:hover {
   color: var(--g-color-primary, #f89d1b);
-  background: rgba(248, 157, 27, 0.08);
+
 }
 
 .pc-nav-lang-trigger:focus-visible {
-  outline: 2px solid var(--g-color-primary, #f89d1b);
-  outline-offset: 2px;
+  outline: none;
+  border: none;
+
 }
 
 /* Popover 内：当前语言行（可点/可悬停展开第二层面板） */
@@ -2042,13 +2056,13 @@ html[lang="cn"] .pc-mega__arrow-btn:focus-visible .pc-mega__arrow {
   border-radius: 8px;
 }
 
-/* hover 时显示第一�?popover（图1�?*/
+
 .pc-nav-lang-wrap:hover .pc-nav-lang-popover,
 .pc-nav-lang-popover.is-open {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
-  transform: translateY(0);
+  /* transform: translateY(0); */
 }
 
 .pc-nav-lang-option {
@@ -2089,7 +2103,8 @@ html[lang="cn"] .pc-mega__arrow-btn:focus-visible .pc-mega__arrow {
 html[lang="cn"] .pc-nav-lang-popover {
   min-width: 360px;
   max-width: 400px;
-  background: linear-gradient(135deg, #d4e1f0 0%, #c5d5e8 100%);
+  background-color: #ffffffee;
+  backdrop-filter: blur(16px);
   border-radius: 16px;
   padding: 20px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
@@ -2116,25 +2131,24 @@ html[lang="cn"] .pc-nav-lang-popover__list {
 }
 
 html[lang="cn"] .pc-nav-lang-option {
-  background: rgba(255, 255, 255, 0.5);
+  
   border-radius: 12px;
   padding: 12px 16px;
   font-size: 15px;
   color: #2c3e50;
-  transition: all 0.2s ease;
+
 }
 
 html[lang="cn"] .pc-nav-lang-option:hover {
-  background: rgba(255, 255, 255, 0.8);
-  color: #1a1d26;
-  transform: translateY(-2px);
+  background: rgba(0, 0, 0, 0.2);
+  color: #fff;
+
 }
 
 html[lang="cn"] .pc-nav-lang-option.is-active {
-  background: rgba(255, 255, 255, 0.95);
-  color: #1a1d26;
-  font-weight: 600;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.2);
+  color: #fff;
+  font-weight: normal;
 }
 
 html[lang="cn"] .pc-nav-lang-popover__dropdown {
