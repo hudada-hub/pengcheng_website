@@ -5,7 +5,12 @@
     <div class="pc-nav__left">
       <a class="pc-brand" href="{{#if basePath}}{{basePath}}{{else}}/{{/if}}">
         {{#if logoUrl}}
-          <img class="pc-logo" src="{{logoUrl}}" alt="{{title}}" />
+          <!-- 顶部状态：中文 logo -->
+          <img class="pc-logo pc-logo--top" src="{{logoUrl}}" alt="{{title}}" />
+          <!-- 滚动状态：英文 logo -->
+          {{#if englishLogoUrl}}
+          <img class="pc-logo pc-logo--scrolled" src="{{englishLogoUrl}}" alt="{{title}}" />
+          {{/if}}
         {{/if}}
       </a>
     </div>
@@ -102,6 +107,7 @@
           <img src="/images/head/global.png" alt="Language" class="pc-nav-icon" width="24" height="24">
           {{/if}}
         </div>
+        {{#unless (eq locale 'cn')}}
         <button type="button" class="pc-nav-icons__item" id="pcNavCartTrigger" aria-label="Shopping cart" aria-expanded="false" aria-controls="pcCartDrawerPanel">
           <img src="/images/head/shopping-cart.png" alt="Shopping cart" class="pc-nav-icon" width="24" height="24">
           <span class="pc-nav-cart-badge" id="pcNavCartBadge" style="display: none;">0</span>
@@ -109,6 +115,7 @@
         <a href="#" class="pc-nav-icons__item pc-member-auth" id="pcMemberEntry" data-member-base="{{#if basePath}}{{basePath}}/member{{else}}/member{{/if}}" data-logged-in="0" aria-label="Login / Register">
           <img src="/images/head/user.png" alt="Login / Register" class="pc-nav-icon pc-member-auth__icon" width="24" height="24">
         </a>
+        {{/unless}}
       </div>
       <button type="button" class="pc-nav__menu-btn" id="pcNavMenuBtn" aria-label="打开菜单" aria-expanded="false" aria-controls="pcNavDrawerPanel">
         <img src="/images/head/menu.png" alt="Menu" class="pc-nav-icon" width="24" height="24">
@@ -228,6 +235,7 @@
         }
       })();
 
+      {{#if (eq locale 'cn')}}
       // 导航栏滚动事件：滚动后文字和图片变黑色
       (function () {
         var nav = document.querySelector('.pc-nav');
@@ -243,6 +251,7 @@
         window.addEventListener('scroll', onScroll, { passive: true });
         onScroll();
       })();
+      {{/if}}
 
       var sel = document.getElementById('langSwitch');
       if (sel) {

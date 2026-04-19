@@ -2,7 +2,7 @@
 {{#if aboutUs.stats.length}}
 <section class="g-section g-about " aria-label="About Us">
   <div class="container">
-    <h2 class="g-section-title">{{aboutUs.title}}</h2>
+    <h2 class="g-section-title">{{aboutUs.title}}{{#if (eq locale 'cn')}}<span class="g-section-title__subtitle">{{aboutUsEnglishTitle}}</span>{{/if}}</h2>
     <div class="g-about__wrap" {{#if aboutUs.bgPicUrl}} style="background-image: url('{{aboutUs.bgPicUrl}}');"{{/if}}>
       {{#if aboutUs.videoUrl}}
       <button type="button" class="g-about__cirplay" data-video-url="{{aboutUs.videoUrl}}" aria-label="播放视频"></button>
@@ -22,7 +22,7 @@
           </div>
           {{/each}}
         </div>
-        <a href="{{basePath}}/about-us" class="g-about__link">{{aboutUs.readMoreLabel}} <img src="/images/global/arrow-right-white.png" alt=""></a>
+        <a href="{{basePath}}/about-us" class="g-about__link">{{aboutUs.readMoreLabel}}<img src="/images/global/arrow-right-white.png" alt=""></a>
       </div>
     </div>
   </div>

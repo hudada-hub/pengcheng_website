@@ -617,6 +617,7 @@ export class HomeController extends BaseWebsiteController {
 
     const logoCfg = layoutData.configByKey['logo'] ?? null;
     const logoUrl = this.getLogoUrlFromConfig(logoCfg);
+    const englishLogoUrl = await this.getEnglishLogoUrlFromConfig(logoCfg, langId ?? 0);
 
     const title = this.getWebsiteTitle(layoutData, isDomestic);
     const description = this.getWebsiteDescription(layoutData, isDomestic);
@@ -667,6 +668,11 @@ export class HomeController extends BaseWebsiteController {
     const aboutUsConfig = layoutData.configByKey['about-us'] ?? null;
     const readmoreConfig = layoutData.configByKey['readmore'] ?? null;
     const aboutUs = this.getAboutUs(aboutUsConfig, readmoreConfig);
+    const aboutUsEnglishTitle = await this.getEnglishTitleFromConfig(aboutUsConfig, langId ?? 0, 'about-us');
+
+    const ourCustomersEnglishTitle = await this.getEnglishTitleFromConfig(ourCustomersConfig, langId ?? 0, 'our-customers');
+
+    const businessAreasEnglishTitle = await this.getEnglishTitleFromConfig(businessAreasMeta, langId ?? 0, 'business-areas');
 
     const isZhContact = resolvedLangCode === 'cn';
     const contactUsSuccessText = this.getContactUsSuccessText(
@@ -706,6 +712,7 @@ export class HomeController extends BaseWebsiteController {
       langId,
       isDomestic,
       logoUrl,
+      englishLogoUrl,
       navItems,
       carouselItems,
       heroLearnMoreLabel,
@@ -718,6 +725,9 @@ export class HomeController extends BaseWebsiteController {
       businessAreasTitle,
       businessAreas,
       aboutUs,
+      aboutUsEnglishTitle: aboutUsEnglishTitle ?? undefined,
+      ourCustomersEnglishTitle: ourCustomersEnglishTitle ?? undefined,
+      businessAreasEnglishTitle: businessAreasEnglishTitle ?? undefined,
       newsList,
       activities,
       contactUsSuccessText,
@@ -746,6 +756,7 @@ export class HomeController extends BaseWebsiteController {
       langId: ctx.langId,
       isDomestic: ctx.isDomestic,
       logoUrl: ctx.logoUrl,
+      englishLogoUrl: ctx.englishLogoUrl,
       navItems: ctx.navItems,
       carouselItems: ctx.carouselItems,
       heroLearnMoreLabel: ctx.heroLearnMoreLabel,
@@ -762,6 +773,9 @@ export class HomeController extends BaseWebsiteController {
       customerLogosGrid: ctx.customerLogosGrid,
       ourCustomersTitle: ctx.ourCustomersTitle,
       businessAreasTitle: ctx.businessAreasTitle,
+      aboutUsEnglishTitle: ctx.aboutUsEnglishTitle,
+      ourCustomersEnglishTitle: ctx.ourCustomersEnglishTitle,
+      businessAreasEnglishTitle: ctx.businessAreasEnglishTitle,
       newsList: ctx.newsList,
       activities: ctx.activities,
       contactUs: ctx.contactUs,

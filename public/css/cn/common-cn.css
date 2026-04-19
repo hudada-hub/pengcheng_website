@@ -7,7 +7,7 @@
   --g-color-text: #0d0d0d;
   --g-color-text-secondary: #2b2b2b;
   --g-color-text-muted: #7e7e7e;
-  --g-color-bg: #f8f8f8;
+  --g-color-bg: #fff;
   --g-color-bg-section: #efefef;
   --g-container-max: 1656px;
   --g-container-padding: 132px;
@@ -25,20 +25,39 @@ h1, h2, h3, h4, h5, h6 {
   font-family: 'Source Han Sans', system-ui, -apple-system, sans-serif;
 }
 
-/* 导航栏图片变白色 */
-.pc-nav .pc-nav-icon {
+/* 导航栏图片 - 默认白色 */
+html[lang="cn"] .pc-nav .pc-nav-icon,
+.pc-nav-lang-wrap .pc-nav-icon {
   filter: brightness(0%) invert(100%);
   -webkit-filter: brightness(0%) invert(100%);
 }
 
-/* 导航栏滚动后的样式 */
-.pc-nav.is-scrolled .pc-nav-icon,
-.pc-nav.is-scrolled .pc-logo {
+/* Logo 显示控制 */
+html[lang="cn"] .pc-nav .pc-logo {
+  display: none;
+}
+
+html[lang="cn"] .pc-nav .pc-logo--top {
+  display: block;
+}
+
+html[lang="cn"] .pc-nav.is-scrolled .pc-logo--top {
+  display: none;
+}
+
+html[lang="cn"] .pc-nav.is-scrolled .pc-logo--scrolled {
+  display: block;
+  height: 30px;
+  width: auto;
+}
+
+/* 导航栏滚动后的样式 - 图标恢复原始颜色 */
+html[lang="cn"] .pc-nav.is-scrolled .pc-nav-icon {
   filter: none;
   -webkit-filter: none;
 }
 
-.pc-nav.is-scrolled .pc-navlink {
+html[lang="cn"] .pc-nav.is-scrolled .pc-navlink {
   color: #0d0d0d;
 }
 /* ===================================
@@ -1064,6 +1083,7 @@ h1, h2, h3, h4, h5, h6 {
 .pc-nav__left {
   display: flex;
   align-items: center;
+  width:200px;
 }
 
 .pc-brand {
@@ -1074,7 +1094,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .pc-logo {
-  height: 32px;
+
   width: auto;
   object-fit: contain;
   margin-right: 6px;

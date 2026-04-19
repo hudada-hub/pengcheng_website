@@ -1,8 +1,8 @@
-{{!-- Business Areas & Application Scenarios - 使用 config 表数�?--}}
+{{!-- Business Areas & Application Scenarios - 使用 config 表数�?--}}
 {{#if businessAreas.length}}
 <section class="g-section g-business " aria-label="Business Areas" id="businessAreas" >
   <div class="container">
-    <h2 class="g-section-title">{{#if businessAreasTitle}}{{businessAreasTitle}}{{else}}BUSINESS AREAS & APPLICATION SCENARIOS{{/if}}</h2>
+    <h2 class="g-section-title">{{#if businessAreasTitle}}{{businessAreasTitle}}{{else}}BUSINESS AREAS & APPLICATION SCENARIOS{{/if}}{{#if (eq locale 'cn')}}<span class="g-section-title__subtitle">{{businessAreasEnglishTitle}}</span>{{/if}}</h2>
     
     {{!-- 标签切换 --}}
     <div class="g-business__tabs">
@@ -14,7 +14,7 @@
       {{/each}}
     </div>
     
-    {{!-- 内容区域：Swiper 仅自动轮播，无箭�?分页 --}}
+    {{!-- 内容区域：Swiper 仅自动轮播，无箭�?分页 --}}
     <div class="g-business__panels swiper g-business__swiper">
     <div class="swiper-wrapper">
     {{#each businessAreas}}
@@ -24,6 +24,7 @@
       <div class="g-business__banner">
         <img src="{{data.bgPicUrl}}" alt="{{data.title}}" class="g-business__banner-img" loading="lazy">
         <div class="g-business__banner-overlay"></div>
+        <div class="g-business__banner-overlay-left"></div>
         <div class="g-business__banner-text">
           <p class="g-business__banner-title">{{data.title}}</p>
           {{#if data.description}}

@@ -549,6 +549,7 @@ export class SolutionsController extends BaseWebsiteController {
       langId: ctx.langId,
       isDomestic: ctx.isDomestic,
       logoUrl: ctx.logoUrl,
+      englishLogoUrl: ctx.englishLogoUrl,
       navItems: ctx.navItems,
       categoryTree: ctx.categoryTree,
       solutions: ctx.solutions,
@@ -670,6 +671,10 @@ export class SolutionsController extends BaseWebsiteController {
     });
     const logoUrl = this.getLogoUrlFromConfig(
       layoutData.configByKey['logo'] ?? null,
+    );
+    const englishLogoUrl = await this.getEnglishLogoUrlFromConfig(
+      layoutData.configByKey['logo'] ?? null,
+      langId,
     );
     const navItems = this.buildNavItemsFromLayout(
       layoutData,
@@ -797,6 +802,7 @@ export class SolutionsController extends BaseWebsiteController {
       description,
       keywords,
       logoUrl,
+      englishLogoUrl,
       navItems,
       categoryTree,
       solutions,
@@ -837,6 +843,10 @@ export class SolutionsController extends BaseWebsiteController {
     });
     const logoUrl = this.getLogoUrlFromConfig(
       layoutData.configByKey['logo'] ?? null,
+    );
+    const englishLogoUrl = await this.getEnglishLogoUrlFromConfig(
+      layoutData.configByKey['logo'] ?? null,
+      langId,
     );
     const navItems = this.buildNavItemsFromLayout(
       layoutData,
@@ -890,6 +900,7 @@ export class SolutionsController extends BaseWebsiteController {
         description: null,
         keywords: null,
         logoUrl,
+        englishLogoUrl,
         navItems,
         categoryTree,
         listUrl: `${basePath}/solutions`,
@@ -951,6 +962,7 @@ export class SolutionsController extends BaseWebsiteController {
       description,
       keywords,
       logoUrl,
+      englishLogoUrl,
       navItems,
       categoryTree,
       solutionsListUrl: `${basePath}/solutions`,

@@ -214,6 +214,7 @@ export class JoinUsController extends BaseWebsiteController {
     // Get logo
     const logoCfg = layoutData.configByKey['logo'] ?? null;
     const logoUrl = this.getLogoUrlFromConfig(logoCfg);
+    const englishLogoUrl = await this.getEnglishLogoUrlFromConfig(logoCfg, lang.id);
 
     // Get banner from menu
     const banner = this.resolveJoinUsBannerFromMenus(
@@ -265,6 +266,7 @@ export class JoinUsController extends BaseWebsiteController {
       langId: lang.id,
       isDomestic,
       logoUrl,
+      englishLogoUrl,
       navItems,
       viewName: 'website/join-us',
       pageViewPageType: 'join-us',

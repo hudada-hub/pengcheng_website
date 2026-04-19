@@ -156,10 +156,13 @@
   </div>
 </footer>
 {{> website/common/page-view-tracker}}
-{{> website/common/member-auth-modal}}
+{{#unless (eq locale 'cn')}}{{> website/common/member-auth-modal}}{{/unless}}
 {{> website/common/inquiry-form-modal}}
-{{> website/common/floating-actions}}
+{{#unless (eq locale 'cn')}}{{> website/common/cart-drawer}}{{/unless}}
 {{> website/common/contactus-modal}}
-{{> website/common/cart-drawer}}
+
+{{#unless (eq locale 'cn')}}
+
 <script src="/js/member-auth.js" defer></script>
 <script src="/js/cart-drawer.js" defer></script>
+{{/unless}}

@@ -47,6 +47,7 @@ export type WebsitePageContext = {
   pageViewPageType?: string;
   isDomestic: boolean;
   logoUrl: string | null;
+  englishLogoUrl: string | null;
   navItems: NavItem[];
   viewName: string;
   carouselItems?: Array<{
@@ -148,6 +149,9 @@ export type WebsitePageContext = {
     active: boolean;
   }>;
   ourCustomersTitle?: string;
+  aboutUsEnglishTitle?: string;
+  ourCustomersEnglishTitle?: string;
+  businessAreasEnglishTitle?: string;
   newsList?: Array<{
     id: number;
     newsUrlId: number;
@@ -621,6 +625,45 @@ export abstract class BaseWebsiteController {
       return url ? String(url) : null;
     }
     return null;
+  }
+
+  /** 从 Config 取英文 logo 路径（通过 langId=2 的配置获取） */
+  protected async getEnglishLogoUrlFromConfig(_cfg: Config | null, langId: number): Promise<string | null> {
+    if (langId === 2) return null;
+    try {
+      const enLayoutData = await this.websiteLayoutService.getLayoutData(2, {
+        configKeys: ['logo'],
+      });
+      const enLogoCfg = enLayoutData.configByKey['logo'] ?? null;
+      if (!enLogoCfg) return null;
+      const c = enLogoCfg.content;
+      if (c && typeof c === 'object' && !Array.isArray(c)) {
+        const obj = c;
+        const url =
+          (typeof obj.pic1Url === 'string' && obj.pic1Url) ||
+          (typeof obj.url === 'string' && obj.url) ||
+          null;
+        return url ? String(url) : null;
+      }
+    } catch {
+      return null;
+    }
+    return null;
+  }
+
+  /** 从 Config 取英文版本的 title（通过 langId=2 的配置获取） */
+  protected async getEnglishTitleFromConfig(_cfg: Config | null, langId: number, configKey: string): Promise<string | null> {
+    if (langId === 2) return null;
+    try {
+      const enLayoutData = await this.websiteLayoutService.getLayoutData(2, {
+        configKeys: [configKey],
+      });
+      const enCfg = enLayoutData.configByKey[configKey] ?? null;
+      if (!enCfg) return null;
+      return this.getTextFromConfig(enCfg, 'title') ?? enCfg.title ?? null;
+    } catch {
+      return null;
+    }
   }
 
   /** 从 Config 取单行文案（title / description / keywords），优先从 content 的 content 字段取。 */

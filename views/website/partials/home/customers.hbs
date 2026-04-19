@@ -1,8 +1,34 @@
-{{!-- Our Customers�? 行网�?+ �?about-us 相同的列步进/拖拽（home-customers-carousel.js，非 Swiper�?--}}
+{{!-- Our Customers - 两行网格 + 与 about-us 相同的列步进/拖拽（home-customers-carousel.js，非 Swiper）--}}
 {{#if customerLogosGrid.length}}
 <section class="g-section g-customers" aria-label="Our Customers">
   <div class="container">
-    <h2 class="g-section-title">{{#if ourCustomersTitle}}{{ourCustomersTitle}}{{else}}OUR CUSTOMERS{{/if}}</h2>
+    <div class="g-customers__header">
+      <h2 class="g-section-title">{{#if ourCustomersTitle}}{{ourCustomersTitle}}{{else}}OUR CUSTOMERS{{/if}}{{#if (eq locale 'cn')}}<span class="g-section-title__subtitle">{{ourCustomersEnglishTitle}}</span>{{/if}}</h2>
+      {{#if (eq locale 'cn')}}
+      <div class="g-customers__nav-container">
+        <button
+          type="button"
+          class="g-customers__nav g-customers__nav--prev"
+          id="home-customers-prev"
+          aria-label="上一组 Logo"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          class="g-customers__nav g-customers__nav--next"
+          id="home-customers-next"
+          aria-label="下一组 Logo"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+      </div>
+      {{/if}}
+    </div>
 
     <div class="g-customers__slider-outer">
       <div class="g-customers__slider">
@@ -19,11 +45,11 @@
         </div>
       </div>
 
-      <button
+      {{#unless (eq locale 'cn')}}<button
         type="button"
         class="g-customers__nav g-customers__nav--prev"
         id="home-customers-prev"
-        aria-label="{{#if (eq locale 'cn')}}上一�?Logo{{else}}Previous logos{{/if}}"
+        aria-label="Previous logos"
       >
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
@@ -33,12 +59,13 @@
         type="button"
         class="g-customers__nav g-customers__nav--next"
         id="home-customers-next"
-        aria-label="{{#if (eq locale 'cn')}}下一�?Logo{{else}}Next logos{{/if}}"
+        aria-label="Next logos"
       >
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
       </button>
+      {{/unless}}
     </div>
   </div>
 </section>
