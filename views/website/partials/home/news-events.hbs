@@ -1,7 +1,8 @@
 {{!-- News & Events - Swiper轮播版（新闻水平轮播，活动垂直滚动） --}}
 <section class="g-section g-news " aria-label="News and Events">
   <div class="container">
-    <h2 class="g-section-title">{{#if newsEventsTitle}}{{newsEventsTitle}}{{/if}}{{#if (eq locale 'cn')}}<span class="g-section-title__subtitle">{{newsEventsEnglishTitle}}</span>{{/if}}</h2>
+    <h2 class="g-section-title">{{#if newsEventsTitle}}{{newsEventsTitle}}{{/if}}{{#if (eq @root.locale 'cn')}}<span class="g-section-title__subtitle">{{newsEventsEnglishTitle}}</span>{{/if}}</h2>
+    <!-- DEBUG: locale={{@root.locale}} -->
     <div class="g-news__wrap">
       {{!-- Left: News Swiper --}}
       <div class="g-news__left">
@@ -30,12 +31,10 @@
                       {{/if}}
                       <div class="g-news__card-content">
                         <h3 class="g-news__card-title">{{truncate title 80}}</h3>
-                        {{#if (eq locale 'cn')}}
-                        {{#if summary}}
+                        {{#if (eq @root.locale 'cn')}}
                         <p class="g-news__card-summary">{{truncate summary 120}}</p>
                         {{/if}}
-                        {{/if}}
-                        {{#if (eq locale 'cn')}}
+                        {{#if (eq @root.locale 'cn')}}
                         <div class="g-news__card-arrow" aria-hidden="true">
                           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>

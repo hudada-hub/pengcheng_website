@@ -664,15 +664,11 @@ export abstract class BaseWebsiteController {
       });
       const enCfg = enLayoutData.configByKey[configKey] ?? null;
       if (!enCfg) {
-        console.log(`[DEBUG] No English config found for key: ${configKey}`);
+       
         return null;
       }
-      const result = this.getTextFromConfig(enCfg, 'content');
-      console.log(`[DEBUG] English title for ${configKey}:`, { 
-        configExists: !!enCfg, 
-        contentField: enCfg.content,
-        result 
-      });
+      const result = this.getTextFromConfig(enCfg, 'title');
+   
       return result;
     } catch (error) {
       console.error(`[DEBUG] Error getting English title for ${configKey}:`, error);

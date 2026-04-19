@@ -957,9 +957,9 @@ html[lang="cn"] .g-customers__slider-outer {
   }
   
   .g-about__wrap {
-    min-height: 500px;
+    min-height: 450px;
   }
-  
+
   .g-about__content {
     padding: 3rem;
     text-align: left;
@@ -1105,6 +1105,7 @@ html[lang="cn"] .g-customers__slider-outer {
   display: flex;
   gap: 24px;
   align-items: stretch;
+  margin-top:2rem;
 }
 
 /* Left: News Swiper */
@@ -1181,9 +1182,8 @@ html[lang="cn"] .g-news__card:hover .g-news__card-img {
 
 html[lang="cn"] .g-news__card-overlay {
   position: relative;
-  height: 40%;
   background: #fff;
-  padding: 16px 20px;
+  padding: 16px 20px 20px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -1193,12 +1193,12 @@ html[lang="cn"] .g-news__card-date-badge {
   width: fit-content;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 10px;
+  gap: 8px;
+  margin-bottom: 12px;
   font-family: 'Source Han Sans', system-ui, sans-serif;
   font-weight: 400;
-  font-size: 13px;
-  color: #666;
+  font-size: 14px;
+  color: #999;
 }
 
 html[lang="cn"] .g-news__card-date-badge svg {
@@ -1216,22 +1216,22 @@ html[lang="cn"] .g-news__card-content {
 html[lang="cn"] .g-news__card-title {
   font-family: 'Source Han Sans', system-ui, sans-serif;
   font-weight: 600;
-  font-size: 17px;
+  font-size: 18px;
   line-height: 1.5;
   color: #f89d1b;
-  margin: 0 0 8px 0;
+  margin: 0 0 10px 0;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 1;
-  line-clamp: 1;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 
 html[lang="cn"] .g-news__card-summary {
   font-family: 'Source Han Sans', system-ui, sans-serif;
   font-weight: 400;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.7;
   color: #666;
   margin: 0;

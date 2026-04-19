@@ -1,8 +1,8 @@
 {{!-- About Us - 使用 config �?about-us 数据，移动端优先 --}}
 {{#if aboutUs.stats.length}}
-<section class="g-section g-about " aria-label="About Us">
-  <div class="container">
-    <h2 class="g-section-title">{{aboutUs.title}}{{#if (eq locale 'cn')}}<span class="g-section-title__subtitle">{{#if aboutUsEnglishTitle}}{{aboutUsEnglishTitle}}{{else}}About Us{{/if}}</span>{{/if}}</h2>
+<section class="g-section g-about "  aria-label="About Us">
+  <div class="container" > 
+    <h2 class="g-section-title" style="margin-bottom:3.5rem;">{{aboutUs.title}}{{#if (eq locale 'cn')}}<span class="g-section-title__subtitle">{{#if aboutUsEnglishTitle}}{{aboutUsEnglishTitle}}{{else}}About Us{{/if}}</span>{{/if}}</h2>
     <div class="g-about__wrap" {{#if aboutUs.bgPicUrl}} style="background-image: url('{{aboutUs.bgPicUrl}}');"{{/if}}>
       {{#if aboutUs.videoUrl}}
       <button type="button" class="g-about__cirplay" data-video-url="{{aboutUs.videoUrl}}" aria-label="播放视频"></button>

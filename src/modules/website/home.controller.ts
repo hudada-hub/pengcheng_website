@@ -683,10 +683,10 @@ export class HomeController extends BaseWebsiteController {
 
     // 新闻和活动配置
     const newsEventsConfig = layoutData.configByKey['news-events'] ?? null;
-    Logger.log(newsEventsConfig)
+ 
     
     const newsEventsTitle = this.getTextFromConfig(newsEventsConfig, 'content')?.trim() ;
-    Logger.log(newsEventsTitle,"xxxxxx")
+ 
     const newsEventsEnglishTitle = await this.getEnglishTitleFromConfig(newsEventsConfig, langId ?? 0, 'news-events');
 
     const isZhContact = resolvedLangCode === 'cn';
