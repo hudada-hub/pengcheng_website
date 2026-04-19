@@ -149,74 +149,124 @@
   {{!-- 子级菜单与顶级菜单 DOM 同级，便于宽度 100% 不受父级限制 --}}
   {{#each navItems}}
     {{#if children}}
-      <div class="pc-mega{{#if (gt @index 2)}} pc-mega--subimg-50{{/if}}" data-mega-index="{{@index}}" role="menu" aria-hidden="true">
-        <div class="pc-mega__backdrop"></div>
-        
-        {{!-- 二级菜单容器 --}}
-        <div class="pc-mega__inner">
-          <div class="pc-mega__content" aria-label="menu-content">
-            {{#each children}}
-              {{!-- 二级菜单项容器 --}}
-              <div class="pc-mega__l2item{{#if children}} pc-mega__l2item--has-l3{{/if}}" data-l2-index="{{@index}}">
-                {{!-- 二级菜单卡片 --}}
-                <div class="pc-mega__l2card">
-                  {{!-- 菜单图：使用数据库 menu_pic_url，后端已映射为 picUrl；有值则显示图片，无则占位 --}}
-                  {{#if picUrl}}
-                    <img class="pc-mega__img" src="{{picUrl}}" alt="{{title}}" loading="lazy" />
-                  {{else}}
-                    <div class="pc-mega__img pc-mega__img--ph" aria-hidden="true" title="placeholder"></div>
-                  {{/if}}
-                  <div class="pc-mega__name-row">
-                    {{#if children}}
-                      {{!-- 有三级菜单时，标题链接进入产品列表，箭头展开三级菜单 --}}
-                      <a class="pc-mega__name" href="{{url}}">{{title}}</a>
-                      <button type="button" class="pc-mega__arrow-btn" aria-label="展开子分类" aria-expanded="false" data-action="expand-l3">
-                        {{#if (eq @root.locale 'cn')}}
-                        <img class="pc-mega__arrow" src="/images/cn/arrow-right.svg" alt="" aria-hidden="true" />
-                        {{else}}
-                        <img class="pc-mega__arrow" src="/images/global/arrow-right-black.png" alt="" aria-hidden="true" />
-                        {{/if}}
-                      </button>
+      {{!-- 判断是否是产品类菜单（有三级菜单） --}}
+      {{#if (hasL3Menu children)}}
+        {{!-- 产品类菜单：保持现有样式 --}}
+        <div class="pc-mega{{#if (gt @index 2)}} pc-mega--subimg-50{{/if}}" data-mega-index="{{@index}}" role="menu" aria-hidden="true">
+          <div class="pc-mega__backdrop"></div>
+          
+          {{!-- 二级菜单容器 --}}
+          <div class="pc-mega__inner">
+            <div class="pc-mega__content" aria-label="menu-content">
+              {{#each children}}
+                {{!-- 二级菜单项容器 --}}
+                <div class="pc-mega__l2item{{#if children}} pc-mega__l2item--has-l3{{/if}}" data-l2-index="{{@index}}">
+                  {{!-- 二级菜单卡片 --}}
+                  <div class="pc-mega__l2card">
+                    {{!-- 菜单图：使用数据库 menu_pic_url，后端已映射为 picUrl；有值则显示图片，无则占位 --}}
+                    {{#if picUrl}}
+                      <img class="pc-mega__img" src="{{picUrl}}" alt="{{title}}" loading="lazy" />
                     {{else}}
-                      {{!-- 无三级菜单时，整个卡片点击进入产品列表 --}}
-                      <a class="pc-mega__name" href="{{url}}">{{title}}</a>
+                      <div class="pc-mega__img pc-mega__img--ph" aria-hidden="true" title="placeholder"></div>
                     {{/if}}
+                    <div class="pc-mega__name-row">
+                      {{#if children}}
+                        {{!-- 有三级菜单时，标题链接进入产品列表，箭头展开三级菜单 --}}
+                        <a class="pc-mega__name" href="{{url}}">{{title}}</a>
+                        <button type="button" class="pc-mega__arrow-btn" aria-label="展开子分类" aria-expanded="false" data-action="expand-l3">
+                          {{#if (eq @root.locale 'cn')}}
+                          <img class="pc-mega__arrow" src="/images/cn/arrow-right.svg" alt="" aria-hidden="true" />
+                          {{else}}
+                          <img class="pc-mega__arrow" src="/images/global/arrow-right-black.png" alt="" aria-hidden="true" />
+                          {{/if}}
+                        </button>
+                      {{else}}
+                        {{!-- 无三级菜单时，整个卡片点击进入产品列表 --}}
+                        <a class="pc-mega__name" href="{{url}}">{{title}}</a>
+                      {{/if}}
+                    </div>
                   </div>
                 </div>
-              </div>
+              {{/each}}
+            </div>
+          </div>
+
+          {{!-- 三级菜单容器：与.pc-mega__inner 同级 --}}
+          <div class="pc-mega__three">
+            {{#each children}}
+              {{#if children}}
+                {{!-- 每个二级菜单对应一个三级菜单 panel --}}
+                <div class="pc-mega__three-panel pc-mega__three-panel--hidden" data-l2-index="{{@index}}">
+               
+                  {{!-- 三级菜单项 --}}
+                  <div class="pc-mega__content">
+                    {{#each children}}
+                      <div class="pc-mega__l3item">
+                        <a class="pc-mega__l3card" href="{{url}}">
+                          {{#if picUrl}}
+                            <img class="pc-mega__img pc-mega__img--l3" src="{{picUrl}}" alt="{{title}}" loading="lazy" />
+                          {{else}}
+                            <div class="pc-mega__img pc-mega__img--ph pc-mega__img--l3" aria-hidden="true"></div>
+                          {{/if}}
+                          <div class="pc-mega__name-row">
+                            <span class="pc-mega__name">{{title}}</span>
+                          </div>
+                        </a>
+                      </div>
+                    {{/each}}
+                  </div>
+                </div>
+              {{/if}}
             {{/each}}
           </div>
         </div>
-
-        {{!-- 三级菜单容器：与.pc-mega__inner 同级 --}}
-        <div class="pc-mega__three">
-          {{#each children}}
-            {{#if children}}
-              {{!-- 每个二级菜单对应一个三级菜单 panel --}}
-              <div class="pc-mega__three-panel pc-mega__three-panel--hidden" data-l2-index="{{@index}}">
-             
-                {{!-- 三级菜单项 --}}
-                <div class="pc-mega__content">
-                  {{#each children}}
-                    <div class="pc-mega__l3item">
-                      <a class="pc-mega__l3card" href="{{url}}">
-                        {{#if picUrl}}
-                          <img class="pc-mega__img pc-mega__img--l3" src="{{picUrl}}" alt="{{title}}" loading="lazy" />
-                        {{else}}
-                          <div class="pc-mega__img pc-mega__img--ph pc-mega__img--l3" aria-hidden="true"></div>
-                        {{/if}}
-                        <div class="pc-mega__name-row">
-                          <span class="pc-mega__name">{{title}}</span>
-                        </div>
-                      </a>
-                    </div>
-                  {{/each}}
-                </div>
-              </div>
-            {{/if}}
-          {{/each}}
+      {{else}}
+        {{!-- 非产品类菜单：图标+文字横向排列样式 --}}
+        {{#if (eq @root.locale 'cn')}}
+        <div class="pc-mega pc-mega--simple" data-mega-index="{{@index}}" role="menu" aria-hidden="true">
+          <div class="pc-mega__backdrop"></div>
+          
+          {{!-- 二级菜单容器：横向排列 --}}
+          <div class="pc-mega__inner pc-mega__inner--simple">
+            <div class="pc-mega__content pc-mega__content--simple" aria-label="menu-content">
+              {{#each children}}
+                <a class="pc-mega__simple-item" href="{{url}}">
+                  {{#if picUrl}}
+                    <img class="pc-mega__simple-icon" src="{{picUrl}}" alt="{{title}}" loading="lazy" />
+                  {{else}}
+                    <div class="pc-mega__simple-icon pc-mega__simple-icon--ph" aria-hidden="true"></div>
+                  {{/if}}
+                  <span class="pc-mega__simple-name">{{title}}</span>
+                </a>
+              {{/each}}
+            </div>
+          </div>
         </div>
-      </div>
+        {{else}}
+        {{!-- 其他语言：保持原有样式 --}}
+        <div class="pc-mega{{#if (gt @index 2)}} pc-mega--subimg-50{{/if}}" data-mega-index="{{@index}}" role="menu" aria-hidden="true">
+          <div class="pc-mega__backdrop"></div>
+          <div class="pc-mega__inner">
+            <div class="pc-mega__content" aria-label="menu-content">
+              {{#each children}}
+                <div class="pc-mega__l2item" data-l2-index="{{@index}}">
+                  <div class="pc-mega__l2card">
+                    {{#if picUrl}}
+                      <img class="pc-mega__img" src="{{picUrl}}" alt="{{title}}" loading="lazy" />
+                    {{else}}
+                      <div class="pc-mega__img pc-mega__img--ph" aria-hidden="true" title="placeholder"></div>
+                    {{/if}}
+                    <div class="pc-mega__name-row">
+                      <a class="pc-mega__name" href="{{url}}">{{title}}</a>
+                    </div>
+                  </div>
+                </div>
+              {{/each}}
+            </div>
+          </div>
+        </div>
+        {{/if}}
+      {{/if}}
     {{/if}}
   {{/each}}
 
@@ -412,6 +462,45 @@
           var open = m.getAttribute('data-mega-index') === String(index);
           m.classList.toggle('is-open', open);
           m.setAttribute('aria-hidden', open ? 'false' : 'true');
+          
+          // 非产品类菜单定位：设置二级菜单位置在对应一级菜单正下方
+          if (open && m.classList.contains('pc-mega--simple')) {
+            var navItem = document.querySelector('.pc-navitem--mega[data-mega-index="' + index + '"]');
+            if (navItem) {
+              var navRect = navItem.getBoundingClientRect();
+              var navCenter = navRect.left + navRect.width / 2;
+              var megaInner = m.querySelector('.pc-mega__inner--simple');
+              if (megaInner) {
+                // 使用getBoundingClientRect获取宽度，避免影响动画
+                var innerWidth = megaInner.scrollWidth || megaInner.offsetWidth;
+                
+                // 如果宽度为0，先临时显示获取宽度
+                if (innerWidth === 0) {
+                  var originalVisibility = m.style.visibility;
+                  var originalOpacity = m.style.opacity;
+                  m.style.visibility = 'hidden';
+                  m.style.opacity = '0';
+                  m.style.pointerEvents = 'none';
+                  m.classList.add('is-open');
+                  innerWidth = megaInner.offsetWidth;
+                  m.classList.remove('is-open');
+                  m.style.visibility = originalVisibility;
+                  m.style.opacity = originalOpacity;
+                  m.style.pointerEvents = '';
+                }
+                
+                // 计算left位置，使二级菜单居中对齐一级菜单
+                var leftPos = navCenter - innerWidth / 2;
+                // 确保不超出屏幕左边
+                if (leftPos < 16) leftPos = 16;
+                // 确保不超出屏幕右边
+                if (innerWidth > 0 && leftPos + innerWidth > window.innerWidth - 16) {
+                  leftPos = window.innerWidth - innerWidth - 16;
+                }
+                m.style.setProperty('--mega-left', leftPos + 'px');
+              }
+            }
+          }
         });
         if (bodyEl) bodyEl.classList.add('pc-mega-open');
       }

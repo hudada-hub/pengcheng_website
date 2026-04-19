@@ -818,9 +818,9 @@ html[lang="cn"] .g-float-actions__btn--link:hover .g-float-actions__social-img {
 
 .g-contactus__form-group label {
   font-family: 'Source Han Sans', system-ui, sans-serif;
-  font-weight: 400;
+  font-weight: medium;
   font-size: 18px;
-  color: rgba(255, 255, 255, 0.8);
+  color: #fff;
   margin: 0;
 }
 
@@ -2198,9 +2198,9 @@ html[lang="cn"] .pc-nav-lang-popover__dropdown {
 }
 
 .pc-nav-search-modal__inner {
-  max-width: 1200px;
+  max-width: 920px;
   margin: 0 auto;
-  padding: 30px 40px 40px;
+  padding: 72px 40px 72px;
 }
 
 .pc-nav-search-modal__form {
@@ -2258,7 +2258,7 @@ html[lang="cn"] .pc-nav-lang-popover__dropdown {
 }
 
 .pc-nav-search-modal__quick {
-  margin-top: 24px;
+  margin-top: 32px;
 }
 
 .pc-nav-search-modal__quick-title {
@@ -3862,6 +3862,111 @@ body.pc-cart-drawer-open {
   flex: 1;
   min-width: 0;
   padding-top: 0.15rem;
+}
+
+/* ===================================
+   非产品类二级菜单样式（图标+文字横向排列）
+   =================================== */
+
+/* 非产品类菜单容器 */
+html[lang="cn"] .pc-mega--simple {
+  height: auto;
+  min-height: 0;
+}
+
+/* 非产品类菜单backdrop：透明，不阻挡交互 */
+html[lang="cn"] .pc-mega--simple .pc-mega__backdrop {
+  background: transparent;
+  pointer-events: none;
+}
+
+/* 非产品类菜单内部容器 */
+html[lang="cn"] .pc-mega__inner--simple {
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  padding: 0;
+  background: #fff;
+  border: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* 非产品类菜单内容容器：横向排列 */
+html[lang="cn"] .pc-mega__content--simple {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0;
+  padding: 0;
+  grid-template-columns: none;
+  max-width: none;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* 非产品类菜单项：图标+文字横向排列 */
+html[lang="cn"] .pc-mega__simple-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  padding: 28px 32px;
+  text-decoration: none;
+  color: #0d0d0d;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+html[lang="cn"] .pc-mega__simple-item:last-child {
+  border-right: none;
+}
+
+html[lang="cn"] .pc-mega__simple-item:hover {
+  background: rgba(248, 157, 27, 0.08);
+  color: #f89d1b;
+}
+
+/* 非产品类菜单图标 */
+html[lang="cn"] .pc-mega__simple-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  flex-shrink: 0;
+  transition: filter 0.2s ease;
+}
+
+html[lang="cn"] .pc-mega__simple-icon--ph {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.03));
+  border-radius: 4px;
+}
+
+/* hover时图标变橙色 */
+html[lang="cn"] .pc-mega__simple-item:hover .pc-mega__simple-icon {
+  filter: brightness(0) saturate(100%) invert(60%) sepia(95%) saturate(1500%) hue-rotate(350deg) brightness(100%) contrast(95%);
+}
+
+/* 非产品类菜单文字 */
+html[lang="cn"] .pc-mega__simple-name {
+  font-family: 'Source Han Sans', system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+/* 非产品类菜单定位：使用CSS变量实现精确定位 */
+html[lang="cn"] .pc-mega--simple {
+  --mega-left: auto;
+  left: var(--mega-left, auto);
+  right: auto;
+  width: auto;
+  max-width: none;
+  transform: translateY(-8px);
+}
+
+html[lang="cn"] .pc-mega--simple.is-open {
+  transform: translateY(0);
 }
 
 .g-contact-toast__title {

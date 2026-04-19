@@ -92,6 +92,13 @@ async function bootstrap() {
     if (!Array.isArray(ch)) return false;
     return ch.some((c) => c.isProduct !== true);
   });
+  /** 判断导航项是否有三级菜单（用于区分产品类和非产品类菜单） */
+  handlebars.registerHelper('hasL3Menu', (children: unknown) => {
+    if (!Array.isArray(children)) return false;
+    return children.some((child: { children?: unknown[] }) => 
+      Array.isArray(child.children) && child.children.length > 0
+    );
+  });
   handlebars.registerHelper('json', (v: unknown) => {
     if (v == null) return '';
     // Escape HTML-significant characters to keep JSON safe inside <script>.

@@ -1859,7 +1859,7 @@ html[lang="cn"] .g-news__card-arrow {
 
 /* Left: Newsletter */
 .g-contactus__left {
-  width: 35%;
+  width: 25%;
   padding: 100px 40px;
  
   display: flex;
@@ -1926,7 +1926,7 @@ html[lang="cn"] .g-news__card-arrow {
 .g-contactus__form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 81px;
 }
 
 .g-contactus__form-group {
@@ -1937,10 +1937,11 @@ html[lang="cn"] .g-news__card-arrow {
 
 .g-contactus__form-group label {
   font-family: 'Source Han Sans', system-ui, sans-serif;
-  font-weight: 400;
+  font-weight: normal;
   font-size: 18px;
-  color: rgba(255,255,255,0.8);
+   color: #fff;;
   margin: 0;
+  margin-bottom: 9px;
 }
 
 .g-contactus__form-group input {

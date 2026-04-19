@@ -610,7 +610,7 @@
 
 /* Left: Newsletter */
 .g-contactus__left {
-  width: 35%;
+  width: 30%;
   padding: 100px 40px;
   display: flex;
   align-items: flex-start;
@@ -675,7 +675,7 @@
 .g-contactus__form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 81px;
 }
 
 .g-contactus__form-group {
@@ -688,8 +688,9 @@
   font-family: 'Exo', system-ui, sans-serif;
   font-weight: 400;
   font-size: 18px;
-  color: rgba(255, 255, 255, 0.8);
+  color: #fff;
   margin: 0;
+  margin-bottom: 9px;
 }
 
 .g-contactus__form-group input {
