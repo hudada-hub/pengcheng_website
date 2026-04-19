@@ -25,10 +25,12 @@
           <label class="g-inquiry-modal__label" for="g-inquiry-firstname">{{#if inquiryPriceFormTexts.firstName}}{{inquiryPriceFormTexts.firstName}}{{else}}First Name{{/if}}</label>
           <input class="g-inquiry-modal__input" type="text" id="g-inquiry-firstname" name="firstName" maxlength="128" autocomplete="given-name" />
         </div>
+        {{#unless (eq locale 'cn')}}
         <div>
           <label class="g-inquiry-modal__label" for="g-inquiry-lastname">{{#if inquiryPriceFormTexts.lastName}}{{inquiryPriceFormTexts.lastName}}{{else}}Last Name{{/if}}</label>
           <input class="g-inquiry-modal__input" type="text" id="g-inquiry-lastname" name="lastName" maxlength="128" autocomplete="family-name" />
         </div>
+        {{/unless}}
       </div>
       <div class="g-inquiry-modal__row">
         <label class="g-inquiry-modal__label" for="g-inquiry-email">{{#if inquiryPriceFormTexts.email}}{{inquiryPriceFormTexts.email}}{{else}}E-mail{{/if}}</label>

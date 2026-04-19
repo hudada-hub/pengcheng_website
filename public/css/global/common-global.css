@@ -404,7 +404,7 @@
     top: auto;
     bottom: max(16px, env(safe-area-inset-bottom));
     transform: none;
-    flex-direction: row;
+    flex-direction: column;
     gap: 6px;
   }
 

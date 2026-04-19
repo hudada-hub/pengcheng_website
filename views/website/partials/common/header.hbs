@@ -54,21 +54,54 @@
 
     <div class="pc-nav__right">
     {{/if}}
+      {{#if (eq locale 'cn')}}
+      {{!-- 中文搜索弹窗 --}}
+      <div class="pc-nav-search-wrap">
+        <button type="button" class="pc-nav-search-trigger" id="pcNavSearchTrigger" aria-label="展开搜索" aria-expanded="false" aria-controls="pcNavSearchModal">
+          <img src="/images/head/search-normal.png" alt="Search" class="pc-nav-icon" width="24" height="24">
+          <span class="pc-nav-text">&nbsp;搜索</span>
+        </button>
+        <div class="pc-nav-search-modal" id="pcNavSearchModal" aria-hidden="true">
+          <div class="pc-nav-search-modal__inner">
+            <form class="pc-nav-search-modal__form" action="{{#if basePath}}{{basePath}}/search{{else}}/search{{/if}}" method="get" role="search">
+              <img src="/images/head/search-normal.png" alt="" class="pc-nav-search-modal__icon" width="20" height="20">
+              <input type="search" name="q" class="pc-nav-search-modal__input" placeholder="{{#if searchPageTexts.navSearchPlaceholder}}{{searchPageTexts.navSearchPlaceholder}}{{else}}请输入关键词{{/if}}" aria-label="搜索" autocomplete="off">
+              <button type="button" class="pc-nav-search-modal__clear" id="pcNavSearchClear" aria-label="清除">×</button>
+              <button type="submit" class="pc-nav-search-modal__submit">搜索</button>
+            </form>
+            {{#if zhSearchEntry}}
+            <div class="pc-nav-search-modal__quick">
+              <p class="pc-nav-search-modal__quick-title">{{zhSearchEntry.title}}</p>
+              <div class="pc-nav-search-modal__quick-links">
+                {{#each zhSearchEntry.content}}
+                <a href="{{url}}" class="pc-nav-search-modal__quick-link{{#if @first}} is-highlight{{/if}}">{{title}}</a>
+                {{/each}}
+              </div>
+            </div>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+      {{else}}
       <form class="pc-nav-search" id="pcNavSearchForm" action="{{#if basePath}}{{basePath}}/search{{else}}/search{{/if}}" method="get" role="search">
         <input type="search" name="q" class="pc-nav-search__input" id="pcNavSearchInput" placeholder="{{#if searchPageTexts.navSearchPlaceholder}}{{searchPageTexts.navSearchPlaceholder}}{{/if}}" aria-label="{{#if searchPageTexts.navSearchPlaceholder}}{{searchPageTexts.navSearchPlaceholder}}{{else}}Search products{{/if}}" autocomplete="off">
-        <button type="button" class="pc-nav-search__btn" id="pcNavSearchTrigger" aria-label="{{#if (eq locale 'cn')}}展开搜索{{else}}Expand search{{/if}}">
+        <button type="button" class="pc-nav-search__btn" id="pcNavSearchTrigger" aria-label="Expand search">
           <img src="/images/head/search-normal.png" alt="Search" class="pc-nav-icon" width="24" height="24">
         </button>
       </form>
+      {{/if}}
       <div class="pc-nav-icons">
         <a type="button" class="pc-nav-icons__item" id="pcNavContactTrigger" aria-label="{{#if (eq locale 'cn')}}联系我们{{else}}Contact{{/if}}">
           <img src="/images/head/sms.png" alt="Contact" class="pc-nav-icon" width="24" height="24">
+            {{#if (eq locale 'cn')}}<span class="pc-nav-text">&nbsp;联系</span>{{/if}}
         </a>
+       
         <div class="pc-nav-icons__item pc-nav-lang-wrap" id="pcNavLangWrap" data-path-locale="{{pathLocale}}">
           {{#if navLangs}}
           {{#if navLangs.length}}
           <button type="button" class="pc-nav-lang-trigger" id="pcNavLangTrigger" aria-expanded="false" aria-haspopup="menu" aria-controls="pcNavLangPopover" aria-label="{{#if (eq locale 'cn')}}语言切换{{else}}Language{{/if}}">
             <img src="/images/head/global.png" alt="Language" class="pc-nav-icon" width="24" height="24">
+            {{#if (eq locale 'cn')}}<span class="pc-nav-text">&nbsp;中文</span>{{/if}}
           </button>
           <div class="pc-nav-lang-popover" id="pcNavLangPopover" role="presentation" aria-hidden="true">
             <p class="pc-nav-lang-popover__title" id="pcNavLangPopoverTitle">{{#if (eq locale 'cn')}}语言{{else}}Language{{/if}}</p>
@@ -148,7 +181,11 @@
                       {{!-- 有三级菜单时，标题链接进入产品列表，箭头展开三级菜单 --}}
                       <a class="pc-mega__name" href="{{url}}">{{title}}</a>
                       <button type="button" class="pc-mega__arrow-btn" aria-label="展开子分类" aria-expanded="false" data-action="expand-l3">
+                        {{#if (eq @root.locale 'cn')}}
+                        <img class="pc-mega__arrow" src="/images/cn/arrow-right.svg" alt="" aria-hidden="true" />
+                        {{else}}
                         <img class="pc-mega__arrow" src="/images/global/arrow-right-black.png" alt="" aria-hidden="true" />
+                        {{/if}}
                       </button>
                     {{else}}
                       {{!-- 无三级菜单时，整个卡片点击进入产品列表 --}}
@@ -480,6 +517,47 @@
           var q = (searchInput.value || '').trim();
           if (q) searchForm.submit();
         });
+      }
+
+      // 中文搜索弹窗控制
+      var cnSearchTrigger = document.getElementById('pcNavSearchTrigger');
+      var cnSearchModal = document.getElementById('pcNavSearchModal');
+      var cnSearchClear = document.getElementById('pcNavSearchClear');
+      var cnSearchInput = document.querySelector('.pc-nav-search-modal__input');
+      
+      if (cnSearchTrigger && cnSearchModal) {
+        cnSearchTrigger.addEventListener('click', function () {
+          var isOpen = cnSearchModal.classList.contains('is-open');
+          if (isOpen) {
+            cnSearchModal.classList.remove('is-open');
+            cnSearchModal.setAttribute('aria-hidden', 'true');
+            cnSearchTrigger.setAttribute('aria-expanded', 'false');
+          } else {
+            cnSearchModal.classList.add('is-open');
+            cnSearchModal.setAttribute('aria-hidden', 'false');
+            cnSearchTrigger.setAttribute('aria-expanded', 'true');
+            if (cnSearchInput) cnSearchInput.focus();
+          }
+        });
+        
+        // 点击外部关闭弹窗
+        document.addEventListener('click', function (e) {
+          if (!cnSearchModal.classList.contains('is-open')) return;
+          var wrap = document.querySelector('.pc-nav-search-wrap');
+          if (wrap && !wrap.contains(e.target)) {
+            cnSearchModal.classList.remove('is-open');
+            cnSearchModal.setAttribute('aria-hidden', 'true');
+            cnSearchTrigger.setAttribute('aria-expanded', 'false');
+          }
+        });
+        
+        // 清除按钮
+        if (cnSearchClear && cnSearchInput) {
+          cnSearchClear.addEventListener('click', function () {
+            cnSearchInput.value = '';
+            cnSearchInput.focus();
+          });
+        }
       }
 
       // 语言切换：保留当前路径（英文无前缀，其它语言 /{code}/...）

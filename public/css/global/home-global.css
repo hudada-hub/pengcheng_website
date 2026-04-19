@@ -1275,6 +1275,17 @@
   letter-spacing: 0.5px;
   text-transform: uppercase;
   margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.g-events__date-line {
+  display: inline-block;
+  width: 12px;
+  height: 1px;
+  background-color: #fff;
 }
 
 .g-events__date-num {

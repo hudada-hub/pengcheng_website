@@ -280,10 +280,6 @@ export class ProductsController extends BaseWebsiteController {
     const logoUrl = this.getLogoUrlFromConfig(
       layoutData.configByKey['logo'] ?? null,
     );
-    const englishLogoUrl = await this.getEnglishLogoUrlFromConfig(
-      layoutData.configByKey['logo'] ?? null,
-      langId,
-    );
     const navItems = this.buildNavItemsFromLayout(
       layoutData,
       basePath,
@@ -372,7 +368,6 @@ export class ProductsController extends BaseWebsiteController {
       description,
       keywords,
       logoUrl,
-      englishLogoUrl,
       navItems,
       categoryTree,
       products,
@@ -489,10 +484,6 @@ export class ProductsController extends BaseWebsiteController {
     console.log('[DEBUG products] viewDetails:', this.pickApplicationTextLabel(layoutData, isDomestic));
     const logoUrl = this.getLogoUrlFromConfig(
       layoutData.configByKey['logo'] ?? null,
-    );
-    const englishLogoUrl = await this.getEnglishLogoUrlFromConfig(
-      layoutData.configByKey['logo'] ?? null,
-      langId,
     );
     const navItems = this.buildNavItemsFromLayout(
       layoutData,
@@ -699,7 +690,6 @@ export class ProductsController extends BaseWebsiteController {
       description,
       keywords,
       logoUrl,
-      englishLogoUrl,
       navItems,
       categoryTree,
       productsListUrl,
@@ -857,7 +847,6 @@ export class ProductsController extends BaseWebsiteController {
       langId: ctx.langId,
       isDomestic: ctx.isDomestic,
       logoUrl: ctx.logoUrl,
-      englishLogoUrl: ctx.englishLogoUrl,
       navItems: ctx.navItems,
       categoryTree: ctx.categoryTree,
       products: ctx.products,
@@ -881,6 +870,7 @@ export class ProductsController extends BaseWebsiteController {
       productTexts: ctx.productTexts,
       contactUsFormLabels: ctx.contactUsFormLabels,
       contactUsSubmitLabel: ctx.contactUsSubmitLabel,
+      zhSearchEntry: ctx.zhSearchEntry,
     });
   }
 
@@ -910,7 +900,6 @@ export class ProductsController extends BaseWebsiteController {
       langId: ctx.langId,
       isDomestic: ctx.isDomestic,
       logoUrl: ctx.logoUrl,
-      englishLogoUrl: ctx.englishLogoUrl,
       navItems: ctx.navItems,
       categoryTree: ctx.categoryTree,
       products: ctx.products,
@@ -934,6 +923,7 @@ export class ProductsController extends BaseWebsiteController {
       productTexts: ctx.productTexts,
       contactUsFormLabels: ctx.contactUsFormLabels,
       contactUsSubmitLabel: ctx.contactUsSubmitLabel,
+      zhSearchEntry: ctx.zhSearchEntry,
     });
   }
 

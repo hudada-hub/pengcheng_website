@@ -10,7 +10,7 @@ import type {
 import { Product } from 'src/entities/product.entity';
 import { ProductCategory } from 'src/entities/product-category.entity';
 
-const DEFAULT_CONFIG_KEYS = ['logo1', 'logo2'];
+
 
 @Injectable()
 export class WebsiteLayoutService {
@@ -29,11 +29,12 @@ export class WebsiteLayoutService {
   ): Promise<LayoutCachePayload> {
     const configKeys = [
       ...new Set([
-        ...(options?.configKeys ?? DEFAULT_CONFIG_KEYS),
+        ...(options?.configKeys ?? []),
         'login-register',
         'fixed-four-icon',
         'cart-texts',
         'inquiry-price-form',
+        'zh-search-entry',
       ]),
     ];
     /** 默认 true：页脚/顶栏 mega 需把产品挂到分类树上，否则非产品页第二列为空 */

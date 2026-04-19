@@ -8,21 +8,14 @@
   data-contact-action="{{#if basePath}}{{basePath}}/contact{{else}}/contact{{/if}}"
 >
   {{!-- 固定 4 项，仅使用配置 fixed-four-icon 的图片（无 SVG / followUs 兜底）--}}
+  {{!-- 第一项固定为询价按钮，点击打开弹窗 --}}
   {{#with (lookup fixedFourIcons.items 0)}}
-  {{#if url}}
-  <a href="{{url}}" class="g-float-actions__btn g-float-actions__btn--link" rel="noopener noreferrer" target="_blank" title="{{#if title}}{{title}}{{else}}Inquiry{{/if}}" aria-label="{{#if title}}{{title}}{{else}}Inquiry{{/if}}">
-    <span class="g-float-actions__btn-inner" aria-hidden="true">
-      <img src="{{picUrl}}" alt="" class="g-float-actions__social-img" width="22" height="22" loading="lazy" />
-    </span>
-  </a>
-  {{else}}
   <button type="button" class="g-float-actions__btn" id="gFloatInquiryBtn" aria-haspopup="dialog" aria-controls="gInquiryModal" aria-expanded="false" title="{{#if title}}{{title}}{{else}}Inquiry{{/if}}">
     <span class="g-float-actions__btn-inner" aria-hidden="true">
       <img src="{{picUrl}}" alt="" class="g-float-actions__social-img" width="22" height="22" loading="lazy" />
     </span>
     <span class="visually-hidden">{{#if title}}{{title}}{{else}}Inquiry{{/if}}</span>
   </button>
-  {{/if}}
   {{/with}}
   {{#with (lookup fixedFourIcons.items 1)}}
   {{#if url}}

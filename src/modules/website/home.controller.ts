@@ -618,9 +618,9 @@ export class HomeController extends BaseWebsiteController {
           configByKey: {} as Record<string, Config | null>,
         } as LayoutCachePayload);
 
-    const logoCfg = layoutData.configByKey['logo'] ?? null;
-    const logoUrl = this.getLogoUrlFromConfig(logoCfg);
-    const englishLogoUrl = await this.getEnglishLogoUrlFromConfig(logoCfg, langId ?? 0);
+    const logoUrl = this.getLogoUrlFromConfig(
+      layoutData.configByKey['logo'] ?? null,
+    );
 
     const title = this.getWebsiteTitle(layoutData, isDomestic);
     const description = this.getWebsiteDescription(layoutData, isDomestic);
@@ -727,7 +727,6 @@ export class HomeController extends BaseWebsiteController {
       langId,
       isDomestic,
       logoUrl,
-      englishLogoUrl,
       navItems,
       carouselItems,
       heroLearnMoreLabel,
@@ -811,6 +810,7 @@ export class HomeController extends BaseWebsiteController {
       cartTexts: ctx.cartTexts,
       inquiryPriceFormTexts: ctx.inquiryPriceFormTexts,
       navLangs: ctx.navLangs,
+      zhSearchEntry: ctx.zhSearchEntry,
     };
     return data;
   }

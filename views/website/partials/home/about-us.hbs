@@ -12,9 +12,10 @@
       {{/if}}
      
       <div class="g-about__content">
-        <div class="g-about__content-horizontalline">
-        </div>
+      
         <h3 class="g-about__heading">{{aboutUs.description}}</h3>
+          <div class="g-about__content-horizontalline">
+        </div>
         <div class="g-about__stats">
           {{#each aboutUs.stats}}
           <div class="g-about__stat ">
@@ -23,7 +24,7 @@
           </div>
           {{/each}}
         </div>
-        <a href="{{basePath}}/about-us" class="g-about__link">{{aboutUs.readMoreLabel}}<img src="/images/global/arrow-right-white.png" alt=""></a>
+        <a href="{{basePath}}/about-us" class="g-about__link">{{aboutUs.readMoreLabel}}{{#if (eq locale 'cn')}}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 18L15 12L9 6" stroke="#f89d1b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>{{else}}<img src="/images/global/arrow-right-white.png" alt="">{{/if}}</a>
       </div>
     </div>
   </div>

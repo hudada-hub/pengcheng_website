@@ -271,6 +271,11 @@ export type WebsitePageContext = {
     langFullName: string;
     langIconUrl: string | null;
   }>;
+  /** 中文搜索快捷入口（config key `zh-search-entry`） */
+  zhSearchEntry?: {
+    title: string;
+    content: Array<{ title: string; url: string }>;
+  } | null;
 };
 
 /**
@@ -1170,6 +1175,12 @@ export abstract class BaseWebsiteController {
       contactUsEnglishTitle 
     });
 
+    // 获取英文 logo（用于中文站滚动后显示）
+    const englishLogoUrl = await this.getEnglishLogoUrlFromConfig(
+      layoutData.configByKey['logo'] ?? null,
+      langId || 0,
+    );
+
     const loginRegisterConfig =
       layoutData.configByKey['login-register'] ?? null;
     const loginRegister = this.getLoginRegisterLabels(
@@ -1191,6 +1202,10 @@ export abstract class BaseWebsiteController {
     const searchTextsConfig =
       layoutData.configByKey['seach-page-texts'] ?? null;
     const searchPageTexts = this.getSearchPageTexts(searchTextsConfig);
+
+    // 中文搜索快捷入口配置
+    const zhSearchEntryConfig = layoutData.configByKey['zh-search-entry'] ?? null;
+    const zhSearchEntry = this.getZhSearchEntry(zhSearchEntryConfig);
 
     const submitInfoTextsConfig =
       layoutData.configByKey['submit-info-texts'] ?? null;
@@ -1229,6 +1244,8 @@ export abstract class BaseWebsiteController {
       searchPageTexts,
       submitInfoTexts,
       navLangs,
+      zhSearchEntry,
+      englishLogoUrl,
     };
   }
 
@@ -1288,6 +1305,25 @@ export abstract class BaseWebsiteController {
       phone = obj.content;
     }
     return { label, phone };
+  }
+
+  /** 从配置中解析中文搜索快捷入口 */
+  protected getZhSearchEntry(config: Config | null): {
+    title: string;
+    content: Array<{ title: string; url: string }>;
+  } | null {
+    if (!config) return null;
+    const content = config.content;
+    const items = Array.isArray(content) ? content : [];
+    return {
+      title: config.title || '快捷入口',
+      content: items
+        .filter((item) => item && typeof item === 'object')
+        .map((item) => ({
+          title: (item as any).title || '',
+          url: (item as any).url || '',
+        })),
+    };
   }
 
   /** 从配置中解析页脚版权信息 */

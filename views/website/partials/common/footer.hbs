@@ -5,7 +5,7 @@
   <div class="container" style="box-sizing: border-box;">
     <div class="g-footer__wrap g-footer__wrap--cn">
       {{!-- Column 1: Logo + 公司标语 --}}
-      <div class="g-footer__col g-footer__col--cn g-footer__col--logo-cn">
+      <div class="g-footer__col g-footer__col--cn g-footer__col--logo-cn" style="margin-right:3rem;">
         <div class="g-footer__logo-section g-footer__logo-section--cn">
           <div class="g-footer__logo g-footer__logo--cn">
             {{#if followUs.bgPicUrl}}
@@ -13,7 +13,7 @@
             {{/if}}
           </div>
           <div class="g-footer__divider g-footer__divider--cn"></div>
-          <p class="g-footer__tagline g-footer__tagline--cn">{{footerAboutUs.description}}</p>
+          <p class="g-footer__tagline g-footer__tagline--cn" >{{footerAboutUs.description}}</p>
         </div>
       </div>
 
@@ -297,15 +297,15 @@
     <p>{{footerBeian.content}}</p>
   </div>
 </footer>
+{{> website/common/inquiry-form-modal}}
   {{> website/common/floating-actions}}
 {{> website/common/page-view-tracker}}
 {{#unless (eq locale 'cn')}}{{> website/common/member-auth-modal}}{{/unless}}
-{{> website/common/inquiry-form-modal}}
-{{#unless (eq locale 'cn')}}{{> website/common/cart-drawer}}{{/unless}}
+{{> website/common/cart-drawer}}
 {{> website/common/contactus-modal}}
-
+<script src="/js/cart-drawer.js" defer></script>
 {{#unless (eq locale 'cn')}}
 
 <script src="/js/member-auth.js" defer></script>
-<script src="/js/cart-drawer.js" defer></script>
+
 {{/unless}}
