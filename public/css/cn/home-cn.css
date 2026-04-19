@@ -38,7 +38,7 @@
   --g-color-bg-section: #efefef;
   --g-container-max: 1656px;
   --g-container-padding: 132px;
-  --g-radius: 12px;
+  --g-radius: 8px;
   --g-radius-sm: 8px;
 }
 
@@ -823,6 +823,10 @@ html[lang="cn"] .g-customers__slider-outer {
   font-size: clamp(18px, 3vw, 24px);
   color: #fff;
   margin: 0;
+  max-width: calc(100% - clamp(24px, 4vw, 32px));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .g-business__card-desc {
@@ -1160,7 +1164,7 @@ html[lang="cn"] .g-news__card {
   display: block;
   width: 100%;
   height: 100%;
-  border-radius: 12px;
+  border-radius: 8px;
   overflow: hidden;
   text-decoration: none;
   color: inherit;
@@ -1264,7 +1268,7 @@ html[lang="cn"] .g-news__card-arrow {
   display: block;
   width: 100%;
   height: 100%;
-  border-radius: 12px;
+  border-radius: 8px;
   overflow: hidden;
   text-decoration: none;
   color: inherit;
@@ -1307,7 +1311,7 @@ html[lang="cn"] .g-news__card-arrow {
   position: absolute;
   inset: 0;
   background: #f6f6f7;
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 20px;
   display: flex;
   flex-direction: column;

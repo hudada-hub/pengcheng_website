@@ -4,7 +4,7 @@
   <div class="container" > 
     <h2 class="g-section-title" style="margin-bottom:3.5rem;">{{aboutUs.title}}{{#if (eq locale 'cn')}}<span class="g-section-title__subtitle">{{#if aboutUsEnglishTitle}}{{aboutUsEnglishTitle}}{{else}}About Us{{/if}}</span>{{/if}}</h2>
     <div class="g-about__wrap">
-      {{#if aboutUs.bgPicUrl}}<div class="g-about__bg-img" style="background-image: url('{{aboutUs.bgPicUrl}}');"></div>{{/if}}
+      {{#if aboutUs.bgPicUrl}}<div class="g-about__bg-img" style="background-image: url('{{aboutUs.bgPicUrl}}');height:100%;"></div>{{/if}}
       {{#if aboutUs.videoUrl}}
       <button type="button" class="g-about__cirplay" data-video-url="{{aboutUs.videoUrl}}" aria-label="播放视频"></button>
       {{else}}
